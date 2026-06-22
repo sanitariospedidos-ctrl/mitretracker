@@ -720,23 +720,47 @@ window.confirmarVisita = function() {
   // Si había visita activa, cerrarla
   if (visitaActual) { cerrarVisita(true); }
 
-  visitaActual = {
-    cliente: clienteSeleccionado,
-    entrada: new Date().toISOString(),
-    lat: trackPoints.length ? trackPoints[trackPoints.length-1].lat : null,
-    lng: trackPoints.length ? trackPoints[trackPoints.length-1].lng : null
-  };
+  const clienteParaVisita = clienteSeleccionado;
+  const horaEntrada = new Date().toISOString();
 
-  // Mostrar visita activa
-  document.getElementById('visita-activa').style.display = 'flex';
-  document.getElementById('visita-nombre').textContent = clienteSeleccionado.razon;
-  document.getElementById('visita-hora').textContent = 'Llegada: ' + formatTime(new Date(visitaActual.entrada));
+  // Pedir GPS en el momento exacto de la visita
+  function registrarConGPS(lat, lng) {
+    visitaActual = {
+      cliente: clienteParaVisita,
+      entrada: horaEntrada,
+      lat: lat,
+      lng: lng
+    };
 
-  cerrarModal();
-  document.getElementById('cliente-search').value = '';
-  document.getElementById('cliente-results').innerHTML = '<div class="search-hint">Escribí el nombre del cliente</div>';
+    // Mostrar visita activa
+    document.getElementById('visita-activa').style.display = 'flex';
+    document.getElementById('visita-nombre').textContent = clienteParaVisita.razon;
+    document.getElementById('visita-hora').textContent = 'Llegada: ' + formatTime(new Date(horaEntrada));
 
-  showToast('📍 Visita registrada: ' + clienteSeleccionado.razon.slice(0,25));
+    cerrarModal();
+    document.getElementById('cliente-search').value = '';
+    document.getElementById('cliente-results').innerHTML = '<div class="search-hint">Escribí el nombre del cliente</div>';
+
+    showToast('📍 En: ' + clienteParaVisita.razon.slice(0,25) + (lat ? ' ✅ GPS' : ' ⚠️ sin GPS'));
+  }
+
+  // Intentar obtener GPS actual
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => registrarConGPS(pos.coords.latitude, pos.coords.longitude),
+      ()    => {
+        // Si falla, usar el último punto conocido
+        const lat = trackPoints.length ? trackPoints[trackPoints.length-1].lat : null;
+        const lng = trackPoints.length ? trackPoints[trackPoints.length-1].lng : null;
+        registrarConGPS(lat, lng);
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
+    );
+  } else {
+    const lat = trackPoints.length ? trackPoints[trackPoints.length-1].lat : null;
+    const lng = trackPoints.length ? trackPoints[trackPoints.length-1].lng : null;
+    registrarConGPS(lat, lng);
+  }
 };
 
 window.cerrarVisita = function(silencioso = false) {
