@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1923">
+<title>Mitre Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1923;
+    --surface: #1a2535;
+    --surface2: #243047;
+    --green: #00d97e;
+    --red: #ff4757;
+    --text: #e8edf5;
+    --text-muted: #6b7a99;
+    --border: #2e3d55;
+    --accent: #3d8ef0;
+    --yellow: #f4c430;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- SCREENS ---- */
+  .screen {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 28px;
+  }
+  .screen.active { display: flex; }
+
+  /* ---- LOGO ---- */
+  .logo-block { text-align: center; }
+  .logo-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--accent), #5b5ef4);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px; font-size: 32px;
+  }
+  .logo-block h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo-block p  { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ---- FORM ---- */
+  .form-box {
+    width: 100%; max-width: 340px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label {
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .form-group input,
+  .form-group select {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text); font-size: 16px;
+    outline: none; transition: border-color 0.2s;
+    width: 100%; -webkit-appearance: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus { border-color: var(--accent); }
+  .form-group select option { background: var(--surface); }
+
+  .btn-primary {
+    background: var(--accent); color: white; border: none;
+    border-radius: 14px; padding: 16px; font-size: 16px; font-weight: 700;
+    cursor: pointer; margin-top: 8px; width: 100%;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+
+  .form-error {
+    color: var(--red); font-size: 13px; text-align: center; display: none;
+  }
+  .form-info {
+    background: rgba(244,196,48,0.1);
+    border: 1px solid rgba(244,196,48,0.3);
+    border-radius: 10px; padding: 12px 14px;
+    font-size: 13px; color: var(--yellow); line-height: 1.5;
+  }
+  .form-title {
+    font-size: 18px; font-weight: 700; text-align: center;
+    margin-bottom: 4px;
+  }
+  .form-sub {
+    font-size: 13px; color: var(--text-muted); text-align: center;
+  }
+
+  /* Password strength */
+  .pwd-strength {
+    height: 4px; border-radius: 2px;
+    background: var(--border); overflow: hidden; margin-top: 4px;
+  }
+  .pwd-strength-bar {
+    height: 100%; width: 0%; border-radius: 2px;
+    transition: width 0.3s, background 0.3s;
+  }
+  .pwd-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ---- APP SCREEN ---- */
+  #app-screen {
+    display: none; flex: 1; flex-direction: column;
+    align-items: stretch; justify-content: flex-start;
+  }
+  #app-screen.active { display: flex; }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .topbar-user { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent), #5b5ef4);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: 14px;
+  }
+  .user-info strong { display: block; font-size: 14px; font-weight: 600; }
+  .user-info span   { font-size: 11px; color: var(--text-muted); }
+  .btn-logout {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-muted); border-radius: 8px;
+    padding: 6px 12px; font-size: 12px; cursor: pointer;
+  }
+
+  .main-content {
+    flex: 1; overflow-y: auto;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 32px 24px; gap: 32px;
+  }
+
+  /* STATUS CARD */
+  .status-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 24px;
+    width: 100%; max-width: 360px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .status-row { display: flex; justify-content: space-between; align-items: center; }
+  .status-label {
+    font-size: 12px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+  }
+  .status-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+  }
+  .status-badge.inactive { background: rgba(107,122,153,0.15); color: var(--text-muted); }
+  .status-badge.active   { background: rgba(0,217,126,0.15); color: var(--green); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .dot.pulse { animation: pulse 1.5s infinite; }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:0.5; transform:scale(0.8); }
+  }
+  .time-display {
+    font-size: 28px; font-weight: 700; letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .divider { height: 1px; background: var(--border); }
+  .time-row { display: flex; justify-content: space-between; }
+  .time-item { display: flex; flex-direction: column; gap: 4px; }
+  .time-item-label {
+    font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .time-item-val { font-size: 15px; font-weight: 600; }
+  .time-item-val.entry { color: var(--green); }
+  .time-item-val.exit  { color: var(--red); }
+  .time-item-val.empty { color: var(--text-muted); font-weight: 400; }
+
+  /* GPS */
+  .gps-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .gps-ok       { color: var(--green); }
+  .gps-off      { color: var(--text-muted); }
+  .gps-searching{ color: var(--yellow); }
+
+  /* MAIN BUTTON */
+  .btn-track-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+  .btn-track {
+    width: 180px; height: 180px; border-radius: 50%; border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; font-size: 16px; font-weight: 800; letter-spacing: 1px;
+    text-transform: uppercase; transition: transform 0.1s, box-shadow 0.3s;
+    outline: none;
+  }
+  .btn-track:active { transform: scale(0.95); }
+  .btn-track.off {
+    background: radial-gradient(circle at 40% 35%, #2a3f2a, #1a2a1a);
+    color: var(--green);
+    box-shadow: 0 0 0 6px rgba(0,217,126,.08), 0 0 0 14px rgba(0,217,126,.04), 0 8px 32px rgba(0,0,0,.4);
+    border: 3px solid rgba(0,217,126,.3);
+  }
+  .btn-track.on {
+    background: radial-gradient(circle at 40% 35%, #3a1a20, #2a0f15);
+    color: var(--red);
+    border: 3px solid rgba(255,71,87,.35);
+    animation: glow-red 2s ease-in-out infinite;
+  }
+  @keyframes glow-red {
+    0%,100% { box-shadow: 0 0 0 6px rgba(255,71,87,.12), 0 0 0 14px rgba(255,71,87,.05), 0 8px 32px rgba(0,0,0,.4); }
+    50%      { box-shadow: 0 0 0 8px rgba(255,71,87,.18), 0 0 0 20px rgba(255,71,87,.08), 0 8px 32px rgba(0,0,0,.4); }
+  }
+  .btn-icon  { font-size: 42px; line-height: 1; }
+  .btn-label-small { font-size: 11px; opacity: 0.7; font-weight: 600; letter-spacing: 2px; }
+  .btn-hint  { font-size: 12px; color: var(--text-muted); text-align: center; }
+
+  /* COUNTERS */
+  .points-row { display: flex; gap: 16px; width: 100%; max-width: 360px; }
+  .point-card {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px; text-align: center;
+  }
+  .point-val { font-size: 22px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .point-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* SESSION LIST */
+  .export-section { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 10px; }
+  .export-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+  .session-list { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
+  .session-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .session-date { font-size: 13px; font-weight: 600; }
+  .session-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .empty-state { text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 20px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0; transition: opacity .3s, transform .3s;
+    pointer-events: none; z-index: 999; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ==================== LOGIN ==================== -->
+<div id="login-screen" class="screen active">
+  <div class="logo-block">
+    <div class="logo-icon">📍</div>
+    <h1>Mitre Tracker</h1>
+    <p>Control de presencia y recorridos</p>
+  </div>
+  <div class="form-box">
+    <div class="form-group">
+      <label>Empleado</label>
+      <select id="login-user">
+        <option value="">Seleccioná tu nombre...</option>
+        <option value="Cristian Albornoz">Cristian Albornoz</option>
+        <option value="Dario Rocha">Dario Rocha</option>
+        <option value="Diego Portillo">Diego Portillo</option>
+        <option value="Hernán Aranda">Hernán Aranda</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="Tu contraseña" autocomplete="current-password">
+    </div>
+    <p class="form-error" id="login-error">Usuario o contraseña incorrectos</p>
+    <button class="btn-primary" onclick="doLogin()">Ingresar</button>
+  </div>
+</div>
+
+<!-- ==================== CAMBIO DE CONTRASEÑA ==================== -->
+<div id="change-pass-screen" class="screen">
+  <div class="logo-block">
+    <div class="logo-icon">🔐</div>
+  </div>
+  <div class="form-box">
+    <div class="form-title">Cambiá tu contraseña</div>
+    <div class="form-sub" id="chpass-name">Hola</div>
+    <div class="form-info">
+      Es tu primer ingreso. Elegí una contraseña personal que solo vos conozcas.
+    </div>
+    <div class="form-group">
+      <label>Nueva contraseña</label>
+      <input type="password" id="new-pass1" placeholder="Mínimo 6 caracteres" oninput="checkStrength()" autocomplete="new-password">
+      <div class="pwd-strength"><div class="pwd-strength-bar" id="str-bar"></div></div>
+      <div class="pwd-hint" id="str-hint">Ingresá tu nueva contraseña</div>
+    </div>
+    <div class="form-group">
+      <label>Repetir contraseña</label>
+      <input type="password" id="new-pass2" placeholder="Repetí la contraseña" autocomplete="new-password">
+    </div>
+    <p class="form-error" id="chpass-error">Las contraseñas no coinciden o son muy cortas</p>
+    <button class="btn-primary" onclick="doChangePass()">Guardar y continuar</button>
+  </div>
+</div>
+
+<!-- ==================== APP PRINCIPAL ==================== -->
+<div id="app-screen">
+  <div class="topbar">
+    <div class="topbar-user">
+      <div class="avatar" id="avatar-initials">--</div>
+      <div class="user-info">
+        <strong id="display-name">Nombre</strong>
+        <span id="display-date">Hoy</span>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">Salir</button>
+  </div>
+
+  <div class="main-content">
+
+    <!-- STATUS -->
+    <div class="status-card">
+      <div class="status-row">
+        <span class="status-label">Estado</span>
+        <div class="status-badge inactive" id="status-badge">
+          <div class="dot" id="status-dot"></div>
+          <span id="status-text">Fuera de turno</span>
+        </div>
+      </div>
+      <div class="time-display" id="clock">00:00:00</div>
+      <div class="gps-row gps-off" id="gps-status">
+        <span>📡</span>
+        <span id="gps-text">GPS inactivo</span>
+      </div>
+      <div class="divider"></div>
+      <div class="time-row">
+        <div class="time-item">
+          <span class="time-item-label">Entrada</span>
+          <span class="time-item-val empty" id="entry-time">--:--</span>
+        </div>
+        <div class="time-item" style="text-align:right">
+          <span class="time-item-label">Salida</span>
+          <span class="time-item-val empty" id="exit-time">--:--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÓN -->
+    <div class="btn-track-wrap">
+      <button class="btn-track off" id="track-btn" onclick="toggleTracking()">
+        <span class="btn-icon" id="btn-icon">▶</span>
+        <span id="btn-label">INICIAR</span>
+        <span class="btn-label-small" id="btn-sub">TURNO</span>
+      </button>
+      <span class="btn-hint" id="btn-hint">Presioná para comenzar tu turno</span>
+    </div>
+
+    <!-- CONTADORES -->
+    <div class="points-row">
+      <div class="point-card">
+        <div class="point-val" id="pts-count">0</div>
+        <div class="point-lbl">Puntos GPS</div>
+      </div>
+      <div class="point-card">
+        <div class="point-val" id="dist-count">0</div>
+        <div class="point-lbl">Km aprox.</div>
+      </div>
+      <div class="point-card">
+        <div class="point-val" id="dur-count">0:00</div>
+        <div class="point-lbl">Duración</div>
+      </div>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="export-section">
+      <div class="export-title">Sesiones de hoy</div>
+      <div class="session-list" id="session-list">
+        <div class="empty-state">No hay sesiones guardadas</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// ============================================================
+// 🔧 CONFIGURACIÓN FIREBASE — reemplazá con tus datos
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyC-QEySKh_4MCoBG-QrIPTb1PLda4-psk0",
+  authDomain: "gps-vendedores-192ab.firebaseapp.com",
+  projectId: "gps-vendedores-192ab",
+  storageBucket: "gps-vendedores-192ab.firebasestorage.app",
+  messagingSenderId: "890957103857",
+  appId: "1:890957103857:web:b34226e06a7fba1f925f50",
+  measurementId: "G-ZVVK70X3Z7"
+};
+// ============================================================
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
+// ============================================================
+// USUARIOS — contraseña inicial = primer nombre en minúsculas
+// ============================================================
+const DEFAULT_PASSWORDS = {
+  "Cristian Albornoz": "cristian",
+  "Dario Rocha":       "dario",
+  "Diego Portillo":    "diego",
+  "Hernán Aranda":     "hernan"
+};
+
+// Las contraseñas personalizadas se guardan en localStorage
+// clave: "pwd_<nombre>"  valor: <nueva_clave>
+// Si no existe, se usa la contraseña por defecto y se exige cambio.
+
+function getPassword(user) {
+  return localStorage.getItem('pwd_' + user) || DEFAULT_PASSWORDS[user];
+}
+
+function isFirstLogin(user) {
+  return !localStorage.getItem('pwd_' + user);
+}
+
+function savePassword(user, pwd) {
+  localStorage.setItem('pwd_' + user, pwd);
+}
+
+// Estado
+let currentUser = null;
+let tracking = false;
+let entryTime = null;
+let trackPoints = [];
+let watchId = null;
+let durationInterval = null;
+let totalDistance = 0;
+
+// Reloj
+setInterval(() => {
+  document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8);
+}, 1000);
+document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8);
+
+function formatDate(d) {
+  return d.toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'long' });
+}
+function formatTime(d) { return d.toTimeString().slice(0,5); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  // app-screen no es .screen, manejo aparte
+  document.getElementById('app-screen').style.display = id === 'app' ? 'flex' : 'none';
+}
+
+// ---- LOGIN ----
+window.doLogin = function() {
+  const user = document.getElementById('login-user').value;
+  const pass = document.getElementById('login-pass').value;
+  const err  = document.getElementById('login-error');
+
+  if (!user || !DEFAULT_PASSWORDS[user]) {
+    err.style.display = 'block';
+    err.textContent = 'Seleccioná tu nombre';
+    return;
+  }
+
+  if (getPassword(user) !== pass) {
+    err.style.display = 'block';
+    err.textContent = 'Contraseña incorrecta';
+    return;
+  }
+
+  err.style.display = 'none';
+  currentUser = user;
+
+  if (isFirstLogin(user)) {
+    // Forzar cambio de contraseña
+    document.getElementById('chpass-name').textContent = '¡Hola, ' + user.split(' ')[0] + '!';
+    document.getElementById('new-pass1').value = '';
+    document.getElementById('new-pass2').value = '';
+    document.getElementById('chpass-error').style.display = 'none';
+    showScreen('change-pass-screen');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('change-pass-screen').classList.add('active');
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('login-screen').classList.remove('active');
+  } else {
+    enterApp();
+  }
+};
+
+// ---- CAMBIO DE CONTRASEÑA ----
+window.checkStrength = function() {
+  const val = document.getElementById('new-pass1').value;
+  const bar  = document.getElementById('str-bar');
+  const hint = document.getElementById('str-hint');
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^a-zA-Z0-9]/.test(val)) score++;
+
+  const colors = ['#ff4757','#f4c430','#00d97e','#00d97e'];
+  const labels = ['Muy corta','Débil','Buena','Fuerte'];
+  const widths  = ['25%','50%','75%','100%'];
+  const i = Math.max(0, score - 1);
+  bar.style.width = val.length === 0 ? '0%' : widths[i];
+  bar.style.background = val.length === 0 ? '' : colors[i];
+  hint.textContent = val.length === 0 ? 'Ingresá tu nueva contraseña' : labels[i];
+};
+
+window.doChangePass = function() {
+  const p1 = document.getElementById('new-pass1').value;
+  const p2 = document.getElementById('new-pass2').value;
+  const err = document.getElementById('chpass-error');
+
+  if (p1.length < 6) {
+    err.textContent = 'La contraseña debe tener al menos 6 caracteres';
+    err.style.display = 'block'; return;
+  }
+  if (p1 !== p2) {
+    err.textContent = 'Las contraseñas no coinciden';
+    err.style.display = 'block'; return;
+  }
+
+  savePassword(currentUser, p1);
+  err.style.display = 'none';
+  showToast('✅ Contraseña guardada correctamente');
+  enterApp();
+};
+
+// ---- ENTRAR A LA APP ----
+function enterApp() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('app-screen').style.display = 'flex';
+
+  const initials = currentUser.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('avatar-initials').textContent = initials;
+  document.getElementById('display-name').textContent = currentUser;
+  document.getElementById('display-date').textContent = formatDate(new Date());
+
+  loadTodaySessions();
+}
+
+// ---- LOGOUT ----
+window.doLogout = function() {
+  if (tracking) { showToast('⚠️ Cerrá el turno antes de salir'); return; }
+  currentUser = null;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').classList.add('active');
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-user').value = '';
+};
+
+// ---- GPS ----
+function startGPS() {
+  if (!navigator.geolocation) { setGPS('off','❌ GPS no disponible'); return; }
+  setGPS('searching','🔍 Buscando señal GPS...');
+  watchId = navigator.geolocation.watchPosition(
+    pos => {
+      setGPS('ok', `✅ GPS activo (±${Math.round(pos.coords.accuracy)}m)`);
+      if (!tracking) return;
+      const pt = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy, ts: new Date().toISOString() };
+      if (trackPoints.length > 0) {
+        const last = trackPoints[trackPoints.length-1];
+        totalDistance += haversine(last.lat, last.lng, pt.lat, pt.lng);
+        document.getElementById('dist-count').textContent = totalDistance.toFixed(2);
+      }
+      trackPoints.push(pt);
+      document.getElementById('pts-count').textContent = trackPoints.length;
+    },
+    err => setGPS('off','⚠️ Sin GPS: ' + err.message),
+    { enableHighAccuracy: true, timeout: 30000, maximumAge: 5000 }
+  );
+}
+
+function stopGPS() {
+  if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+  setGPS('off','GPS inactivo');
+}
+
+function setGPS(state, text) {
+  document.getElementById('gps-status').className = 'gps-row gps-' + (state==='ok'?'ok':state==='searching'?'searching':'off');
+  document.getElementById('gps-text').textContent = text;
+}
+
+function haversine(lat1,lon1,lat2,lon2) {
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// ---- TOGGLE TURNO ----
+window.toggleTracking = async function() {
+  if (!tracking) {
+    tracking = true; entryTime = new Date(); trackPoints = []; totalDistance = 0;
+
+    document.getElementById('entry-time').textContent = formatTime(entryTime);
+    document.getElementById('entry-time').className = 'time-item-val entry';
+    document.getElementById('exit-time').textContent = '--:--';
+    document.getElementById('exit-time').className = 'time-item-val empty';
+
+    document.getElementById('track-btn').className = 'btn-track on';
+    document.getElementById('btn-icon').textContent = '⏹';
+    document.getElementById('btn-label').textContent = 'FINALIZAR';
+    document.getElementById('btn-hint').textContent = 'Presioná para terminar tu turno';
+
+    document.getElementById('status-badge').className = 'status-badge active';
+    document.getElementById('status-text').textContent = 'En turno';
+    document.getElementById('status-dot').className = 'dot pulse';
+
+    durationInterval = setInterval(() => {
+      const e = Math.floor((Date.now()-entryTime.getTime())/1000);
+      const h = Math.floor(e/3600), m = Math.floor((e%3600)/60);
+      document.getElementById('dur-count').textContent = `${h}:${String(m).padStart(2,'0')}`;
+    }, 10000);
+
+    startGPS();
+    showToast('✅ Turno iniciado — ' + formatTime(entryTime));
+
+  } else {
+    tracking = false;
+    const exitTime = new Date();
+    clearInterval(durationInterval);
+    stopGPS();
+
+    document.getElementById('exit-time').textContent = formatTime(exitTime);
+    document.getElementById('exit-time').className = 'time-item-val exit';
+
+    document.getElementById('track-btn').className = 'btn-track off';
+    document.getElementById('btn-icon').textContent = '▶';
+    document.getElementById('btn-label').textContent = 'INICIAR';
+    document.getElementById('btn-hint').textContent = 'Presioná para comenzar tu turno';
+
+    document.getElementById('status-badge').className = 'status-badge inactive';
+    document.getElementById('status-text').textContent = 'Fuera de turno';
+    document.getElementById('status-dot').className = 'dot';
+
+    const session = {
+      empleado: currentUser,
+      fecha: entryTime.toISOString().slice(0,10),
+      entrada: entryTime.toISOString(),
+      salida: exitTime.toISOString(),
+      duracion_min: Math.round((exitTime-entryTime)/60000),
+      distancia_km: parseFloat(totalDistance.toFixed(3)),
+      puntos: trackPoints.length,
+      recorrido: trackPoints,
+      creado: serverTimestamp()
+    };
+
+    try {
+      await addDoc(collection(db,'sesiones'), session);
+      showToast('💾 Sesión guardada correctamente');
+    } catch(e) {
+      showToast('⚠️ Error al guardar: ' + e.message);
+      console.error(e);
+    }
+    loadTodaySessions();
+  }
+};
+
+// ---- SESIONES DEL DÍA ----
+async function loadTodaySessions() {
+  const today = new Date().toISOString().slice(0,10);
+  const list = document.getElementById('session-list');
+  try {
+    const q = query(collection(db,'sesiones'),
+      where('empleado','==',currentUser),
+      where('fecha','==',today),
+      orderBy('entrada','desc'));
+    const snap = await getDocs(q);
+    if (snap.empty) { list.innerHTML='<div class="empty-state">No hay sesiones hoy</div>'; return; }
+    list.innerHTML='';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const ei = new Date(d.entrada).toTimeString().slice(0,5);
+      const si = new Date(d.salida).toTimeString().slice(0,5);
+      const item = document.createElement('div');
+      item.className='session-item';
+      item.innerHTML=`<div>
+        <div class="session-date">${ei} → ${si}</div>
+        <div class="session-meta">${d.duracion_min} min · ${d.distancia_km} km · ${d.puntos} pts GPS</div>
+      </div>`;
+      list.appendChild(item);
+    });
+  } catch(e) {
+    list.innerHTML='<div class="empty-state">Error al cargar sesiones</div>';
+    console.error(e);
+  }
+}
+
+// ---- TOAST ----
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// Enter en login
+document.getElementById('login-pass').addEventListener('keypress', e => {
+  if (e.key==='Enter') window.doLogin();
+});
+document.getElementById('new-pass2').addEventListener('keypress', e => {
+  if (e.key==='Enter') window.doChangePass();
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Control — Mitre Tracker</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #3d8ef0;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --purple: #8b5cf6;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* LOGIN */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .login-header {
+    text-align: center;
+  }
+
+  .login-logo {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  .login-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .login-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .field input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus { border-color: var(--accent); }
+
+  .btn-enter {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .btn-enter:hover { opacity: 0.85; }
+
+  .login-err {
+    color: var(--red);
+    font-size: 13px;
+    text-align: center;
+    display: none;
+  }
+
+  /* PANEL */
+  #panel-screen { display: none; }
+
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sidebar-title {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-logout-panel {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  .filters {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .filter-select, .filter-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+  }
+
+  .filter-select:focus, .filter-input:focus { border-color: var(--accent); }
+
+  .btn-buscar {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .session-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 12px;
+  }
+
+  .session-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .session-card:hover { border-color: var(--accent); }
+  .session-card.active { border-color: var(--accent); background: rgba(61,142,240,0.08); }
+
+  .sc-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .sc-date {
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .sc-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .sc-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .tag-green { background: rgba(63,185,80,0.15); color: var(--green); }
+  .tag-blue { background: rgba(61,142,240,0.15); color: var(--accent); }
+  .tag-purple { background: rgba(139,92,246,0.15); color: var(--purple); }
+
+  .no-sessions {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 32px 16px;
+  }
+
+  /* MAIN AREA */
+  .main-area {
+    margin-left: 280px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .topbar-panel {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .topbar-info h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .topbar-info p {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .topbar-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-action {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* STATS */
+  .stats-row {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .stat-box {
+    flex: 1;
+    background: var(--surface);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-val {
+    font-size: 24px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -1px;
+  }
+
+  .stat-lbl {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* MAP */
+  #map {
+    flex: 1;
+    background: #0d1117;
+  }
+
+  /* INFO PANEL */
+  .info-panel {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    display: none;
+    flex-shrink: 0;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .info-panel.visible { display: flex; }
+
+  .info-chips {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .btn-export-html {
+    background: var(--green);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .main-area { margin-left: 0; }
+    .stats-row { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">🗺️</div>
+      <h1>Panel de Control</h1>
+      <p>Mitre Tracker — Acceso supervisores</p>
+    </div>
+
+    <div class="field">
+      <label>Usuario</label>
+      <input type="text" id="admin-user" placeholder="admin">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="admin-pass" placeholder="••••••">
+    </div>
+    <p class="login-err" id="admin-err">Credenciales incorrectas</p>
+    <button class="btn-enter" onclick="adminLogin()">Ingresar al panel</button>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div id="panel-screen">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">📍 Mitre Tracker</div>
+      <button class="btn-logout-panel" onclick="adminLogout()">Salir</button>
+    </div>
+
+    <div class="filters">
+      <div>
+        <div class="filter-label">Empleado</div>
+        <select class="filter-select" id="filter-emp">
+          <option value="">Todos</option>
+          <option>Cristian Albornoz</option>
+          <option>Dario Rocha</option>
+          <option>Diego Portillo</option>
+          <option>Hernán Aranda</option>
+        </select>
+      </div>
+      <div>
+        <div class="filter-label">Fecha</div>
+        <input type="date" class="filter-input" id="filter-date">
+      </div>
+      <button class="btn-buscar" onclick="buscarSesiones()">🔍 Buscar</button>
+    </div>
+
+    <div class="session-scroll" id="session-scroll">
+      <div class="no-sessions">Buscá para ver sesiones</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <div class="topbar-panel">
+      <div class="topbar-info">
+        <h2 id="panel-title">Seleccioná una sesión</h2>
+        <p id="panel-sub">Usá el panel lateral para filtrar y elegir un recorrido</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-action" onclick="exportarReporteHTML()">📄 Exportar reporte HTML</button>
+      </div>
+    </div>
+
+    <div class="stats-row" id="stats-row" style="display:none">
+      <div class="stat-box">
+        <div class="stat-val" id="stat-entrada">--:--</div>
+        <div class="stat-lbl">Entrada</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-salida">--:--</div>
+        <div class="stat-lbl">Salida</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-dur">0 min</div>
+        <div class="stat-lbl">Duración</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-km">0 km</div>
+        <div class="stat-lbl">Distancia</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-pts">0</div>
+        <div class="stat-lbl">Puntos GPS</div>
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="info-panel" id="info-panel">
+      <div class="info-chips" id="info-chips"></div>
+      <button class="btn-export-html" onclick="exportarSesionHTML()">📄 Exportar esta sesión</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE + LÓGICA -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// ============================================================
+// 🔧 CONFIGURACIÓN FIREBASE — misma que en app.html
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyC-QEySKh_4MCoBG-QrIPTb1PLda4-psk0",
+  authDomain: "gps-vendedores-192ab.firebaseapp.com",
+  projectId: "gps-vendedores-192ab",
+  storageBucket: "gps-vendedores-192ab.firebasestorage.app",
+  messagingSenderId: "890957103857",
+  appId: "1:890957103857:web:b34226e06a7fba1f925f50",
+  measurementId: "G-ZVVK70X3Z7"
+};
+
+// Admin credentials
+const ADMIN_CREDENTIALS = {
+  "admin": "admin"
+};
+// ============================================================
+
+const app2 = initializeApp(firebaseConfig, 'panel');
+const db2 = getFirestore(app2);
+
+let map = null;
+let currentLayer = null;
+let currentSession = null;
+let allSessions = [];
+
+// Set today's date in filter
+document.getElementById('filter-date').value = new Date().toISOString().slice(0,10);
+
+// LOGIN
+window.adminLogin = function() {
+  const user = document.getElementById('admin-user').value.trim();
+  const pass = document.getElementById('admin-pass').value;
+  const err = document.getElementById('admin-err');
+
+  if (!ADMIN_CREDENTIALS[user] || ADMIN_CREDENTIALS[user] !== pass) {
+    err.style.display = 'block';
+    return;
+  }
+
+  err.style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('panel-screen').style.display = 'block';
+  initMap();
+};
+
+window.adminLogout = function() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('panel-screen').style.display = 'none';
+};
+
+// MAP
+function initMap() {
+  map = L.map('map', { zoomControl: true }).setView([-34.65, -58.72], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(map);
+}
+
+// BUSCAR SESIONES
+window.buscarSesiones = async function() {
+  const emp = document.getElementById('filter-emp').value;
+  const fecha = document.getElementById('filter-date').value;
+  const scroll = document.getElementById('session-scroll');
+  scroll.innerHTML = '<div class="no-sessions">Cargando...</div>';
+
+  try {
+    let constraints = [collection(db2, 'sesiones')];
+    let q;
+
+    if (emp && fecha) {
+      q = query(collection(db2,'sesiones'), where('empleado','==',emp), where('fecha','==',fecha), orderBy('entrada','desc'));
+    } else if (emp) {
+      q = query(collection(db2,'sesiones'), where('empleado','==',emp), orderBy('entrada','desc'));
+    } else if (fecha) {
+      q = query(collection(db2,'sesiones'), where('fecha','==',fecha), orderBy('entrada','desc'));
+    } else {
+      q = query(collection(db2,'sesiones'), orderBy('entrada','desc'));
+    }
+
+    const snap = await getDocs(q);
+    allSessions = [];
+    snap.forEach(doc => allSessions.push({ id: doc.id, ...doc.data() }));
+
+    if (allSessions.length === 0) {
+      scroll.innerHTML = '<div class="no-sessions">No hay sesiones para estos filtros</div>';
+      return;
+    }
+
+    scroll.innerHTML = '';
+    allSessions.forEach((s, i) => {
+      const entrada = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+      const salida = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+      const fechaFmt = new Date(s.entrada).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
+
+      const card = document.createElement('div');
+      card.className = 'session-card';
+      card.id = 'sc-' + i;
+      card.innerHTML = `
+        <div class="sc-name">${s.empleado}</div>
+        <div class="sc-date">${fechaFmt} · ${entrada} → ${salida}</div>
+        <div class="sc-meta">
+          <span class="sc-tag tag-green">${s.duracion_min} min</span>
+          <span class="sc-tag tag-blue">${s.distancia_km} km</span>
+          <span class="sc-tag tag-purple">${s.puntos} pts</span>
+        </div>
+      `;
+      card.onclick = () => verSesion(s, i);
+      scroll.appendChild(card);
+    });
+
+  } catch(e) {
+    scroll.innerHTML = `<div class="no-sessions">Error: ${e.message}</div>`;
+    console.error(e);
+  }
+};
+
+// VER SESIÓN EN MAPA
+window.verSesion = function(s, idx) {
+  currentSession = s;
+
+  // Highlight card
+  document.querySelectorAll('.session-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('sc-' + idx);
+  if (card) card.classList.add('active');
+
+  // Stats
+  document.getElementById('stats-row').style.display = 'flex';
+  const entrada = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  const salida = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('stat-entrada').textContent = entrada;
+  document.getElementById('stat-salida').textContent = salida;
+  document.getElementById('stat-dur').textContent = s.duracion_min + ' min';
+  document.getElementById('stat-km').textContent = s.distancia_km + ' km';
+  document.getElementById('stat-pts').textContent = s.puntos;
+
+  // Panel title
+  document.getElementById('panel-title').textContent = s.empleado;
+  document.getElementById('panel-sub').textContent =
+    new Date(s.entrada).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  // Limpiar mapa
+  if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
+
+  if (!s.recorrido || s.recorrido.length === 0) {
+    document.getElementById('info-panel').className = 'info-panel';
+    return;
+  }
+
+  const pts = s.recorrido.map(p => [p.lat, p.lng]);
+
+  // Grupo de capas
+  currentLayer = L.layerGroup().addTo(map);
+
+  // Polyline del recorrido
+  const poly = L.polyline(pts, {
+    color: '#3d8ef0',
+    weight: 4,
+    opacity: 0.85,
+    dashArray: null
+  }).addTo(currentLayer);
+
+  // Inicio (verde)
+  L.circleMarker(pts[0], {
+    radius: 10,
+    fillColor: '#3fb950',
+    color: '#fff',
+    weight: 2,
+    fillOpacity: 1
+  }).bindPopup(`<b>🟢 ENTRADA</b><br>${entrada}<br><small>${s.empleado}</small>`).addTo(currentLayer);
+
+  // Fin (rojo)
+  L.circleMarker(pts[pts.length-1], {
+    radius: 10,
+    fillColor: '#f85149',
+    color: '#fff',
+    weight: 2,
+    fillOpacity: 1
+  }).bindPopup(`<b>🔴 SALIDA</b><br>${salida}<br><small>${s.empleado}</small>`).addTo(currentLayer);
+
+  // Puntos intermedios (cada 10)
+  for (let i = 10; i < pts.length - 1; i += 10) {
+    const ts = new Date(s.recorrido[i].ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    L.circleMarker(pts[i], {
+      radius: 4,
+      fillColor: '#3d8ef0',
+      color: 'transparent',
+      fillOpacity: 0.7
+    }).bindPopup(`⏱️ ${ts}`).addTo(currentLayer);
+  }
+
+  map.fitBounds(poly.getBounds(), { padding: [40, 40] });
+
+  // Info chips
+  document.getElementById('info-panel').className = 'info-panel visible';
+  document.getElementById('info-chips').innerHTML = `
+    <span class="chip">🟢 Entrada: ${entrada}</span>
+    <span class="chip">🔴 Salida: ${salida}</span>
+    <span class="chip">⏱️ ${s.duracion_min} min</span>
+    <span class="chip">📍 ${s.distancia_km} km</span>
+    <span class="chip">🔵 ${s.puntos} puntos GPS</span>
+  `;
+};
+
+// EXPORTAR SESIÓN INDIVIDUAL HTML
+window.exportarSesionHTML = function() {
+  if (!currentSession) return;
+  const s = currentSession;
+  const pts = s.recorrido || [];
+  const entrada = new Date(s.entrada).toLocaleTimeString('es-AR');
+  const salida = new Date(s.salida).toLocaleTimeString('es-AR');
+  const fechaStr = new Date(s.entrada).toLocaleDateString('es-AR', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const ptsJSON = JSON.stringify(pts.map(p=>[p.lat,p.lng]));
+  const primeraLat = pts.length ? pts[0].lat : -34.65;
+  const primeraLng = pts.length ? pts[0].lng : -58.72;
+
+  const html = `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reporte — ${s.empleado} — ${fechaStr}</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
+<style>
+  body{font-family:sans-serif;margin:0;background:#f5f7fa;color:#1a1a2e}
+  .header{background:#1a2535;color:white;padding:24px 32px}
+  .header h1{font-size:20px;margin-bottom:4px}
+  .header p{font-size:13px;opacity:0.7}
+  .stats{display:flex;gap:0;background:white;border-bottom:1px solid #dde3ef}
+  .stat{flex:1;padding:16px 20px;border-right:1px solid #dde3ef;text-align:center}
+  .stat:last-child{border-right:none}
+  .sv{font-size:22px;font-weight:800;color:#3d8ef0}
+  .sl{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  #map{height:500px}
+  .footer{background:white;padding:16px 32px;text-align:center;font-size:12px;color:#8b949e;border-top:1px solid #dde3ef}
+  @media print{.footer{position:fixed;bottom:0;width:100%}}
+</style>
+</head><body>
+<div class="header">
+  <h1>📍 ${s.empleado}</h1>
+  <p>${fechaStr} · Sanitarios Mitre</p>
+</div>
+<div class="stats">
+  <div class="stat"><div class="sv">${entrada}</div><div class="sl">Entrada</div></div>
+  <div class="stat"><div class="sv">${salida}</div><div class="sl">Salida</div></div>
+  <div class="stat"><div class="sv">${s.duracion_min} min</div><div class="sl">Duración</div></div>
+  <div class="stat"><div class="sv">${s.distancia_km} km</div><div class="sl">Distancia</div></div>
+  <div class="stat"><div class="sv">${s.puntos}</div><div class="sl">Puntos GPS</div></div>
+</div>
+<div id="map"></div>
+<div class="footer">Generado por Mitre Tracker · Sanitarios Mitre</div>
+<script>
+const map = L.map('map').setView([${primeraLat},${primeraLng}],14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+const pts = ${ptsJSON};
+if(pts.length>0){
+  const poly=L.polyline(pts,{color:'#3d8ef0',weight:4}).addTo(map);
+  L.circleMarker(pts[0],{radius:10,fillColor:'#3fb950',color:'#fff',weight:2,fillOpacity:1}).bindPopup('🟢 ENTRADA ${entrada}').addTo(map);
+  L.circleMarker(pts[pts.length-1],{radius:10,fillColor:'#f85149',color:'#fff',weight:2,fillOpacity:1}).bindPopup('🔴 SALIDA ${salida}').addTo(map);
+  map.fitBounds(poly.getBounds(),{padding:[40,40]});
+}
+<\/script>
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `recorrido_${s.empleado.replace(' ','_')}_${s.fecha}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+// EXPORTAR REPORTE GENERAL
+window.exportarReporteHTML = function() {
+  if (allSessions.length === 0) {
+    alert('Primero buscá sesiones para exportar');
+    return;
+  }
+
+  const rows = allSessions.map(s => {
+    const entrada = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    const salida = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    const fecha = new Date(s.entrada).toLocaleDateString('es-AR');
+    return `<tr>
+      <td>${s.empleado}</td>
+      <td>${fecha}</td>
+      <td style="color:#3fb950;font-weight:600">${entrada}</td>
+      <td style="color:#f85149;font-weight:600">${salida}</td>
+      <td>${s.duracion_min} min</td>
+      <td>${s.distancia_km} km</td>
+      <td>${s.puntos}</td>
+    </tr>`;
+  }).join('');
+
+  const totalMin = allSessions.reduce((a,s) => a + s.duracion_min, 0);
+  const totalKm = allSessions.reduce((a,s) => a + s.distancia_km, 0).toFixed(2);
+  const fechaReporte = new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Reporte General — Mitre Tracker</title>
+<style>
+  body{font-family:sans-serif;background:#f5f7fa;color:#1a1a2e;margin:0}
+  .header{background:#1a2535;color:white;padding:24px 40px}
+  .header h1{font-size:22px}
+  .header p{opacity:.7;font-size:13px;margin-top:4px}
+  .totals{display:flex;background:white;border-bottom:2px solid #dde3ef}
+  .tot{flex:1;padding:16px 24px;border-right:1px solid #eee;text-align:center}
+  .tot:last-child{border-right:none}
+  .tv{font-size:26px;font-weight:900;color:#3d8ef0}
+  .tl{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  table{width:100%;border-collapse:collapse;background:white;margin:20px 0}
+  th{background:#f0f4ff;padding:12px 16px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#8b949e;border-bottom:2px solid #dde3ef}
+  td{padding:12px 16px;border-bottom:1px solid #eee;font-size:13px}
+  tr:hover td{background:#f9fbff}
+  .footer{text-align:center;padding:20px;color:#8b949e;font-size:12px}
+  @media print{body{background:white}.header{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="header">
+  <h1>📊 Reporte General — Sanitarios Mitre</h1>
+  <p>Generado el ${fechaReporte} · ${allSessions.length} sesiones</p>
+</div>
+<div class="totals">
+  <div class="tot"><div class="tv">${allSessions.length}</div><div class="tl">Sesiones</div></div>
+  <div class="tot"><div class="tv">${totalMin} min</div><div class="tl">Total trabajado</div></div>
+  <div class="tot"><div class="tv">${totalKm} km</div><div class="tl">Total recorrido</div></div>
+</div>
+<table>
+  <thead><tr>
+    <th>Empleado</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Duración</th><th>Distancia</th><th>Pts GPS</th>
+  </tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+<div class="footer">Mitre Tracker · Sanitarios Mitre · ${fechaReporte}</div>
+</body></html>`;
+
+  const blob = new Blob([html],{type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `reporte_mitre_${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+// Enter en login
+document.getElementById('admin-pass').addEventListener('keypress', e => {
+  if (e.key === 'Enter') window.adminLogin();
+});
+
+</script>
+</body>
+</html>
