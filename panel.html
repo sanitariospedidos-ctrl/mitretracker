@@ -397,6 +397,34 @@
     .main-area { margin-left: 0; }
     .stats-row { display: none; }
   }
+
+  .visitas-panel {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 14px 20px;
+    flex-shrink: 0;
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+  }
+  .visitas-panel.visible { display: block; }
+  .visitas-title {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px;
+  }
+  .visita-row {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+  }
+  .visita-row:last-child { border-bottom: none; }
+  .visita-hora {
+    font-size: 12px; font-weight: 700; color: var(--green);
+    white-space: nowrap; flex-shrink: 0; padding-top: 1px;
+  }
+  .visita-info { flex: 1; min-width: 0; }
+  .visita-nombre { font-size: 12px; font-weight: 600; }
+  .visita-dir { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
 </style>
 </head>
 <body>
@@ -624,6 +652,58 @@ window.buscarSesiones = async function() {
   }
 };
 
+
+// CARGAR VISITAS DE LA SESIÓN
+async function cargarVisitas(s) {
+  const panel = document.getElementById('visitas-panel');
+  const lista = document.getElementById('visitas-lista');
+  const fecha = s.fecha;
+  const emp = s.empleado;
+  const horaEntrada = s.entrada;
+  const horaSalida = s.salida;
+
+  try {
+    const q = query(
+      collection(db2,'visitas'),
+      where('empleado','==',emp),
+      where('fecha','==',fecha),
+      orderBy('hora','asc')
+    );
+    const snap = await getDocs(q);
+
+    // Filter only visitas within session time range
+    const visitas = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      if (d.hora >= horaEntrada && d.hora <= horaSalida) visitas.push(d);
+    });
+
+    if (visitas.length === 0) {
+      panel.classList.remove('visible');
+      return;
+    }
+
+    lista.innerHTML = '';
+    visitas.forEach(v => {
+      const hora = new Date(v.hora).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+      const row = document.createElement('div');
+      row.className = 'visita-row';
+      row.innerHTML = `
+        <div class="visita-hora">${hora}</div>
+        <div class="visita-info">
+          <div class="visita-nombre">${v.razon || v.nombre}</div>
+          <div class="visita-dir">${v.direccion || ''}</div>
+        </div>
+      `;
+      lista.appendChild(row);
+    });
+    panel.classList.add('visible');
+  } catch(e) {
+    console.error('Error cargando visitas:', e);
+    panel.classList.remove('visible');
+  }
+}
+
 // VER SESIÓN EN MAPA
 window.verSesion = function(s, idx) {
   currentSession = s;
@@ -699,6 +779,7 @@ window.verSesion = function(s, idx) {
   }
 
   map.fitBounds(poly.getBounds(), { padding: [40, 40] });
+  cargarVisitas(s);
 
   // Info chips
   document.getElementById('info-panel').className = 'info-panel visible';

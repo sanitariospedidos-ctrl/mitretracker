@@ -9,264 +9,228 @@
 <title>Mitre Tracker</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0f1923;
-    --surface: #1a2535;
-    --surface2: #243047;
-    --green: #00d97e;
-    --red: #ff4757;
-    --text: #e8edf5;
-    --text-muted: #6b7a99;
-    --border: #2e3d55;
-    --accent: #3d8ef0;
-    --yellow: #f4c430;
+    --bg: #0f1923; --surface: #1a2535; --surface2: #243047;
+    --green: #00d97e; --red: #ff4757; --text: #e8edf5;
+    --text-muted: #6b7a99; --border: #2e3d55; --accent: #3d8ef0; --yellow: #f4c430;
   }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ---- SCREENS ---- */
-  .screen {
-    flex: 1;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px;
-    gap: 28px;
-  }
+  .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; gap: 28px; }
   .screen.active { display: flex; }
 
-  /* ---- LOGO ---- */
   .logo-block { text-align: center; }
-  .logo-icon {
-    width: 72px; height: 72px;
-    background: linear-gradient(135deg, var(--accent), #5b5ef4);
-    border-radius: 20px;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 16px; font-size: 32px;
-  }
-  .logo-block h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
-  .logo-block p  { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .logo-icon { width: 72px; height: 72px; background: linear-gradient(135deg, var(--accent), #5b5ef4); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
+  .logo-block h1 { font-size: 22px; font-weight: 700; }
+  .logo-block p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
-  /* ---- FORM ---- */
-  .form-box {
-    width: 100%; max-width: 340px;
-    display: flex; flex-direction: column; gap: 14px;
-  }
+  .form-box { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 14px; }
   .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group label {
-    font-size: 12px; font-weight: 600; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .form-group input,
-  .form-group select {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    color: var(--text); font-size: 16px;
-    outline: none; transition: border-color 0.2s;
-    width: 100%; -webkit-appearance: none;
-  }
-  .form-group input:focus,
-  .form-group select:focus { border-color: var(--accent); }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input, .form-group select { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; color: var(--text); font-size: 16px; outline: none; transition: border-color 0.2s; width: 100%; -webkit-appearance: none; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
   .form-group select option { background: var(--surface); }
 
-  .btn-primary {
-    background: var(--accent); color: white; border: none;
-    border-radius: 14px; padding: 16px; font-size: 16px; font-weight: 700;
-    cursor: pointer; margin-top: 8px; width: 100%;
-    transition: opacity 0.2s, transform 0.1s;
-  }
+  .btn-primary { background: var(--accent); color: white; border: none; border-radius: 14px; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; width: 100%; transition: opacity 0.2s, transform 0.1s; }
   .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
 
-  .form-error {
-    color: var(--red); font-size: 13px; text-align: center; display: none;
-  }
-  .form-info {
-    background: rgba(244,196,48,0.1);
-    border: 1px solid rgba(244,196,48,0.3);
-    border-radius: 10px; padding: 12px 14px;
-    font-size: 13px; color: var(--yellow); line-height: 1.5;
-  }
-  .form-title {
-    font-size: 18px; font-weight: 700; text-align: center;
-    margin-bottom: 4px;
-  }
-  .form-sub {
-    font-size: 13px; color: var(--text-muted); text-align: center;
-  }
+  .form-error { color: var(--red); font-size: 13px; text-align: center; display: none; }
+  .form-info { background: rgba(244,196,48,0.1); border: 1px solid rgba(244,196,48,0.3); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--yellow); line-height: 1.5; }
+  .form-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+  .form-sub { font-size: 13px; color: var(--text-muted); text-align: center; }
 
-  /* Password strength */
-  .pwd-strength {
-    height: 4px; border-radius: 2px;
-    background: var(--border); overflow: hidden; margin-top: 4px;
-  }
-  .pwd-strength-bar {
-    height: 100%; width: 0%; border-radius: 2px;
-    transition: width 0.3s, background 0.3s;
-  }
+  .pwd-strength { height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; margin-top: 4px; }
+  .pwd-strength-bar { height: 100%; width: 0%; border-radius: 2px; transition: width 0.3s, background 0.3s; }
   .pwd-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
-  /* ---- APP SCREEN ---- */
-  #app-screen {
-    display: none; flex: 1; flex-direction: column;
-    align-items: stretch; justify-content: flex-start;
-  }
-  #app-screen.active { display: flex; }
+  #app-screen { display: none; flex: 1; flex-direction: column; align-items: stretch; justify-content: flex-start; }
 
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0;
-  }
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
   .topbar-user { display: flex; align-items: center; gap: 10px; }
-  .avatar {
-    width: 38px; height: 38px;
-    background: linear-gradient(135deg, var(--accent), #5b5ef4);
-    border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-weight: 700; font-size: 14px;
-  }
+  .avatar { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent), #5b5ef4); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
   .user-info strong { display: block; font-size: 14px; font-weight: 600; }
-  .user-info span   { font-size: 11px; color: var(--text-muted); }
-  .btn-logout {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text-muted); border-radius: 8px;
-    padding: 6px 12px; font-size: 12px; cursor: pointer;
-  }
+  .user-info span { font-size: 11px; color: var(--text-muted); }
+  .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
 
-  .main-content {
-    flex: 1; overflow-y: auto;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 32px 24px; gap: 32px;
-  }
+  .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 24px 20px; gap: 24px; }
 
   /* STATUS CARD */
-  .status-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 20px; padding: 24px;
-    width: 100%; max-width: 360px;
-    display: flex; flex-direction: column; gap: 16px;
-  }
+  .status-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 14px; }
   .status-row { display: flex; justify-content: space-between; align-items: center; }
-  .status-label {
-    font-size: 12px; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
-  }
-  .status-badge {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
-  }
+  .status-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .status-badge { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
   .status-badge.inactive { background: rgba(107,122,153,0.15); color: var(--text-muted); }
-  .status-badge.active   { background: rgba(0,217,126,0.15); color: var(--green); }
+  .status-badge.active { background: rgba(0,217,126,0.15); color: var(--green); }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
   .dot.pulse { animation: pulse 1.5s infinite; }
-  @keyframes pulse {
-    0%,100% { opacity:1; transform:scale(1); }
-    50%      { opacity:0.5; transform:scale(0.8); }
-  }
-  .time-display {
-    font-size: 28px; font-weight: 700; letter-spacing: -1px;
-    font-variant-numeric: tabular-nums;
-  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+  .time-display { font-size: 26px; font-weight: 700; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
   .divider { height: 1px; background: var(--border); }
   .time-row { display: flex; justify-content: space-between; }
   .time-item { display: flex; flex-direction: column; gap: 4px; }
-  .time-item-label {
-    font-size: 11px; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
+  .time-item-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
   .time-item-val { font-size: 15px; font-weight: 600; }
   .time-item-val.entry { color: var(--green); }
-  .time-item-val.exit  { color: var(--red); }
+  .time-item-val.exit { color: var(--red); }
   .time-item-val.empty { color: var(--text-muted); font-weight: 400; }
-
-  /* GPS */
   .gps-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-  .gps-ok       { color: var(--green); }
-  .gps-off      { color: var(--text-muted); }
-  .gps-searching{ color: var(--yellow); }
+  .gps-ok { color: var(--green); } .gps-off { color: var(--text-muted); } .gps-searching { color: var(--yellow); }
 
-  /* MAIN BUTTON */
-  .btn-track-wrap {
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
-  }
-  .btn-track {
-    width: 180px; height: 180px; border-radius: 50%; border: none; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 8px; font-size: 16px; font-weight: 800; letter-spacing: 1px;
-    text-transform: uppercase; transition: transform 0.1s, box-shadow 0.3s;
-    outline: none;
-  }
+  /* BOTÓN PRINCIPAL */
+  .btn-track-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .btn-track { width: 170px; height: 170px; border-radius: 50%; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; transition: transform 0.1s; outline: none; }
   .btn-track:active { transform: scale(0.95); }
-  .btn-track.off {
-    background: radial-gradient(circle at 40% 35%, #2a3f2a, #1a2a1a);
-    color: var(--green);
-    box-shadow: 0 0 0 6px rgba(0,217,126,.08), 0 0 0 14px rgba(0,217,126,.04), 0 8px 32px rgba(0,0,0,.4);
-    border: 3px solid rgba(0,217,126,.3);
-  }
-  .btn-track.on {
-    background: radial-gradient(circle at 40% 35%, #3a1a20, #2a0f15);
-    color: var(--red);
-    border: 3px solid rgba(255,71,87,.35);
-    animation: glow-red 2s ease-in-out infinite;
-  }
-  @keyframes glow-red {
-    0%,100% { box-shadow: 0 0 0 6px rgba(255,71,87,.12), 0 0 0 14px rgba(255,71,87,.05), 0 8px 32px rgba(0,0,0,.4); }
-    50%      { box-shadow: 0 0 0 8px rgba(255,71,87,.18), 0 0 0 20px rgba(255,71,87,.08), 0 8px 32px rgba(0,0,0,.4); }
-  }
-  .btn-icon  { font-size: 42px; line-height: 1; }
+  .btn-track.off { background: radial-gradient(circle at 40% 35%, #2a3f2a, #1a2a1a); color: var(--green); box-shadow: 0 0 0 6px rgba(0,217,126,.08), 0 0 0 14px rgba(0,217,126,.04), 0 8px 32px rgba(0,0,0,.4); border: 3px solid rgba(0,217,126,.3); }
+  .btn-track.on { background: radial-gradient(circle at 40% 35%, #3a1a20, #2a0f15); color: var(--red); border: 3px solid rgba(255,71,87,.35); animation: glow-red 2s ease-in-out infinite; }
+  @keyframes glow-red { 0%,100%{box-shadow:0 0 0 6px rgba(255,71,87,.12),0 0 0 14px rgba(255,71,87,.05),0 8px 32px rgba(0,0,0,.4)} 50%{box-shadow:0 0 0 8px rgba(255,71,87,.18),0 0 0 20px rgba(255,71,87,.08),0 8px 32px rgba(0,0,0,.4)} }
+  .btn-icon { font-size: 40px; line-height: 1; }
   .btn-label-small { font-size: 11px; opacity: 0.7; font-weight: 600; letter-spacing: 2px; }
-  .btn-hint  { font-size: 12px; color: var(--text-muted); text-align: center; }
+  .btn-hint { font-size: 12px; color: var(--text-muted); text-align: center; }
 
-  /* COUNTERS */
-  .points-row { display: flex; gap: 16px; width: 100%; max-width: 360px; }
-  .point-card {
-    flex: 1; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 14px; text-align: center;
+  /* CONTADORES */
+  .points-row { display: flex; gap: 10px; width: 100%; max-width: 380px; }
+  .point-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; text-align: center; }
+  .point-val { font-size: 20px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .point-lbl { font-size: 10px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* BUSCADOR DE CLIENTES */
+  .cliente-section { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 10px; }
+  .section-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .search-wrap { position: relative; }
+  .search-input { width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 16px 12px 40px; color: var(--text); font-size: 15px; outline: none; transition: border-color 0.2s; }
+  .search-input:focus { border-color: var(--accent); }
+  .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+  .search-input:disabled { opacity: 0.4; }
+
+  .cliente-results { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
+  .cliente-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; align-items: center; gap: 12px; }
+  .cliente-item:hover, .cliente-item:active { border-color: var(--accent); background: rgba(61,142,240,0.08); }
+  .cliente-item-icon { font-size: 20px; flex-shrink: 0; }
+  .cliente-item-info { flex: 1; min-width: 0; }
+  .cliente-razon { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cliente-dir { font-size: 11px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cliente-cod { font-size: 10px; color: var(--accent); font-weight: 600; margin-top: 2px; }
+  .search-hint { text-align: center; color: var(--text-muted); font-size: 12px; padding: 16px; }
+
+  /* VISITA ACTIVA */
+  .visita-activa { width: 100%; max-width: 380px; background: rgba(0,217,126,0.08); border: 1.5px solid rgba(0,217,126,0.3); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .visita-activa-info { flex: 1; min-width: 0; }
+  .visita-activa-label { font-size: 10px; color: var(--green); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .visita-activa-nombre { font-size: 14px; font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .visita-activa-hora { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .btn-cerrar-visita { background: rgba(255,71,87,0.15); border: 1px solid rgba(255,71,87,0.3); color: var(--red); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+
+  /* MODAL CONFIRMACION VISITA */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: flex-end; justify-content: center; z-index: 200; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px 20px 16px 16px; padding: 24px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 16px; transform: translateY(40px); transition: transform 0.25s; }
+  .modal-overlay.open .modal-card { transform: translateY(0); }
+  .modal-icon { font-size: 36px; text-align: center; }
+  .modal-title { font-size: 17px; font-weight: 700; text-align: center; }
+  .modal-sub { font-size: 13px; color: var(--text-muted); text-align: center; line-height: 1.5; }
+  .modal-cliente-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+  .modal-cliente-name { font-size: 15px; font-weight: 700; }
+  .modal-cliente-dir { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .modal-cliente-cod { font-size: 11px; color: var(--accent); margin-top: 4px; font-weight: 600; }
+  .modal-btns { display: flex; gap: 10px; }
+  .btn-modal-cancel { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-modal-confirm { flex: 2; background: var(--green); border: none; color: #000; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 800; cursor: pointer; }
+
+  /* HISTORIAL VISITAS */
+  .visitas-list { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
+  .visita-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .visita-item-name { font-size: 12px; font-weight: 600; }
+  .visita-item-hora { font-size: 11px; color: var(--green); margin-top: 2px; }
+  .visita-item-dur { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .visita-badge { background: rgba(0,217,126,0.15); color: var(--green); border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: 700; }
+
+  /* SESIONES */
+  .session-list { display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto; }
+  .session-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .session-date { font-size: 13px; font-weight: 600; }
+  .session-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .empty-state { text-align: center; color: var(--text-muted); font-size: 13px; padding: 16px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 20px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; z-index: 999; white-space: nowrap; max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---- BUSCADOR DE CLIENTES ---- */
+  .clientes-section {
+    width: 100%; max-width: 360px;
+    display: flex; flex-direction: column; gap: 10px;
   }
-  .point-val { font-size: 22px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
-  .point-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .5px; }
-
-  /* SESSION LIST */
-  .export-section { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 10px; }
-  .export-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
-  .session-list { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
-  .session-item {
+  .clientes-title {
+    font-size: 12px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .5px; font-weight: 600;
+  }
+  .search-wrap {
+    position: relative;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 12px 16px 12px 40px;
+    color: var(--text); font-size: 15px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-icon {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%); font-size: 16px; pointer-events: none;
+  }
+  .search-clear {
+    position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%);
+    background: transparent; border: none; color: var(--text-muted);
+    font-size: 18px; cursor: pointer; padding: 4px; display: none;
+  }
+  .clientes-lista {
+    max-height: 280px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .cliente-item {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 12px; padding: 12px 14px;
     display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; cursor: pointer; transition: border-color 0.2s;
   }
-  .session-date { font-size: 13px; font-weight: 600; }
-  .session-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .empty-state { text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px; }
+  .cliente-item:hover { border-color: var(--accent); }
+  .cliente-item.visitado { border-color: var(--green); background: rgba(0,217,126,0.05); }
+  .cliente-info { flex: 1; min-width: 0; }
+  .cliente-razon {
+    font-size: 13px; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cliente-dir {
+    font-size: 11px; color: var(--text-muted); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .btn-visitar {
+    background: var(--accent); color: white; border: none;
+    border-radius: 8px; padding: 7px 12px;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-visitar.done {
+    background: var(--green); color: #000;
+  }
+  .clientes-empty {
+    text-align: center; color: var(--text-muted);
+    font-size: 13px; padding: 20px;
+  }
+  .visita-badge {
+    display: inline-block;
+    background: rgba(0,217,126,0.15); color: var(--green);
+    border-radius: 20px; padding: 2px 8px;
+    font-size: 10px; font-weight: 700; margin-top: 3px;
+  }
 
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 32px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px 20px;
-    font-size: 13px; font-weight: 600;
-    opacity: 0; transition: opacity .3s, transform .3s;
-    pointer-events: none; z-index: 999; white-space: nowrap;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- ==================== LOGIN ==================== -->
+<!-- LOGIN -->
 <div id="login-screen" class="screen active">
   <div class="logo-block">
     <div class="logo-icon">📍</div>
@@ -293,7 +257,7 @@
   </div>
 </div>
 
-<!-- ==================== CAMBIO DE CONTRASEÑA ==================== -->
+<!-- CAMBIO DE CONTRASEÑA -->
 <div id="change-pass-screen" class="screen">
   <div class="logo-block">
     <div class="logo-icon">🔐</div>
@@ -301,9 +265,7 @@
   <div class="form-box">
     <div class="form-title">Cambiá tu contraseña</div>
     <div class="form-sub" id="chpass-name">Hola</div>
-    <div class="form-info">
-      Es tu primer ingreso. Elegí una contraseña personal que solo vos conozcas.
-    </div>
+    <div class="form-info">Es tu primer ingreso. Elegí una contraseña personal que solo vos conozcas.</div>
     <div class="form-group">
       <label>Nueva contraseña</label>
       <input type="password" id="new-pass1" placeholder="Mínimo 6 caracteres" oninput="checkStrength()" autocomplete="new-password">
@@ -314,12 +276,12 @@
       <label>Repetir contraseña</label>
       <input type="password" id="new-pass2" placeholder="Repetí la contraseña" autocomplete="new-password">
     </div>
-    <p class="form-error" id="chpass-error">Las contraseñas no coinciden o son muy cortas</p>
+    <p class="form-error" id="chpass-error"></p>
     <button class="btn-primary" onclick="doChangePass()">Guardar y continuar</button>
   </div>
 </div>
 
-<!-- ==================== APP PRINCIPAL ==================== -->
+<!-- APP PRINCIPAL -->
 <div id="app-screen">
   <div class="topbar">
     <div class="topbar-user">
@@ -345,8 +307,7 @@
       </div>
       <div class="time-display" id="clock">00:00:00</div>
       <div class="gps-row gps-off" id="gps-status">
-        <span>📡</span>
-        <span id="gps-text">GPS inactivo</span>
+        <span>📡</span><span id="gps-text">GPS inactivo</span>
       </div>
       <div class="divider"></div>
       <div class="time-row">
@@ -375,7 +336,7 @@
     <div class="points-row">
       <div class="point-card">
         <div class="point-val" id="pts-count">0</div>
-        <div class="point-lbl">Puntos GPS</div>
+        <div class="point-lbl">Pts GPS</div>
       </div>
       <div class="point-card">
         <div class="point-val" id="dist-count">0</div>
@@ -385,11 +346,46 @@
         <div class="point-val" id="dur-count">0:00</div>
         <div class="point-lbl">Duración</div>
       </div>
+      <div class="point-card">
+        <div class="point-val" id="vis-count">0</div>
+        <div class="point-lbl">Visitas</div>
+      </div>
     </div>
 
-    <!-- HISTORIAL -->
-    <div class="export-section">
-      <div class="export-title">Sesiones de hoy</div>
+    <!-- VISITA ACTIVA (oculta por defecto) -->
+    <div class="visita-activa" id="visita-activa" style="display:none">
+      <span style="font-size:24px">🏪</span>
+      <div class="visita-activa-info">
+        <div class="visita-activa-label">📍 Estás en:</div>
+        <div class="visita-activa-nombre" id="visita-nombre">—</div>
+        <div class="visita-activa-hora" id="visita-hora">—</div>
+      </div>
+      <button class="btn-cerrar-visita" onclick="cerrarVisita()">Salir</button>
+    </div>
+
+    <!-- BUSCADOR DE CLIENTES -->
+    <div class="cliente-section">
+      <div class="section-title">🏪 Registrar visita a cliente</div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="cliente-search"
+          placeholder="Iniciá el turno para buscar clientes..."
+          oninput="buscarCliente()" disabled>
+      </div>
+      <div class="cliente-results" id="cliente-results">
+        <div class="search-hint">Iniciá el turno para registrar visitas</div>
+      </div>
+    </div>
+
+    <!-- HISTORIAL VISITAS HOY -->
+    <div class="cliente-section" id="visitas-section" style="display:none">
+      <div class="section-title">✅ Visitas de hoy</div>
+      <div class="visitas-list" id="visitas-list"></div>
+    </div>
+
+    <!-- SESIONES DEL DÍA -->
+    <div class="cliente-section">
+      <div class="section-title">🕐 Sesiones de hoy</div>
       <div class="session-list" id="session-list">
         <div class="empty-state">No hay sesiones guardadas</div>
       </div>
@@ -398,17 +394,31 @@
   </div>
 </div>
 
+<!-- MODAL CONFIRMAR VISITA -->
+<div class="modal-overlay" id="modal-visita">
+  <div class="modal-card">
+    <div class="modal-icon">📍</div>
+    <div class="modal-title">¿Estás visitando este cliente?</div>
+    <div class="modal-sub">Se va a registrar la hora de llegada y tu ubicación actual.</div>
+    <div class="modal-cliente-card">
+      <div class="modal-cliente-name" id="modal-cli-name">—</div>
+      <div class="modal-cliente-dir" id="modal-cli-dir">—</div>
+      <div class="modal-cliente-cod" id="modal-cli-cod">—</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-modal-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-modal-confirm" onclick="confirmarVisita()">✅ Confirmar visita</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-// ============================================================
-// 🔧 CONFIGURACIÓN FIREBASE — reemplazá con tus datos
-// ============================================================
 const firebaseConfig = {
   apiKey: "AIzaSyC-QEySKh_4MCoBG-QrIPTb1PLda4-psk0",
   authDomain: "gps-vendedores-192ab.firebaseapp.com",
@@ -418,14 +428,13 @@ const firebaseConfig = {
   appId: "1:890957103857:web:b34226e06a7fba1f925f50",
   measurementId: "G-ZVVK70X3Z7"
 };
-// ============================================================
 
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 
-// ============================================================
-// USUARIOS — contraseña inicial = primer nombre en minúsculas
-// ============================================================
+// ---- CLIENTES POR VENDEDOR ----
+const CLIENTES = {"Cristian Albornoz": [{"codigo": "663", "razon": "ALAN FERRETERIA", "nombre": "ALAN DAVID QUINTEROS", "direccion": "HUGO DEL CARRIL Y LA NIÑA", "localidad": "MORENO"}, {"codigo": "666", "razon": "ARIEL FERRETERIA", "nombre": "CESAR ARIEL CASTILLO", "direccion": "GRANADEROS 10770", "localidad": "MORENO"}, {"codigo": "574", "razon": "ARRIBEÑOS", "nombre": "IGNACIO NAHUEL PEREZ", "direccion": "ARRIBEÑOS 2079", "localidad": "MORENO"}, {"codigo": "516", "razon": "BONED FERRETERIA EL SANTI S.A.", "nombre": "JOSE BONED", "direccion": "AV. CALLE REAL 2181", "localidad": "MORENO"}, {"codigo": "466", "razon": "BRADAMEL ( EL TALA)", "nombre": "DAMIAN", "direccion": "MURILLO 1590", "localidad": "MORENO"}, {"codigo": "515413", "razon": "CARCAZA", "nombre": "CARCAZA", "direccion": "la bastilla 5645", "localidad": "GONZALEZ CATAN"}, {"codigo": "895", "razon": "CARPETTI", "nombre": "CARPETTI", "direccion": "LOIA  5516 5516", "localidad": "MORENO"}, {"codigo": "224", "razon": "CASA COVALDI", "nombre": "PABLO GERMAN COSCIA", "direccion": "DE LA VEGA 594", "localidad": "MORENO"}, {"codigo": "99", "razon": "CASA DANNY", "nombre": "DANIEL OMAR OTTERO", "direccion": "IRIGOYEN 2201", "localidad": "MORENO"}, {"codigo": "125", "razon": "CASA FLORES", "nombre": "ANDREA FLORES", "direccion": "INDEPENDENCIA 3260", "localidad": "MORENO"}, {"codigo": "417", "razon": "CECI FERRETERIA", "nombre": "CECILIA MARIA LORENA MACIAS", "direccion": "DEMOCRACIA 1381", "localidad": "MORENO"}, {"codigo": "1173", "razon": "CENTENARIO FERRETERIA", "nombre": "MATIAS DIAZ", "direccion": "CENTENARIO 1300", "localidad": ""}, {"codigo": "557771", "razon": "CORRALON JULIO", "nombre": "JULIO", "direccion": "POLA ESQUINA SAUGIL S/N", "localidad": "PONTEVEDRA"}, {"codigo": "692", "razon": "DEL PUEBLO  BUGALLO RICARDO JAVIER", "nombre": "RICARDO JAVIER BUGALLO", "direccion": "MARTINEZ MELO 110", "localidad": "MORENO"}, {"codigo": "1270", "razon": "DIAZ FERRETERIA", "nombre": "ARMANDO DIAZ", "direccion": "USPALLATA 2228", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "491", "razon": "DOMINGUEZ FERRETERIA", "nombre": "JAVIER DOMINGUEZ", "direccion": "LA MADRID 126", "localidad": ""}, {"codigo": "555889", "razon": "DON ANGEL", "nombre": "QUIRICO GASTON / MIGUEL IBARRA", "direccion": "RUTA 25 ESQ. GUATEMALA 788", "localidad": "CUARTEL V"}, {"codigo": "0001", "razon": "ELECTRO JC PAZ", "nombre": "ELECTRO JC PAZ", "direccion": "presidente peron 4637", "localidad": "MORENO"}, {"codigo": "1216", "razon": "EL PIPI", "nombre": "CESAR DANIEL PAREDES", "direccion": "MARCOS DEL BUENO 1032", "localidad": "MORENO"}, {"codigo": "662", "razon": "EL RAYO", "nombre": "ROMERO LAIME", "direccion": "DEL CAÑON 2571", "localidad": "MORENO"}, {"codigo": "667", "razon": "EMILIANO FERRETERIA", "nombre": "DEBORA ESTELA CASTELLANO", "direccion": "LOPEZ DE VEGA 98", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "464", "razon": "ESPINOSA", "nombre": "ESPINOSA JORGE ADRIAN", "direccion": "CHILE 543", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "436", "razon": "FAROLITO", "nombre": "MIGUEL ANGEL MADEO", "direccion": "CAGUAZU 1732", "localidad": "ITUZAINGO"}, {"codigo": "10084", "razon": "FAYSAN", "nombre": "YONATAN DI BARTOLOMEO", "direccion": "NAHUEL HUAPI 862", "localidad": "ITUZAINGO"}, {"codigo": "5125", "razon": "FERRETERIA AGUSTIN", "nombre": "AGUSTIN NIEVO", "direccion": "BALCARCE 2680", "localidad": "MERLO"}, {"codigo": "516796", "razon": "FERRETERÍA ALMARAZ", "nombre": "FERRETERÍA ALMARAZ", "direccion": "Julian martel 5857 entre colon y Ruta 197", "localidad": "MORENO"}, {"codigo": "105922225", "razon": "FERRETERIA BRAVO", "nombre": "ESCALANTE JONATHAN GABRIEL", "direccion": "mario bravo 1002", "localidad": "MERLO"}, {"codigo": "515276", "razon": "FERRETERÍA BULNES", "nombre": "CRISTIAN PICCOLO", "direccion": "Mozart 410 410", "localidad": "MERLO"}, {"codigo": "18", "razon": "FERRETERIA DEL LAGO", "nombre": "HUICI DIEGO RAUL", "direccion": "CORVALAN 201", "localidad": "MERLO"}, {"codigo": "55555702", "razon": "FERRETERIA DON PEDRO", "nombre": "FERRETERIA DON PEDRO", "direccion": "colombia 1720", "localidad": "LIBERTAD"}, {"codigo": "10599", "razon": "FERRETERIA ESTERCITA", "nombre": "ANALIA ROJAS BEATRIZ", "direccion": "RUTA 21 2325 2325", "localidad": "GONZALEZ CATAN"}, {"codigo": "13586", "razon": "FERRETERIA EZE", "nombre": "EZEQUIEL JACINTO FUENTES", "direccion": "Darwin Passaponti 1369", "localidad": "MORENO"}, {"codigo": "6704", "razon": "FERRETERIA FABIAN", "nombre": "FABIAN HORACIO CACERES", "direccion": "AV OTERO ESQUINA NASCAR 1511", "localidad": "MERLO"}, {"codigo": "515462", "razon": "FERRETERIA GARAY", "nombre": "FERRETERIA GARAY", "direccion": "Carrazco 1602", "localidad": "PONTEVEDRA"}, {"codigo": "515453", "razon": "FERRETERIA GIAN", "nombre": "FERRETERIA GIAN", "direccion": "Balcarce 5439", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "1555614", "razon": "FERRETERIA LA BROCA", "nombre": "GASTON GERMAN GARCIA", "direccion": "av otero 5017", "localidad": "PONTEVEDRA"}, {"codigo": "629", "razon": "FERRETERIA MARTIN", "nombre": "MARTIN LEDESMA", "direccion": "ESCRIBANO MAYOR 3533", "localidad": "MORENO"}, {"codigo": "515428", "razon": "FERRETERIA  ORION", "nombre": "FERRETERIA  ORION", "direccion": "Eva Perón (libertad, Merlo) 4445", "localidad": "MERLO"}, {"codigo": "955", "razon": "FERRETERIA WILLY", "nombre": "GONZALEZ CINTIA ROMINA", "direccion": "SEGUROLA 1923", "localidad": "MORENO"}, {"codigo": "593", "razon": "FERRITO", "nombre": "FERRITO", "direccion": "25 DE MAYO 3520", "localidad": "MERLO"}, {"codigo": "1146", "razon": "FERRITO 2", "nombre": "FERRITO 2", "direccion": "BARILOCHE 1390", "localidad": "MERLO"}, {"codigo": "3", "razon": "GABRIEL PEREZ", "nombre": "GABRIEL SERGIO PEREZ", "direccion": "GOMEZ FRETES 4298", "localidad": "MERLO"}, {"codigo": "516488", "razon": "HDT FERRETERIA", "nombre": "HDT FERRETERIA", "direccion": "Obarrio 2029 entre Tapalque y La Fuente - Merlo", "localidad": "MERLO"}, {"codigo": "10290", "razon": "INVESTIGACIONES Y DESARROLLOS ARGENTINOS SRL", "nombre": "INVESTIGACIONES Y DESARROLLOS ARGENTINOS SRL", "direccion": "Av. Dorrego 640", "localidad": ""}, {"codigo": "518", "razon": "JAVIER TUCCI", "nombre": "JAVIER TUCCI", "direccion": "OLIVERA 1286", "localidad": "CASTELAR"}, {"codigo": "516247", "razon": "JG", "nombre": "JG", "direccion": "bach 3465 entre freire y amado nervo", "localidad": "MERLO"}, {"codigo": "122", "razon": "J.R", "nombre": "ADELA RAMAYO", "direccion": "ANTEZANA 2770", "localidad": "MERLO"}, {"codigo": "634", "razon": "JUAN MANUEL", "nombre": "JUAN MANUEL CASTELLANO", "direccion": "CAPDEVILLA 560", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "693", "razon": "JUAN OCHOA", "nombre": "JUAN OCHOA", "direccion": "CORSINI N°5", "localidad": "MARIANO ACOSTA"}, {"codigo": "623", "razon": "JULIAN FERRETERIA", "nombre": "LUIS DANIEL IBARRA", "direccion": "BOSSINI 560", "localidad": "MARIANO ACOSTA"}, {"codigo": "556096", "razon": "LA CAPITANA", "nombre": "GABRIEL TORRES", "direccion": "COLOMBIA 1046", "localidad": "MERLO"}, {"codigo": "760", "razon": "LA CURVA CORRALON", "nombre": "JOAQUIN MAGRI", "direccion": "CONSTITUYENTE ESQ. ZAPARELLI", "localidad": "MERLO"}, {"codigo": "514", "razon": "LAKI FERRETERIA", "nombre": "EDGARDO DANIEL ROJAS", "direccion": "BROWN 1336", "localidad": "MORENO"}, {"codigo": "1003", "razon": "LA SOLUCION FERRETERIA", "nombre": "HERNAN PICOLO", "direccion": "BALBIN Y TRELEW SIN NUMERO", "localidad": "MERLO"}, {"codigo": "177", "razon": "LEYTON I", "nombre": "DELIA NORMA YODRA", "direccion": "ORIBE 3710", "localidad": "MORENO"}, {"codigo": "500", "razon": "LEYTON II", "nombre": "ANTONIO DAMIAN DIETZ", "direccion": "CROACIA 685", "localidad": "MORENO"}, {"codigo": "1186", "razon": "LEYTON III", "nombre": "LEYTON III", "direccion": "Bufano 6002", "localidad": "MORENO"}, {"codigo": "378", "razon": "LG", "nombre": "LUIS ALBERTO RUSSI", "direccion": "ENTRE RIOS 1590", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "993", "razon": "LO ARTESANAL", "nombre": "JAVIER TORALES", "direccion": "RESERVISTAS ARGENTINOS 3665", "localidad": "MORENO"}, {"codigo": "557055", "razon": "LO DE CARLITOS", "nombre": "CARLOS VALDIVIA", "direccion": "DARDO ROCHA 1943", "localidad": "MORENO"}, {"codigo": "630", "razon": "LO DE COCO", "nombre": "NOELIA PEREIRA", "direccion": "EL TIZIANO 1442", "localidad": "MORENO"}, {"codigo": "1377", "razon": "LO DE LIO FERRETERIA", "nombre": "LIONEL DARIO BATAGLIA", "direccion": "MORRIS 3121", "localidad": "CASTELAR"}, {"codigo": "111470", "razon": "LOS CARDALES", "nombre": "LOS CARDALES", "direccion": "J.R. CASTRO 1670", "localidad": "MERLO"}, {"codigo": "601", "razon": "MAESTRO ESPINOZA", "nombre": "MILLER ANDRES ESPINOZA PAJUELO", "direccion": "BALVIN 8822", "localidad": "MERLO"}, {"codigo": "801", "razon": "MARMIEM", "nombre": "HORACIO MARTIN CARDACI", "direccion": "AV. UNION 2735 2735", "localidad": "PONTEVEDRA"}, {"codigo": "288", "razon": "MATERIALES FRANCO", "nombre": "NORA LILIANA FISCELLA", "direccion": "PTE. PERON 1925", "localidad": "MORENO"}, {"codigo": "188", "razon": "MECHI", "nombre": "VERONICA GOMEZ", "direccion": "BALABASTRO 2328", "localidad": "MERLO"}, {"codigo": "153", "razon": "MEGA", "nombre": "GUSTAVO ALFREDO PEREYRA", "direccion": "SAN CARLOS 3557", "localidad": "MORENO"}, {"codigo": "280", "razon": "MI PATRIA", "nombre": "MIGUEL SUETTI", "direccion": "HELVECIA 1198", "localidad": "MERLO"}, {"codigo": "324", "razon": "NARDONI", "nombre": "PABLO NARDONI", "direccion": "MOZART 686", "localidad": "MERLO"}, {"codigo": "557183", "razon": "PABLITO", "nombre": "PABLO DANIEL ZENGARO", "direccion": "ARISTOBULO DE VALLE 3297", "localidad": "MERLO"}, {"codigo": "558", "razon": "PARLA FERRETERIA", "nombre": "GISELA SILVA", "direccion": "CONSTITUYENTE 723", "localidad": "MERLO"}, {"codigo": "600", "razon": "PEHUEN", "nombre": "JUAN FERNANDEZ", "direccion": "NOGUERA 1635", "localidad": "MERLO"}, {"codigo": "76", "razon": "PIO XII (COSTABEL HEMILSE NORMA)", "nombre": "PIO XII (COSTABEL HEMILSE NORMA)", "direccion": "PIO XII 2729", "localidad": "PASO DEL REY"}, {"codigo": "527", "razon": "POLO PADUA", "nombre": "HECTOR DANIEL MENEGHINI", "direccion": "AV. ECHEVERRIA 1960", "localidad": "MERLO"}, {"codigo": "414", "razon": "PRIMAVERA", "nombre": "KEVIN SOSA", "direccion": "GRAN COLOMBIA 132", "localidad": "MORENO"}, {"codigo": "112173", "razon": "QUINVE", "nombre": "SILVIA LETICA QUINIONES", "direccion": "Av. Int. Remigio López 4971", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "555884", "razon": "RIMAR CONSTRUCCIONES", "nombre": "RIMAR CONSTRUCCIONES", "direccion": "REPUBLIQUETA 3200", "localidad": "PONTEVEDRA"}, {"codigo": "811", "razon": "RIO ALEGRE FERRETERIA", "nombre": "HORACIO FERNANDO GAGIGA", "direccion": "TRENQUE LAUQUEN 2161", "localidad": "MORENO"}, {"codigo": "55555835", "razon": "ROJMAR", "nombre": "SILVIO MARTINS", "direccion": "suipacha 730", "localidad": "MERLO"}, {"codigo": "557694", "razon": "ROLDAN FERRETERIA", "nombre": "ALEJANDRO MAXIMILIANO ALFANO", "direccion": "BELISARIO ROLDAN 2152", "localidad": "LA REJA"}, {"codigo": "573", "razon": "ROMERO HNOS", "nombre": "MARIO ALBERTO ROMERO", "direccion": "EL TIZIANO 3038", "localidad": "MORENO"}, {"codigo": "455", "razon": "SAN ATILIO", "nombre": "MARIA INES GUILLEN", "direccion": "SAN BLAS 5955", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "748", "razon": "SAN CARLOS FERRETERIA", "nombre": "CRISPIN VELASQUEZ", "direccion": "SAN CARLOS 2769", "localidad": "MORENO"}, {"codigo": "403", "razon": "SERGIO NEIRA", "nombre": "SERGIO NEIRA", "direccion": "IRIGOYEN 1900", "localidad": "MORENO"}, {"codigo": "515423", "razon": "SUFERRETERIA", "nombre": "SUFERRETERIA", "direccion": "Ruta 25 1079", "localidad": "MORENO"}, {"codigo": "519", "razon": "TANGO FERRETERIA", "nombre": "MARCELO GUSTAVO VILLANUSTRE", "direccion": "VIEYTES 1111", "localidad": "MERLO"}, {"codigo": "143", "razon": "TOTARO QUINTO", "nombre": "TOTARO QUINTO", "direccion": "ARTIGAS 24", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "79", "razon": "VICENTE PERNICIARO", "nombre": "RICARDO DANIEL JOSE PERNICIARO", "direccion": "BALLADARES 2146", "localidad": "PONTEVEDRA"}, {"codigo": "275", "razon": "VILLA AMELIA", "nombre": "ORLANDO CRISTIAN", "direccion": "COLOMBIA 592", "localidad": "MERLO"}], "Hernán Aranda": [{"codigo": "740", "razon": "25 DE MAYO  MUÑOZ SANTOS PABLO", "nombre": "25 DE MAYO  MUÑOZ SANTOS PABLO", "direccion": "GRAL LAMADRID 5073 EGHANDY Y ANGELIS", "localidad": "MORENO"}, {"codigo": "516188", "razon": "ALDO", "nombre": "ALDO", "direccion": "Jose Miranda Jose Miranda 551", "localidad": "MERLO"}, {"codigo": "883", "razon": "ALMIRANTE BROWN FERRETERIA", "nombre": "MANUEL LOPEZ DI BENEDETTO", "direccion": "Galileo Galilei 3852", "localidad": "MORENO"}, {"codigo": "557289", "razon": "ALTOS DE MERLO FERRETERIA", "nombre": "ALTOS DE MERLO FERRETERIA", "direccion": "TOSCANIBI T BETINOTI MERLO", "localidad": ""}, {"codigo": "515197", "razon": "ARIEL LAS LATAS", "nombre": "ARIEL LAS LATAS", "direccion": "MARCOS DEL BUENO 601", "localidad": "MORENO"}, {"codigo": "782", "razon": "BARBARA  AQUINO", "nombre": "BARBARA  AQUINO", "direccion": "PARAGUAY 5293", "localidad": "MORENO"}, {"codigo": "803", "razon": "BARRIO PARQUE", "nombre": "MIGUEL ESPINDOLA", "direccion": "GRAHAM BELL 2762", "localidad": "PASO DEL REY"}, {"codigo": "5158", "razon": "BETO Y LILI", "nombre": "ROBERTO", "direccion": "", "localidad": "MORENO"}, {"codigo": "1201", "razon": "BLASPASCAL FERRETERIA", "nombre": "BLASPASCAL FERRETERIA", "direccion": "BLASPACOL 1683 ENTRE BOLIVIA Y PARAGUAY", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "697", "razon": "CAPELEN", "nombre": "CAPELEN", "direccion": "Laguna Capalen 121 e/ruta 24", "localidad": "MORENO"}, {"codigo": "13270", "razon": "CARLOS PEREZ", "nombre": "FERRETERIA CARLOS PEREZ", "direccion": "Ruta 40 1398", "localidad": "LAS HERAS"}, {"codigo": "96", "razon": "CASA ROSA", "nombre": "RAFAEL LOPARDO", "direccion": "SEGUROLA 1779", "localidad": "MORENO"}, {"codigo": "556445", "razon": "CORB SANITARIOS", "nombre": "CORB SANITARIOS", "direccion": "GRAL LAMADRIS Y PASTOR OBLIGADO", "localidad": "MORENO"}, {"codigo": "13367", "razon": "CORRALON DON GARCIA", "nombre": "CORRALON DON GARCIA", "direccion": "ACCESO VILLAR ENTRE EVA PERON Y CENTENARIO", "localidad": "MORENO"}, {"codigo": "940", "razon": "CUEVA FERRETERIA", "nombre": "CUEVA FERRETERIA", "direccion": "PEIRET 1425 ENTRE MACIEL Y QUEQUEN", "localidad": "MORENO"}, {"codigo": "557558", "razon": "DANNY FERRETERIA", "nombre": "DANNY FERRETERIA", "direccion": "JUAN MANUEL ROSAS 166", "localidad": "MARCOS PAZ"}, {"codigo": "828", "razon": "DE SOUSA FERRETERIA", "nombre": "DE SOUSA FERRETERIA", "direccion": "REAL 934  MERLO SUR", "localidad": "MORENO"}, {"codigo": "515504", "razon": "DEUZ EL CAÑON", "nombre": "DEUZ EL CAÑON", "direccion": "Hipolito Yrigoyen 1994", "localidad": "MORENO"}, {"codigo": "1494", "razon": "DEUZ FERRETERIA", "nombre": "DEUZ FERRETERIA", "direccion": "JUSTO DARAC Y CORVALAN", "localidad": "PASO DEL REY"}, {"codigo": "2185", "razon": "DIEGO LAS HERAS", "nombre": "DIEGO LAS HERAS", "direccion": "atilio chiocconi 200", "localidad": "GENERAL LAS HERAS"}, {"codigo": "786", "razon": "DIOSQUES", "nombre": "DANIEL DIOSQUES Y MIRIAM BEATRIZ LEAL", "direccion": "JUAN CARLOS YOLI 32", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "426", "razon": "DON ALBERTO  PERACI ALEXIS SEBASTIAN", "nombre": "DON ALBERTO  PERACI ALEXIS SEBASTIAN", "direccion": "Remedio de escalada y Luis Agote", "localidad": "MORENO"}, {"codigo": "908", "razon": "DORCH FERRETERIA - DORCH DANIEL", "nombre": "DANIEL EDUARDO DORCH", "direccion": "BELGRANO 4278 4278", "localidad": "PASO DEL REY"}, {"codigo": "555897", "razon": "DOS LEONES", "nombre": "MARCELO JAVIER TEJADA", "direccion": "BATALLON SAN PEDRO 275", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "138", "razon": "DURO", "nombre": "ROBERTO MANUEL DURO", "direccion": "MIERO 888", "localidad": "MORENO"}, {"codigo": "211", "razon": "EBEN EZER  SAAVEDRA DORADO GUILLERMO", "nombre": "EBEN EZER  SAAVEDRA DORADO GUILLERMO", "direccion": "Irigoyen Yrigoyen 140 esq. Monteverde", "localidad": "MORENO"}, {"codigo": "537", "razon": "EL COLORADO  APPUGLIESE ANTONIO JOSE RICARD", "nombre": "EL COLORADO  APPUGLIESE ANTONIO JOSE RICARD", "direccion": "Asconape 1531 , entre san juan bautista y soldado de rico", "localidad": "MORENO"}, {"codigo": "555931", "razon": "EL CRIOLLO FERRETERIA", "nombre": "ENRIQUE MANUEL GONZALEZ", "direccion": "el criollo 619", "localidad": ""}, {"codigo": "950", "razon": "EL GALPON", "nombre": "ANGEL ALONSO", "direccion": "TUCUMAN 440", "localidad": "MORENO"}, {"codigo": "111368", "razon": "EL MUDO", "nombre": "EL MUDO", "direccion": "", "localidad": "MORENO"}, {"codigo": "557014", "razon": "EL PELA  FERRETERIA", "nombre": "ABEL ESCOBAR", "direccion": "LA MADRID 5892", "localidad": "MORENO"}, {"codigo": "405", "razon": "EL POBRE HUGO - GIMENEZ HUGO ALBERTO", "nombre": "HUGO ALBERTO GIMENEZ", "direccion": "BOUCHARD 4765", "localidad": "MORENO"}, {"codigo": "576", "razon": "EL PORVENIR  VERON ZAIDA ESTHER", "nombre": "EL PORVENIR  VERON ZAIDA ESTHER", "direccion": "Ruta 7 km 43700", "localidad": "MORENO"}, {"codigo": "557277", "razon": "EMIDAN SANITARIOS - PABLO DANIEL RIVERO", "nombre": "EMIDAN SANITARIOS - PABLO DANIEL RIVERO", "direccion": "Tulisi 2042", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "11111462", "razon": "FABIO ESPINDOLA", "nombre": "FABIO ESPINDOLA", "direccion": "DINARCO S/NRO", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "515220", "razon": "FERRE ANTO Y RICHY", "nombre": "FERRE ANTO Y RICHY", "direccion": "homero 5136", "localidad": "MARIANO ACOSTA"}, {"codigo": "13518", "razon": "FERRE CATONAS", "nombre": "FERRE CATONAS", "direccion": "jorge newbery", "localidad": "MORENO"}, {"codigo": "1555618", "razon": "FERRE COLON", "nombre": "MARCELA MACHELLA", "direccion": "AV COLON 1266", "localidad": "MORENO"}, {"codigo": "515443", "razon": "FERRE GANDARA", "nombre": "FERRE GANDARA", "direccion": "bastanchuri 353", "localidad": "MARCOS PAZ"}, {"codigo": "515221", "razon": "FERRE HORNOS", "nombre": "FERRE HORNOS", "direccion": "ruta 40 km 62", "localidad": "HORNOS"}, {"codigo": "1029", "razon": "FERREMAX", "nombre": "FERREMAX", "direccion": "Dr Marcos Paz 1427", "localidad": "MORENO"}, {"codigo": "516636", "razon": "FERRE PIEDRAS", "nombre": "FERRE PIEDRAS", "direccion": "Piedra 14", "localidad": "MARCOS PAZ"}, {"codigo": "515684", "razon": "FERRE PORTEÑO", "nombre": "FERRE PORTEÑO", "direccion": "guillermo costalonga 749", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "556039", "razon": "FERRER FERRETERIA", "nombre": "LAGRECA NORMA", "direccion": "HOUSSAY 325", "localidad": "MARCOS PAZ"}, {"codigo": "762", "razon": "FERRETERIA 2000", "nombre": "YANINA CORREA", "direccion": "RICARDO GUTIERREZ 2775", "localidad": "MORENO"}, {"codigo": "1350", "razon": "FERRETERIA 2/14", "nombre": "FERRETERIA 2/14", "direccion": "FALCON 1651", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "43292", "razon": "FERRETERIA ANALIA", "nombre": "ANALIA VERONICA AGUIAR", "direccion": "FLORIDA", "localidad": "MORENO"}, {"codigo": "111671", "razon": "FERRETERIA BRUNSTEIN", "nombre": "BRUNSTEIN", "direccion": "aveida eva peron", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "4258", "razon": "FERRETERIA EL REY", "nombre": "FERRETERIA EL REY", "direccion": "san martin 4619", "localidad": "MERLO"}, {"codigo": "516792", "razon": "FERRETERIA GABRIEL", "nombre": "FERRETERIA GABRIEL", "direccion": "manco capac y manuel lavarden (Barrio la gloria)", "localidad": "MORENO"}, {"codigo": "705", "razon": "FERRETERIA LAS 3G", "nombre": "MARISOL FLORES", "direccion": "ECUADOR 5052", "localidad": "MORENO"}, {"codigo": "5732", "razon": "FERRETERIA L Y S", "nombre": "CORTEZ", "direccion": "Vacarezza 125", "localidad": "MERLO"}, {"codigo": "515183", "razon": "FERRETERIA MARCOS PAZ \"MARIO\"", "nombre": "FERRETERIA MARCOS PAZ \"MARIO\"", "direccion": "dorrego 385", "localidad": "MARCOS PAZ"}, {"codigo": "111111301", "razon": "FERRETERIA MILAGROS", "nombre": "FERRETERIA MILAGROS", "direccion": "ambroseti 4400", "localidad": "MORENO"}, {"codigo": "20300998", "razon": "FERRETERIA MONICA", "nombre": "FERRETERIA MONICA", "direccion": "tulisi", "localidad": "MORENO"}, {"codigo": "515495", "razon": "FERRETERIA PLUCHINO", "nombre": "FERRETERIA PLUCHINO", "direccion": "Tacuary 1435", "localidad": "MARCOS PAZ"}, {"codigo": "111901", "razon": "FERRETERIA RUTA 47", "nombre": "VERONICA  MARIELA  SITZ", "direccion": "CAMINO NAVARRO 855", "localidad": "MORENO"}, {"codigo": "1137", "razon": "FERRETERIA SARMIENTO", "nombre": "PEÑA ADRIANA CECILIA", "direccion": "DR MARCOS PAZ 2558", "localidad": "MARCOS PAZ"}, {"codigo": "515379", "razon": "FERRE TOP", "nombre": "MARCELO", "direccion": "dagnillo y ruta 40", "localidad": "MARCOS PAZ"}, {"codigo": "516816", "razon": "FERRE TORRES", "nombre": "FERRE TORRES", "direccion": "RAMON FALCON Y PARAMARIBO 1771", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "567", "razon": "FIDEL", "nombre": "FIDEL", "direccion": "GNECCO 720 ENTRE MISERERE Y DEL CARRIL", "localidad": "MORENO"}, {"codigo": "557275", "razon": "FORTEN MAX", "nombre": "FORTEN MAX", "direccion": "AVMARCOS PAZ Y LOZANO", "localidad": "MARCOS PAZ"}, {"codigo": "556238", "razon": "FRANCO FERRETERIA", "nombre": "FRANCO BREPPE", "direccion": "EZEIZA 80", "localidad": "MERLO"}, {"codigo": "903", "razon": "FV FERRETERIA  VICENTE JORGE RAUL", "nombre": "FV FERRETERIA  VICENTE JORGE RAUL", "direccion": "R. BALBIN 1598 ESQ CONSTITUCION  MERLO", "localidad": "MORENO"}, {"codigo": "1019", "razon": "GABRIEL BULONERA CARMONA ANTONIO GABRIEL", "nombre": "GABRIEL BULONERA CARMONA ANTONIO GABRIEL", "direccion": "RIVADAVIA 301", "localidad": "GENERAL LAS HERAS"}, {"codigo": "556066", "razon": "GABRIEL SANITARIOS", "nombre": "GABRIEL SANITARIOS", "direccion": "SUPERI 587 - MARIANO ACOSTA", "localidad": ""}, {"codigo": "555825", "razon": "GALLOZO NOELIA", "nombre": "NOELIA SANDRA GALLOZO", "direccion": "CAAGUAZÚ 1398", "localidad": "MORENO"}, {"codigo": "81", "razon": "GERARDO", "nombre": "GERARDO MUSTONE", "direccion": "LUJAN Y THORLACHE", "localidad": "PASO DEL REY"}, {"codigo": "10165", "razon": "HC BULONERA", "nombre": "HC BULONERA", "direccion": "INTENTE SUAREZ 2140", "localidad": "MERLO"}, {"codigo": "5630", "razon": "HILARIO 3 L", "nombre": "HILARIO 3 L", "direccion": "", "localidad": "MORENO"}, {"codigo": "108", "razon": "JOMIFER - ROTONDO MIGUEL ANGEL", "nombre": "MIGUEL ANGEL ROTONDO", "direccion": "JOLY 1080", "localidad": "PASO DEL REY"}, {"codigo": "246", "razon": "J Y M FERRETERIA", "nombre": "MAXIMILIANO MAIDANA", "direccion": "CORDOVA 10", "localidad": "PASO DEL REY"}, {"codigo": "516846", "razon": "LA ANTIGUA", "nombre": "LA ANTIGUA", "direccion": "Av gaona y dardo rocha", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "450", "razon": "LAFAYETTE", "nombre": "LAFAYETTE", "direccion": "Lafayatte 3592", "localidad": "MORENO"}, {"codigo": "516371", "razon": "LALA FERRETERIA", "nombre": "LALA FERRETERIA", "direccion": "SAN JOSE 1059", "localidad": "MORENO"}, {"codigo": "5720", "razon": "LA MOROCHA", "nombre": "LA MOROCHA", "direccion": "", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "111707", "razon": "LA NACION", "nombre": "LA NACION", "direccion": "Diario La Nacion 4081", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "771", "razon": "LARRALDE FERRETERIA", "nombre": "CARLOS ALBERTO CRISTALDO", "direccion": "PERU 2210", "localidad": "MORENO"}, {"codigo": "1015", "razon": "LAS HERAS FERRET.  GONZALEZ JORGE RUBEN", "nombre": "LAS HERAS FERRET.  GONZALEZ JORGE RUBEN", "direccion": "25 DE MAYO 1057 E MAIPU", "localidad": ""}, {"codigo": "119", "razon": "LAS LATAS", "nombre": "MARIELA ALEJANDRA DIAZ", "direccion": "RUTA 5 (EX 7) 49.500", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "472", "razon": "LAS NENAS FERRETERIA", "nombre": "DEBORA CHAVEZ", "direccion": "ECUADOR 5900", "localidad": "MORENO"}, {"codigo": "742", "razon": "LIJA FERRETERIA", "nombre": "LIJA FERRETERIA", "direccion": "Luis Braile 211 e/Garray y Guemez (B. Lago del bosque)", "localidad": "MERLO"}, {"codigo": "806", "razon": "LOCK FERRETERIA", "nombre": "LOCK FERRETERIA", "direccion": "TOAY 374* POMPEYA", "localidad": "MORENO"}, {"codigo": "847", "razon": "LOS AMIGOS", "nombre": "LOS AMIGOS", "direccion": "AV. LAS MONTONERAS 4008", "localidad": "MORENO"}, {"codigo": "556925", "razon": "LOS CHICOS", "nombre": "LOS CHICOS", "direccion": "LOS AROMOS Y NECOCHEA", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "605", "razon": "LOS COMPADRES", "nombre": "LOS COMPADRES", "direccion": "Consejal Pellico 1991 ( Esquina Concordia)", "localidad": "MORENO"}, {"codigo": "864", "razon": "LOS MOROS ( EX LA COFRADIA )", "nombre": "LOS MOROS ( EX LA COFRADIA )", "direccion": "L. TULLISI 4182  F. ALVAREZ", "localidad": "MORENO"}, {"codigo": "516385", "razon": "LOZANO", "nombre": "LOZANO", "direccion": "lozano 1365 ( cerca de ferre colon)", "localidad": ""}, {"codigo": "1427", "razon": "LUCHO FERRETERIA", "nombre": "LUCHO FERRETERIA", "direccion": "ALTOS DEL OESTE 28", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "1021", "razon": "LUISITO FERRETERIA  ITURRI ANGELICA GRISELDA", "nombre": "LUISITO FERRETERIA  ITURRI ANGELICA GRISELDA", "direccion": "AV VILLA MAYOR 780 E/ MARCONI", "localidad": "GENERAL LAS HERAS"}, {"codigo": "1122", "razon": "MARANO FERRETERIA", "nombre": "CLAUDIA ISABEL MARANO", "direccion": "MONTALVO 890 9 a 13 y 17 a 19.30", "localidad": "MERLO"}, {"codigo": "5853", "razon": "MARIANA ACOSTA", "nombre": "MARIANA ACOSTA", "direccion": "hugo del carril", "localidad": "MORENO"}, {"codigo": "800", "razon": "MATU CORRALON", "nombre": "GERARDO CONTRERAS", "direccion": "FILPO 26", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "1016", "razon": "MC FERRETERIA", "nombre": "MC FERRETERIA", "direccion": "SAN MARTIN 325 E LOZANO martin o maria", "localidad": "GENERAL LAS HERAS"}, {"codigo": "555924", "razon": "MEB", "nombre": "HORACIO GONZALES", "direccion": "AV.RICARDO BALBIN 2646", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "575", "razon": "MENDOZA  ALBERTO", "nombre": "ALBERTO MENDOZA", "direccion": "ZAPIOLA 2106", "localidad": "PASO DEL REY"}, {"codigo": "1511", "razon": "MI JOYA", "nombre": "PEDRO DOMINGO GAMARRA", "direccion": "CAMPICHUELO 3559", "localidad": "MERLO"}, {"codigo": "555953", "razon": "MORA FACUNDO", "nombre": "FACUNDO MORA", "direccion": "TRUEBA 1445", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "556186", "razon": "MUJER TATA FERRETERIA", "nombre": "EL TATA", "direccion": "JOSE BETTINOTI 212", "localidad": ""}, {"codigo": "556041", "razon": "MUJICA  FERRETERIA", "nombre": "MUJICA  FERRETERIA", "direccion": "PEDRO MUJICA 452", "localidad": "MERLO"}, {"codigo": "118", "razon": "NUÑEZ", "nombre": "NUÑEZ", "direccion": "Italia  y Paraguay", "localidad": "MORENO"}, {"codigo": "39", "razon": "OLI FERRETERIA", "nombre": "RENEE PELLICO", "direccion": "PÉLLICO 1710", "localidad": "PASO DEL REY"}, {"codigo": "557293", "razon": "OLMOS FERRETERIA", "nombre": "OLMOS FERRETERIA", "direccion": "olmos y ruta 7  francisco alvarez", "localidad": ""}, {"codigo": "556308", "razon": "PASADO DE ROSCA", "nombre": "JULIO OSCAR ALVAREZ", "direccion": "MANZANA 41 CASA 25 CASA 25", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "516560", "razon": "PATRICIA SCHMIDT", "nombre": "PATRICIA SCHMIDT", "direccion": "Piedras (Parque san martín) 1941", "localidad": "MERLO"}, {"codigo": "5556", "razon": "PEDERNERA", "nombre": "ROBERTO", "direccion": "BELEN 3305", "localidad": "MERLO"}, {"codigo": "55555775", "razon": "PEPE (DEUZ 2)", "nombre": "PEPE FERRETERIA (DEUZ 2)", "direccion": "AV STORNI 1232", "localidad": "MORENO"}, {"codigo": "1133", "razon": "PERFORACIONES EX LOS PIBES", "nombre": "PERFORACIONES EX LOS PIBES", "direccion": "Maldonado 4020", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "769", "razon": "PERONA DIEGO ALBERTO", "nombre": "PERONA DIEGO ALBERTO", "direccion": "Avellaneda 2376 (M.Paz)", "localidad": "MORENO"}, {"codigo": "613", "razon": "PILAR FERRETERIA", "nombre": "PILAR CESPEDEZ NUÑES", "direccion": "CATALUÑA 9945", "localidad": "MORENO"}, {"codigo": "556102", "razon": "PROKO FERRETERIA", "nombre": "JUAN PROKO", "direccion": "9 DE JULIO 329", "localidad": "MORENO"}, {"codigo": "777", "razon": "RAMIRO FERRETERIA", "nombre": "MARCELA MUÑOZ", "direccion": "MARCOS DEL BUENO 406", "localidad": "MORENO"}, {"codigo": "556355", "razon": "RAPISOL", "nombre": "RAPISOL", "direccion": "BONGEOVANNI 1973 1973", "localidad": "PASO DEL REY"}, {"codigo": "11308", "razon": "RAPISOL 2", "nombre": "RAPISOL 2", "direccion": "bongiovanni 2445", "localidad": ""}, {"codigo": "515232", "razon": "RAPISOL CATONAS", "nombre": "RAPISOL CATONAS", "direccion": "JORGE NEWBERY Y DA VINCI", "localidad": "MORENO"}, {"codigo": "556790", "razon": "RAUCH FERRETERIA", "nombre": "ALAN SANCHEZ", "direccion": "Rauch 615 615", "localidad": "MARIANO ACOSTA"}, {"codigo": "5", "razon": "RAVINA GUSTAVO", "nombre": "GUSTAVO RAVINA", "direccion": "SALVADOR MARIA  DEL CARRIL 1858", "localidad": "PASO DEL REY"}, {"codigo": "476", "razon": "RIVAROLA LUIS", "nombre": "RIVAROLA LUIS", "direccion": "Cordoba 425", "localidad": "MORENO"}, {"codigo": "351", "razon": "ROBERTO 1 RUIZ CARLOS FELICIANO", "nombre": "ROBERTO 1 RUIZ CARLOS FELICIANO", "direccion": "Av. echeverry 1371", "localidad": "MORENO"}, {"codigo": "482", "razon": "ROBERTO 2", "nombre": "ROBERTO RUIZ", "direccion": "Gorriti 1247", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "936", "razon": "RUDY FERRETERIA", "nombre": "CLAUDIA BEST", "direccion": "RIVADAVIA 1012", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "854", "razon": "SCHULLER GABRIEL", "nombre": "GABRIEL SCHULLER", "direccion": "PASO", "localidad": "MORENO"}, {"codigo": "49", "razon": "SILVIO  GIMENEZ DANIEL ALBERTO", "nombre": "SILVIO  GIMENEZ DANIEL ALBERTO", "direccion": "filibero 1500", "localidad": "MERLO"}, {"codigo": "696", "razon": "SOFOCLES FERRETERIA  JORGE MARCELO MARTINEZ", "nombre": "SOFOCLES FERRETERIA  JORGE MARCELO MARTINEZ", "direccion": "SOFLOCLES 1763", "localidad": "LA REJA"}, {"codigo": "557080", "razon": "TESTTI FERRETERIA", "nombre": "TESTTI FERRETERIA", "direccion": "BERNARDO IRIGOYEN 579", "localidad": "MARCOS PAZ"}, {"codigo": "843", "razon": "TIROL FERRETERIA", "nombre": "GUSTAVO SCHULLER", "direccion": "TALCAHUANO 2740", "localidad": "PASO DEL REY"}, {"codigo": "100", "razon": "TIZERA", "nombre": "LIDIA INES DE TIZERA", "direccion": "SAENZ PEÑA", "localidad": "PASO DEL REY"}, {"codigo": "1409", "razon": "VARIETE FERRETERIA", "nombre": "VARIETE FERRETERIA", "direccion": "DEL CARRIL 223 223", "localidad": "PASO DEL REY"}, {"codigo": "764", "razon": "VERON FERRETERIA (EX JAIME ) NORMA LILIANA VERON", "nombre": "VERON FERRETERIA (EX JAIME ) NORMA LILIANA VERON", "direccion": "Dr. M. Paz 1315", "localidad": "MARCOS PAZ"}, {"codigo": "944", "razon": "VICTORIA FERRETERIA", "nombre": "VICTORIA FERRETERIA", "direccion": "25 DE MAYO 2338 PARQUE SAN MARTIN", "localidad": "MERLO"}, {"codigo": "1048", "razon": "WALTER RUARTE FERRETERIA", "nombre": "WALTER RUARTE FERRETERIA", "direccion": "San Luis 1400 445", "localidad": "MORENO"}, {"codigo": "557475", "razon": "ZAPALERI FERRETERIA", "nombre": "ROMAN VELAZQUEZ", "direccion": "ZAPALERI 2315", "localidad": "MARIANO ACOSTA"}], "Diego Portillo": [{"codigo": "929", "razon": "3L FERRETERIA", "nombre": "3L", "direccion": "Mayor Irusta 5835  E/ Duran y Nicolas Granada", "localidad": "MORENO"}, {"codigo": "1126", "razon": "ABEL RIQUELME (EX LA  ALDEA)", "nombre": "ABEL RIQUELME (EX LA  ALDEA)", "direccion": "lariola 115", "localidad": "MORENO"}, {"codigo": "555840", "razon": "ACME", "nombre": "HUGO ALBERTO BARRERA", "direccion": "SOMELLERA 10651 Y PAMPA  JOSE C PAZ", "localidad": ""}, {"codigo": "957", "razon": "ALEGRE FERRETERIA", "nombre": "ALEGRE", "direccion": "ALBAÑA ENTRE 690Y 62", "localidad": "MORENO"}, {"codigo": "711", "razon": "ALEJANDRO FERRETERIA", "nombre": "LUIS ALEJANDRO BUSTOS", "direccion": "SAN EMILIO 2262  E/PERICLES  Y GERVASIO MENEDEZ 2262", "localidad": "MORENO"}, {"codigo": "1191", "razon": "ALEX FERRETERIA", "nombre": "ALEX CUBA", "direccion": "CARLOS DURAND", "localidad": "BELLA VISTA"}, {"codigo": "918", "razon": "ALMEIDA FERRETERIA", "nombre": "JOSE ARIEL ALMEIDA", "direccion": "SANTA CRUZ 3120", "localidad": "BELLA VISTA"}, {"codigo": "13486", "razon": "ANDREA  CORONEL", "nombre": "FERRETERIA  ANDRE E HIJOS", "direccion": "MONTEAGUDO 153", "localidad": "MORENO"}, {"codigo": "01", "razon": "ANGEL (FERRETERIA LOS TRES HERMANOS)", "nombre": "FERRETERIA LOS TRES HERMANOS", "direccion": "GALDOS 9721", "localidad": "PABLO PODESTA"}, {"codigo": "13788", "razon": "ANGEL GABRIEL ORTEGA", "nombre": "ANGEL GABRIEL ORTEGA", "direccion": "ALFARO 2118", "localidad": ""}, {"codigo": "826", "razon": "ASTOLFI  LIGORRIA NANCY GISELA", "nombre": "NANCY GISELA ASTOLFI LIGORRIA", "direccion": "RONDAU 350 e/J.M. Paz y 3 de Febrero", "localidad": "MORENO"}, {"codigo": "1119611", "razon": "BETSABE ASIMO", "nombre": "BETSABE ASIMO", "direccion": "diaz velez 2787", "localidad": "TRUJUI"}, {"codigo": "758", "razon": "BILANCIERI- HERNAN DONATO", "nombre": "HERNAN DONATO BILANCIERI", "direccion": "Lisandro de la Torre 855", "localidad": "MORENO"}, {"codigo": "751", "razon": "BISQUERRA(POTOSI DERQUI)", "nombre": "BISQUERRA MARIO", "direccion": "San Fernando 10910 Cuartel V (Moreno)", "localidad": "MORENO"}, {"codigo": "516589", "razon": "BONA OBRA", "nombre": "BONA OBRA", "direccion": "SAN JOSE 928", "localidad": "MORENO"}, {"codigo": "413", "razon": "BONZI MARIA EMIDIA", "nombre": "BONZI MARIA EMIDIA", "direccion": "Namuncura y galvez", "localidad": "MORENO"}, {"codigo": "956", "razon": "CAACUPE FERRETERIA", "nombre": "CAACUPE", "direccion": "PEDRO JIANCHINO  LA ESCONDIDA", "localidad": "MORENO"}, {"codigo": "866", "razon": "CALLAO FERRETERIA", "nombre": "CALLAO", "direccion": "CALLAO 3591  TORTUGUITAS", "localidad": "MORENO"}, {"codigo": "643", "razon": "CANADA  BENITEZ CRISTIAN JAVIER", "nombre": "CANADA  BENITEZ CRISTIAN JAVIER", "direccion": "Canada 3861 Ruta 25", "localidad": "MORENO"}, {"codigo": "964", "razon": "CARLOS FERRETERIA (SANTANDER)", "nombre": "CARLOS SANTANDER", "direccion": "BARTOLOME DIAZ Y LOYOLA  CUARTEVI BARRIO LOS HORNOS", "localidad": "MORENO"}, {"codigo": "753", "razon": "CASA ANTONIO", "nombre": "ALBA NOEMI OCAMPO", "direccion": "MURILLO 672 SANTA BRIGIDA * MORENO", "localidad": "MORENO"}, {"codigo": "001", "razon": "CASA MACRI", "nombre": "HAIT CRISTIAN", "direccion": "tucuman 403", "localidad": "PILAR"}, {"codigo": "515273", "razon": "CASTELLI NATALIA H Y CASTELLI ESTEBAN A SOC SIMPLE", "nombre": "CASTELLI NATALIA H Y CASTELLI ESTEBAN A SOC SIMPLE", "direccion": "RUTA 25", "localidad": "PRESIDENTE DERQUI"}, {"codigo": "1135", "razon": "CASTRO FERRETERIA", "nombre": "CASTRO", "direccion": "Luis Agote e/Mosconi y Paris Cuartel V", "localidad": "MORENO"}, {"codigo": "557090", "razon": "CERRAFE -PABLO AGUSTIN CAMPOS", "nombre": "PABLO AGUSTIN CAMPOS", "direccion": "Rivadavia 630 - Pilar Centro", "localidad": ""}, {"codigo": "886", "razon": "CLAUDIA FERRETERIA", "nombre": "CLAUDIA CAPONNETO", "direccion": "SAN JOSE 5000", "localidad": "SAN MIGUEL"}, {"codigo": "515151", "razon": "CLIENTE NUEVO DIEGO", "nombre": "CLIENTE NUEVO DIEGO", "direccion": "", "localidad": "MORENO"}, {"codigo": "725", "razon": "COMPACTO FERRETERIA", "nombre": "JUAN CARLOS BARBOZA", "direccion": "SEGUROLA", "localidad": "MORENO"}, {"codigo": "945", "razon": "CORONEL FERRETERIA", "nombre": "SUSANA RODRIGUES", "direccion": "JOAQUIN V GONZALEZ 3008", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "508", "razon": "CORRALON EL NENE", "nombre": "VERONICA GABRIELA JUANGORENA", "direccion": "AV. DEL LIBERTADOR 6842", "localidad": "MORENO"}, {"codigo": "557306", "razon": "CORRALON EL PRADO - ZAMBRANO MARIANO ALEJANDRO", "nombre": "MARIANO ALEJANDRO ZAMBRANO", "direccion": "", "localidad": ""}, {"codigo": "5992", "razon": "CORRALON ITAKURU", "nombre": "GREGORIO CORONIL", "direccion": "OYUELO E ITAKARU", "localidad": "MORENO"}, {"codigo": "938", "razon": "CORRALON RIVADAVIA  BONADONNA ORLANDO ESTEBAN", "nombre": "ORLANDO ESTEBAN BONADONNA", "direccion": "Arricau 2011 e/Gelly y Obes y Roque Saenz Peña", "localidad": "MORENO"}, {"codigo": "905", "razon": "CRISCI HUGO CLAUDIO", "nombre": "HUGO CLAUDIO CRISCI", "direccion": "ARREGUI 1708  E/ AGRELO Y 11 DE SEPTIEMBRE *JOSE C. PAZ", "localidad": "MORENO"}, {"codigo": "557430", "razon": "CRISTIAN DANIEL CHAVEZ", "nombre": "CRISTIAN DANIEL CHAVEZ", "direccion": "filiberto 1863", "localidad": "MORENO"}, {"codigo": "825", "razon": "DADA FERRETERIA  DIEGO ESCOBAR", "nombre": "DADA FERRETERIA  DIEGO ESCOBAR", "direccion": "SHAKESPEARE 1416 * MORENO", "localidad": "MORENO"}, {"codigo": "557296", "razon": "DANI EVARISTO FERRETERIA", "nombre": "DANIEL EVARISTO", "direccion": "evaristo corriego 10628", "localidad": "MORENO"}, {"codigo": "1282", "razon": "DERQUI FERRETERIA - VIVAS ROCIO SOLEDAD", "nombre": "ROCIO SOLEDAD VIVAS", "direccion": "AV DERQUI  BARRIO LAS MARIAS 5890", "localidad": ""}, {"codigo": "516769", "razon": "DIEGO GUSTAVO ÁVALOS", "nombre": "DIEGO GUSTAVO ÁVALOS", "direccion": "Alta Gracia 897", "localidad": "MORENO"}, {"codigo": "712", "razon": "DIONICIO FERRETERIA", "nombre": "DIONICIO", "direccion": "ESOPO 628  BARRIO 25 DE MAYO * MORENO", "localidad": "MORENO"}, {"codigo": "112101", "razon": "DON LOPEZ (GAUCHITO PILAR)", "nombre": "DON LOPEZ (GAUCHITO PILAR)", "direccion": "pedro pico 2040", "localidad": "PILAR"}, {"codigo": "1011", "razon": "EL CARDENAL  MIGUEL", "nombre": "EL CARDENAL  MIGUEL", "direccion": "EL CARDENAL 1350", "localidad": "PILAR"}, {"codigo": "899", "razon": "EL COLO CATAMARCA FERRETERIA", "nombre": "MARCELO BOHN", "direccion": "CATAMARCA", "localidad": "BELLA VISTA"}, {"codigo": "112184", "razon": "EL GAUCHITO 2 (GRAND BOURG)", "nombre": "EL GAUCHITO 2 (GRAND BOURG)", "direccion": "BOLIVIA 2881", "localidad": "MORENO"}, {"codigo": "556869", "razon": "EL GITANO", "nombre": "FABIO CORDERO", "direccion": "", "localidad": ""}, {"codigo": "516527", "razon": "EL MISIO", "nombre": "EL MISIO", "direccion": "Calle atagualpa 866", "localidad": "MORENO"}, {"codigo": "1063", "razon": "EL MOLINO", "nombre": "EDGARDO BALMACEDA", "direccion": "REMIGIO LOPEZ 5112", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "555948", "razon": "EL OBRADOR", "nombre": "EL OBRADOR", "direccion": "hipolito yrigoyen 792 792", "localidad": "PRESIDENTE DERQUI"}, {"codigo": "1095", "razon": "EL PERU FERRETERIA", "nombre": "EL PERU", "direccion": "", "localidad": "MORENO"}, {"codigo": "927", "razon": "EL PORTUGUES", "nombre": "EL PORTUGUES", "direccion": "USTARRO 902", "localidad": "MORENO"}, {"codigo": "910", "razon": "EL TUCU  GALVAN MARCOS", "nombre": "MARCOS GALVAN", "direccion": "CORVETA URUGUAY 3053", "localidad": "MORENO"}, {"codigo": "628", "razon": "EL YUNQUE  CRISTIANI RUTH", "nombre": "EL YUNQUE  CRISTIANI RUTH", "direccion": "Atalaya y Peru (Ex ferreteria Nicolas)", "localidad": "MORENO"}, {"codigo": "556166", "razon": "ESTUDIANTES FERRETERIA", "nombre": "JORGE MACHADO", "direccion": "VERNET  E/PALACIOS Y LINCH 351", "localidad": "GRAND BOURG"}, {"codigo": "879", "razon": "EVA AMALIA  MARTIN AGUILERA", "nombre": "EVA AMALIA  MARTIN AGUILERA", "direccion": "AV. DERQUI 7944 CUARTEL V", "localidad": "MORENO"}, {"codigo": "13256", "razon": "FACUNDO MIGUEL GUZMAN", "nombre": "FACUNDO MIGUEL GUZMAN", "direccion": "aconcagua 2094", "localidad": ""}, {"codigo": "743", "razon": "FAMEL - BONIGO MARCELO FERNANDO", "nombre": "MARCELO FERNANDO BONIGO", "direccion": "CROACIA 2005", "localidad": "MORENO"}, {"codigo": "557753", "razon": "FERRESOL", "nombre": "ORIANA BARRETO", "direccion": "GASPAR CAMPOS 4140", "localidad": "SAN MIGUEL"}, {"codigo": "11111228", "razon": "FERRESOL 2", "nombre": "ORIANA BARRETO", "direccion": "GRAL PINTOD 4506", "localidad": "MU"}, {"codigo": "516813", "razon": "FERRETEK", "nombre": "JULIO PEREYRA", "direccion": "uruguay 409", "localidad": "MORENO"}, {"codigo": "985", "razon": "FERRETERIA ALVEAR", "nombre": "MARCELO ROBERTO LEMOS", "direccion": "ALVEAR 2112", "localidad": "SAN MIGUEL"}, {"codigo": "5510", "razon": "FERRETERIA AM", "nombre": "FERRETERIA AM", "direccion": "puerto rico 1706", "localidad": "MANUEL ALBERTI"}, {"codigo": "515285", "razon": "FERRETERIA AMPUERO", "nombre": "SABRINA VERÓNICA ACOSTA", "direccion": "Av del libertador 2909", "localidad": "MORENO"}, {"codigo": "869", "razon": "FERRETERIA ARDINO", "nombre": "GUSTAVO DANIEL ARDINO", "direccion": "LA PINTA 2017", "localidad": "MU"}, {"codigo": "704", "razon": "FERRETERIA ATLANTIS - DIOSQUES FERNANDA DEL CARMEN", "nombre": "FERNANDA DEL CARMEN DIOSQUES", "direccion": "NIEL FINSEN 2997", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "9982", "razon": "FERRETERIA BENJA", "nombre": "FERRETERIA BENJA", "direccion": "URUGUAY 188", "localidad": "MORENO"}, {"codigo": "43349", "razon": "FERRETERIA CARLOS PINTOS", "nombre": "FERRETERIA CARLOS PINTOS", "direccion": "patricias medicinas 1108", "localidad": "MORENO"}, {"codigo": "557821", "razon": "FERRETERIA DANIEL", "nombre": "DANIEL RIEDEL", "direccion": "BARKER", "localidad": "MORENO"}, {"codigo": "863", "razon": "FERRETERIA DON ANTONIO", "nombre": "FERRETERIA DON ANTONIO", "direccion": "JAPON /ESQUINA VICTOR GUERRERO", "localidad": "MORENO"}, {"codigo": "5712", "razon": "FERRETERIA EL ABUELO", "nombre": "MARCIA CHAPARRO RIVAROLA", "direccion": "PARAGUAY 1438", "localidad": "MORENO"}, {"codigo": "779", "razon": "FERRETERIA  EL COSITO", "nombre": "NICOLAS DANIEL BOHILER", "direccion": "AV. LIBERTADOR 3300", "localidad": "MORENO"}, {"codigo": "11111645", "razon": "FERRETERIA EL NONO", "nombre": "NICOLAS CELLUDO", "direccion": "PARAGUAY 540", "localidad": "MATHEU"}, {"codigo": "11111549", "razon": "FERRETERIA E Y E", "nombre": "WILMER ALBERTO SANDOVAL MONTALVAN", "direccion": "Chile 906", "localidad": "PILAR"}, {"codigo": "20300961", "razon": "FERRETERIA FELVAL", "nombre": "BRIAN EZEQUIEL ROA", "direccion": "Alvarez Prado 2078", "localidad": "CUARTEL V"}, {"codigo": "515310", "razon": "FERRETERIA GOMEZ", "nombre": "FERRETERIA GOMEZ", "direccion": "Nicaragua , Barrio Agostini 1280", "localidad": "PILAR"}, {"codigo": "13221", "razon": "FERRETERIA HERNANDEZ", "nombre": "HERNANDEZ HECTOR JAVIER", "direccion": "velazquez 4231", "localidad": "LOS POLVORINES"}, {"codigo": "833", "razon": "FERRETERIA JABIER", "nombre": "JABIER", "direccion": "URUGUAY Y CHACABUCO * DERQUI", "localidad": "MORENO"}, {"codigo": "557123", "razon": "FERRETERIA JORGE", "nombre": "FERRETERIA JORGE", "direccion": "beltran esquina flemin barrio parque", "localidad": ""}, {"codigo": "516606", "razon": "FERRETERIA LOS AMIGOS", "nombre": "FERRETERIA LOS AMIGOS", "direccion": "Solano López Mz5 casa 6,barrio las catalinas", "localidad": "MORENO"}, {"codigo": "1555595", "razon": "FERRETERIA MARIJU", "nombre": "POUSA ANGEL ANTONIO", "direccion": "AV PTE PERON 7970 7970", "localidad": "MARTIN CORONADO"}, {"codigo": "13351", "razon": "FERRETERIA  M Y S", "nombre": "LARRAMENDI MANUEL  ADRIAN", "direccion": "FRAY BUTLER 1306", "localidad": "ALBERDI"}, {"codigo": "557652", "razon": "FERRETERIA ODISEA", "nombre": "FERRETERIA ODISEA", "direccion": "VICTOR ARREGUI 4209", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "516165", "razon": "FERRETERIA PEQUEÑA ROMA", "nombre": "FERRETERIA PEQUEÑA ROMA", "direccion": "soldado Toledo 6831 la victoria", "localidad": "MORENO"}, {"codigo": "516637", "razon": "FERRETERIA R8", "nombre": "FERRETERIA R8", "direccion": "Av pte illia 5981 e/chile y cane", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "5561", "razon": "FERRETERIA RAQUEL", "nombre": "FERRETERIA RAQUEL", "direccion": "CUETO 5270", "localidad": ""}, {"codigo": "13308", "razon": "FERRETERIA REX", "nombre": "FERRETERIA REX", "direccion": "MEJICO 716", "localidad": "MORENO"}, {"codigo": "204", "razon": "FERRETERIA RIVAS", "nombre": "NESTOR FABIAN LUGO RIVAS", "direccion": "AV CARRE 4901 4901", "localidad": "MORENO"}, {"codigo": "515972", "razon": "FERRETERIA SANTA ELENA", "nombre": "FERRETERIA SANTA ELENA", "direccion": "Perito Mariano moreno , Derqui (pilar) 768", "localidad": "PILAR"}, {"codigo": "5552", "razon": "FERRETERIA WILSON", "nombre": "FERRETERIA WILSON", "direccion": "sarmiento", "localidad": "MORENO"}, {"codigo": "5624", "razon": "FERROGAR", "nombre": "JOSE RAMIREZ", "direccion": "SALVATORI 2070", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "11111261", "razon": "FERROPILAR - MARCOS PELLEGRINI", "nombre": "MARCOS GABRIEL PELLEGRINI", "direccion": "SAN MARTIN 346", "localidad": "PILAR"}, {"codigo": "516880", "razon": "FERRRETERIA NACHO", "nombre": "FERRRETERIA NACHO", "direccion": "av remigio lopez 4712", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "831", "razon": "FG  JORGE", "nombre": "FG  JORGE", "direccion": "Ugarteche 2891esquina F. Brughetti", "localidad": "MORENO"}, {"codigo": "555966", "razon": "FIGUEREDO  CRISTIAN", "nombre": "FIGUEREDO CRISTIAN", "direccion": "Pasteur ENTRE TUCUMAN Y GUTIERREZ 700", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "13323", "razon": "GABRIEL CASTRO", "nombre": "GABRIEL CASTRO", "direccion": "Av papá francisco 4723", "localidad": "SAN MIGUEL"}, {"codigo": "555730", "razon": "GALILEO GALILEY", "nombre": "GALILEO GALILEY", "direccion": "GALILEO GALILEY 6855", "localidad": "MORENO"}, {"codigo": "1331", "razon": "GASTON FERRETERIA", "nombre": "ADRIAN GASTON BACHETI", "direccion": "ROMA 403", "localidad": ""}, {"codigo": "941", "razon": "GERES CORRALON", "nombre": "GERES CORRALON", "direccion": "MARTIN GARCIA Y PAYRO", "localidad": "MORENO"}, {"codigo": "555967", "razon": "GER-MAK", "nombre": "GERARDO DANIEL OBEID", "direccion": "Ravignani 3526 manuel alberti", "localidad": "GARIN"}, {"codigo": "555986", "razon": "GERONIMO RULO FERRETERIA", "nombre": "OLEO GERONIMO", "direccion": "Pirovano 8315 Barrio Pinazo 8315", "localidad": "PILAR"}, {"codigo": "516147", "razon": "GIANFRANCO", "nombre": "GIANFRANCO", "direccion": "Luis Tejeda y 27 de febrero", "localidad": "CUARTEL V"}, {"codigo": "55555696", "razon": "GILES FLORENCIA DYD", "nombre": "GILES FLORENCIA", "direccion": "rio tercero 1463", "localidad": "PRESIDENTE DERQUI"}, {"codigo": "817", "razon": "GIMENEZ FERRETERIA - GIMENEZ JORGE ALBERTO", "nombre": "JORGE ALBERTO GIMENEZ", "direccion": "VIENA 1332 JC PAZ", "localidad": "MORENO"}, {"codigo": "971", "razon": "GM FERRETERIA", "nombre": "GERMAN", "direccion": "LAVALLOL 4096 ESQUINA DIRECTORIO", "localidad": "MORENO"}, {"codigo": "515454", "razon": "GONZALO ENCINAS", "nombre": "GONZALO ENCINAS", "direccion": "Pilar n°170 LOS CARDALES", "localidad": "EXALTACION DE LA CRUZ"}, {"codigo": "516263", "razon": "GUSTY", "nombre": "GUSTY", "direccion": "Constituyentes y Colectora Panamericana", "localidad": "TORTUGUITAS"}, {"codigo": "516283", "razon": "GYE", "nombre": "FERNANDEZ NELIDA GIMENA", "direccion": "CALLE ALTUBE 5469, BARRIO ALTUBE", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "1472", "razon": "HANS FERRETERIA", "nombre": "LAURA ELIZABETH LOPEZ", "direccion": "AV PTE SARMIENTO 4009", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "1496", "razon": "HERNAN Y ROMINA", "nombre": "HERNAN Y ROMINA", "direccion": "", "localidad": ""}, {"codigo": "556076", "razon": "IPA FERRETERIA", "nombre": "GUILLERMO IPARRAGUIRRE", "direccion": "MOCORETA 578", "localidad": "INGENIERO MASCHWITZ"}, {"codigo": "112041", "razon": "J.J.", "nombre": "ROCIO SOLEDAD BRAVO", "direccion": "corrientes 5740", "localidad": "BELLA VISTA"}, {"codigo": "1382", "razon": "JOANDET PABLO", "nombre": "JOANDET PABLO", "direccion": "Pinzon 2101 entre Vicente Lopez y Lincold", "localidad": "MORENO"}, {"codigo": "933", "razon": "J Y L", "nombre": "JOSE LUIS DIAZ", "direccion": "GASPAR CAMPOS 795", "localidad": "SAN MIGUEL"}, {"codigo": "556405", "razon": "KAIROS", "nombre": "KAIROS", "direccion": "SANTA  MARIA 566", "localidad": "PILAR"}, {"codigo": "515264", "razon": "KIYAN", "nombre": "KIYAN", "direccion": "benito lynch 1789", "localidad": "PRESIDENTE DERQUI"}, {"codigo": "730", "razon": "LA ABUELA PERCHA CORRALON", "nombre": "LA ABUELA PERCHA CORRALON", "direccion": "OYUELO", "localidad": "MORENO"}, {"codigo": "011", "razon": "LA ACADEMIA", "nombre": "DIAZ CARLOS ALBERTO", "direccion": "PTE. PERON 9424", "localidad": "11 DE SEPTIEMBRE"}, {"codigo": "761", "razon": "LA ESPERANZA FERRETERIA", "nombre": "HUGO COMA", "direccion": "PUERTO DESEADO 6068", "localidad": "MORENO"}, {"codigo": "859", "razon": "LA FERRE", "nombre": "LA FERRE", "direccion": "batalla maipu 2825 entre ecuado y a danici", "localidad": "MORENO"}, {"codigo": "515274", "razon": "LA HUELLA", "nombre": "LA HUELLA", "direccion": "dardo rocha 5100", "localidad": "MORENO"}, {"codigo": "10092", "razon": "LA LLAVE MAESTRA", "nombre": "AGUSTIN PERALTA", "direccion": "RUTA 28 KM. 6", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "11111913", "razon": "LA MONEDA", "nombre": "DAISY BOGADO", "direccion": "LAS TRES MARIAS 6137", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "1047", "razon": "LA NUEVA FLORIDA", "nombre": "LA NUEVA FLORIDA", "direccion": "FLORIDA 1554 ENTRE URUGUAY Y BOLIVIA", "localidad": "MORENO"}, {"codigo": "882", "razon": "LAS DELICIAS FERRETERIA", "nombre": "LAS DELICIAS FERRETERIA", "direccion": "LAS DELICIAS 4200 Y CONSTANCIO GIL  SAN MIGUEL", "localidad": "MORENO"}, {"codigo": "68", "razon": "LAS FLORES", "nombre": "GABRIELA GRISELDA GUIÑAZU", "direccion": "DEMOSTENES 3241", "localidad": "MORENO"}, {"codigo": "972", "razon": "LAS VEGAS - VEGA CRISTIAN MIGUEL", "nombre": "CRISTIAN MIGUEL VEGA", "direccion": "LOS PICOS 1876  barrio los Tilos ENTRE LOS CHAGALES Y SECOIAS", "localidad": "MORENO"}, {"codigo": "407", "razon": "LAURA  MOLINA LAURA BEATRIZ", "nombre": "LAURA  MOLINA LAURA BEATRIZ", "direccion": "Andino y esquina Ecuador cuit 27170636088", "localidad": "MORENO"}, {"codigo": "74", "razon": "LENCINA JOSE", "nombre": "LENCINA JOSE", "direccion": "Aguero y Venezuela", "localidad": "MORENO"}, {"codigo": "557307", "razon": "LEONARDO ARIELCASTILLO", "nombre": "LEONARDO ARIELCASTILLO", "direccion": "", "localidad": ""}, {"codigo": "1221", "razon": "LEZCATECH", "nombre": "JORGE LEZCANO", "direccion": "RUTA 25 5225", "localidad": "MORENO"}, {"codigo": "557697", "razon": "LIMA FERRETERIA", "nombre": "LIMA FERRETERIA - CORRALON", "direccion": "C.CHACABUCO 2060 E/URUGUAY Y BOLIVIA", "localidad": "PRESIDENTE DERQUI"}, {"codigo": "1512", "razon": "LINCOLN", "nombre": "JORGE GABRIEL PFEIFFER", "direccion": "MAGALLANES 2210", "localidad": "MORENO"}, {"codigo": "794", "razon": "LO DE DIEGO FERRETERIA - MACIAS LAURA CECILIA", "nombre": "LAURA CECILIA MACIAS", "direccion": "AV. DERQUI 7308", "localidad": "CUARTEL V"}, {"codigo": "858", "razon": "LO DE FELI", "nombre": "JULIO SANCHEZ", "direccion": "GRAL JUAN LAVALLE 5326", "localidad": "MORENO"}, {"codigo": "557667", "razon": "LOS 3 HERMANOS FERRETERIA", "nombre": "ROBERTO OSCAR GONZALEZ", "direccion": "CASA CUBERTA 5433", "localidad": "MORENO"}, {"codigo": "516594", "razon": "LOS ALEGRES", "nombre": "ADRIAN JUAN JOSE ALEGRE", "direccion": "rio atuel y noruega", "localidad": "PRESIDENTE DERQUI"}, {"codigo": "1466", "razon": "LOS GRANADOS", "nombre": "LOS GRANADOS", "direccion": "Demostenes 2982", "localidad": "MORENO"}, {"codigo": "744", "razon": "LOS PINOS CORRALON", "nombre": "LOS PINOS CORRALON", "direccion": "RUTA 25 Y SAMANIEGO", "localidad": "MORENO"}, {"codigo": "515743", "razon": "LOS TANOS", "nombre": "LOS TANOS", "direccion": "Primera Junta 5345", "localidad": "SAN MIGUEL"}, {"codigo": "884", "razon": "LOS TILOS SANITARIOS - TORRES LILIANA BEATRIZ (EX ESTEBAN)", "nombre": "LILIANA BEATRIZ TORRES", "direccion": "LOS TILOS  LOS FRENOS Y PEDRO PICO  LA LONJA   PILAR", "localidad": "MORENO"}, {"codigo": "13660", "razon": "LOY", "nombre": "JUAN MOSCA", "direccion": "pintos 4008", "localidad": "MORENO"}, {"codigo": "1340", "razon": "MADERA GONZALEZ", "nombre": "MADERA GONZALEZ", "direccion": "PTE PERON 3080 DERQUI", "localidad": ""}, {"codigo": "10", "razon": "MAGA", "nombre": "MARIO LUIS", "direccion": "av sarmiento 4622", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "516248", "razon": "MAIPU", "nombre": "MAIPU", "direccion": "Rivadavia 2785 - los polvorines", "localidad": "MAIPU"}, {"codigo": "556539", "razon": "MANU FERRETERIA \"PILAR\"", "nombre": "MANU", "direccion": "DARBEL Y LIBERTAD", "localidad": "PILAR"}, {"codigo": "835", "razon": "MARCHIONNI FERRETERIA", "nombre": "MARCHIONNI", "direccion": "RECONQUISTA 998  E/SOLER Y LAS PIEDRAS * DERQUI", "localidad": "MORENO"}, {"codigo": "1580", "razon": "MARIANA GOMEZ", "nombre": "MARIANA GOMEZ", "direccion": "PRUDENCIO MURGIONDO 1645", "localidad": ""}, {"codigo": "729", "razon": "MARIO FERRETERIA", "nombre": "MARIO", "direccion": "MItre Entre San jose y Santa Maria S/N", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "880", "razon": "MATERIALES DERQUI S.R.L", "nombre": "MATERIALES DERQUI S.R.L", "direccion": "ANTONIO TORO 360  DERQUI", "localidad": "MORENO"}, {"codigo": "556226", "razon": "MATERIALES IRIGOYEN - CHAVES NATALIA", "nombre": "MATERIALES IRIGOYEN - CHAVES NATALIA", "direccion": "Av. Diagonal Norte 2448 2448", "localidad": "LA REJA"}, {"codigo": "10150", "razon": "MATERIALES LOS MOLINOS", "nombre": "SERGIO GALVAN", "direccion": "VARELA 6028", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "515474", "razon": "MATHEU", "nombre": "MATHEU", "direccion": "Matheu 33", "localidad": "GRAND BOURG"}, {"codigo": "917", "razon": "MATI FERRETERIA", "nombre": "DANIEL SERGIO SILVA", "direccion": "LAGO LACAR 1772", "localidad": "BELLA VISTA"}, {"codigo": "239", "razon": "MAURO -TOOL", "nombre": "MAURO -TOOL", "direccion": "Shakespeare 1225el plutarco y toledo", "localidad": ""}, {"codigo": "423", "razon": "MAXI FERRETERIA", "nombre": "MAXI FERRETERIA", "direccion": "Ezeiza 110  Barrio Podesta", "localidad": "MERLO"}, {"codigo": "1437", "razon": "MAXIMILIANO GOMEZ", "nombre": "MAXIMILIANO GOMEZ", "direccion": "entrega en castro", "localidad": ""}, {"codigo": "1284", "razon": "MAYRA - ARGAÑARAZ MAYRA TAMARA", "nombre": "MAYRA TAMARA ARGAÑARAZ", "direccion": "JOSE HERNANDEZ", "localidad": "DEL VISO"}, {"codigo": "586", "razon": "METALICA FERRETERIA", "nombre": "METALICA FERRETERIA", "direccion": "Shakespeare 1033 E/ ECUADOR Y CURA BROCHRERO", "localidad": "MORENO"}, {"codigo": "727", "razon": "MIGUEL FERRETERIA", "nombre": "MIGUEL", "direccion": "MONTEZUMA   TRUJUI", "localidad": "MORENO"}, {"codigo": "556043", "razon": "MN BAIRES - MIGUEL SANTIAGO BADARACCO", "nombre": "MIGUEL SANTIAGO BADARACCO", "direccion": "FRANCISCO MUÑIS 530", "localidad": "SAN MIGUEL"}, {"codigo": "1335", "razon": "MOCNIK MATERIALES", "nombre": "LUCIA MOCNIK", "direccion": "AV. DARDO ROCHA", "localidad": "PILAR"}, {"codigo": "515913", "razon": "MONGANO RUBEN OMAR", "nombre": "MONGANO RUBEN OMAR", "direccion": "rivadavia 2785", "localidad": "LOS POLVORINES"}, {"codigo": "442", "razon": "MURCIELAGO  RUBER PABLO", "nombre": "MURCIELAGO  RUBER PABLO", "direccion": "Pirobano esq. Larreta", "localidad": "MORENO"}, {"codigo": "953", "razon": "NORUEGA FERRETERIA", "nombre": "NORUEGA", "direccion": "NORUEGA 148 entre Rio Limay y Pilcomayo", "localidad": "MORENO"}, {"codigo": "555987", "razon": "OLIVA FERRETERIA", "nombre": "SANDRO GABRIEL OLIVAS", "direccion": "ASAMBLEA 273", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "415", "razon": "ORIBE", "nombre": "MIGUEL ANGEL AFFRANCHINO", "direccion": "ORIBE 1222", "localidad": "MORENO"}, {"codigo": "1055", "razon": "OXI TEC S.A.", "nombre": "LUCAS ALEJANDRO ALI", "direccion": "JUAN BAUTISTA AMBROSETTI 793", "localidad": "ALMIRANTE IRIZAR"}, {"codigo": "404", "razon": "PATRO TORTORA HERNAN ARIEL", "nombre": "PATRO TORTORA HERNAN ARIEL", "direccion": "Andinos 898", "localidad": "MORENO"}, {"codigo": "1587", "razon": "PEÑA FERRETERIA", "nombre": "PEÑA", "direccion": "MONTESUMO 10421 10421", "localidad": "TRUJUI"}, {"codigo": "877", "razon": "PICHINCHA FERRETERIA", "nombre": "JIMENEZ LAURA MARIA", "direccion": "PICHINCHA 2497  SAN MIGUEL", "localidad": "MORENO"}, {"codigo": "1037", "razon": "PLATON FERRETERIA  - MELISA CRISTINA FERNANDEZ", "nombre": "MELISA CRISTINA FERNANDEZ", "direccion": "PLATON 3800", "localidad": "MORENO"}, {"codigo": "1485", "razon": "QUAGLIA NICOLAS", "nombre": "QUAGLIA NICOLAS", "direccion": "Marcos del bueno 240 entre Camilli y Ruta 23", "localidad": "MORENO"}, {"codigo": "924", "razon": "RAFA FERRETERIA", "nombre": "RAFAEL VICTOR NIVEA", "direccion": "PADRE MANUEL USTARROZ 549  SAN MIGUEL", "localidad": ""}, {"codigo": "749", "razon": "REINALDO QUIROGA SILVERO", "nombre": "REINALDO QUIROGA SILVERO", "direccion": "DOCTOR ARECHAVALA 4500  CUARTEL V", "localidad": "MORENO"}, {"codigo": "556084", "razon": "RETA  MADERAS", "nombre": "RETA  MADERAS", "direccion": "BUONAROTTI MIGUEL 4700", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "516407", "razon": "ROBERTO GABRIEL MACIEL", "nombre": "ROBERTO GABRIEL MACIEL", "direccion": "Davaine 1750 entre enrique larreta y felix de azara", "localidad": "MORENO"}, {"codigo": "1365", "razon": "RODRIGO FERRETERIA", "nombre": "RODRIGO", "direccion": "BUTLER 2490 SOL Y VERDE  JOSE C, PAZ", "localidad": ""}, {"codigo": "783", "razon": "ROLO FERETERIA", "nombre": "ROLO", "direccion": "THOMAS EDISON  Y SANTA MARIA  MORENO SANTA BRIGIDA", "localidad": "MORENO"}, {"codigo": "930", "razon": "ROSHER FERRETERIA", "nombre": "ALEX CUBA", "direccion": "RIO LIMAY 2950", "localidad": "BELLA VISTA"}, {"codigo": "1447", "razon": "ROSITA RIVADAVIA FERRETERIA", "nombre": "RIVADAVIA FERRETERIA", "direccion": "RIVADAVIA  368 ENTRE MITRE Y BELGRANO 368", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "1577", "razon": "SAN BENITO 2", "nombre": "SAN BENITO 2", "direccion": "", "localidad": ""}, {"codigo": "556750", "razon": "SANDRA DI BENEDETTO", "nombre": "SANDRA DI BENEDETTO", "direccion": "BELTRAN 2402 2402", "localidad": "PASO DEL REY"}, {"codigo": "656", "razon": "SANITARIOS VERTIENTE - NAVARRO MARIELA ROXANA", "nombre": "MARIELA ROXANA NAVARRO", "direccion": "Av Balbin 4197esq Defensa * SAN MIGUEL", "localidad": "MORENO"}, {"codigo": "556097", "razon": "SANTANDER FERRETERIA", "nombre": "KEVIN ALEJANDRO POVOLI", "direccion": "MURILLO 481", "localidad": "TRUJUI"}, {"codigo": "893", "razon": "SASHA CORRALON MARILO", "nombre": "DOROTEO TORRES YUDI MARIBEL", "direccion": "RAFAEL 1211", "localidad": "BELLA VISTA"}, {"codigo": "900", "razon": "SASHA OBLIGADO FERRETERIA", "nombre": "DOROTEO TORRES YUDI MARIBEL", "direccion": "SANTA CRUZ 3721", "localidad": "SAN MIGUEL"}, {"codigo": "1533", "razon": "SERVICE OESTE FERRETERIA", "nombre": "SERVICE OESTE FERRETERIA", "direccion": "Magallanes 3000", "localidad": "MORENO"}, {"codigo": "516223", "razon": "SILVA SANITARIOS", "nombre": "ISAIAS SILVA", "direccion": "PLATON 3308", "localidad": "SAN MIGUEL"}, {"codigo": "889", "razon": "SJS FRANCK CONSTRUCCIONES S.R.", "nombre": "SJS FRANCK CONSTRUCCIONES S.R.", "direccion": "FRANCISCO SEGUI 2721  TIERRES ALTAS", "localidad": "MORENO"}, {"codigo": "710", "razon": "SOFI FERRETERIA", "nombre": "CORONIL CUBAS GREGORIO", "direccion": "PORTUGAL Y MONROE * CUARTEL V", "localidad": "MORENO"}, {"codigo": "516546", "razon": "SUSANA ORTIZ", "nombre": "SUSANA ORTIZ", "direccion": "Otawa 1997 esquina Congreso", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "1007", "razon": "TABARES FERRETERIA", "nombre": "TABARES FERRETERIA", "direccion": "AV. DE MAYO 427", "localidad": "MORENO"}, {"codigo": "915", "razon": "TIO JORGE BARRERA HECTOR JORGE", "nombre": "JONATAN BARRERA", "direccion": "ROQUE SAENZ PEÑA 3527", "localidad": "JOSE LEON SUAREZ"}, {"codigo": "949", "razon": "TOMAS FERRETERIA - MONTADORES LIBERTAD", "nombre": "LIBERTAD PALAVECINO MONTADORES", "direccion": "CHACABUCO 718 ORIBE Y ALVEAR", "localidad": "MORENO"}, {"codigo": "1558", "razon": "TRIANA FERRETERIA", "nombre": "TRIANA", "direccion": "R. TRIANA 5801 ENTRE JOSE C PAZ Y COLON", "localidad": ""}, {"codigo": "1555594", "razon": "TYM", "nombre": "CARLOS TORANZO", "direccion": "BARSOVIA 3353", "localidad": "JOSE CLEMENTE PAZ"}, {"codigo": "515272", "razon": "T Y S", "nombre": "T Y S", "direccion": "MAIPU 1815", "localidad": "PILAR"}, {"codigo": "881", "razon": "URUGUAY 1 FERRETERIA - FRANCO LEANDRO ANDRES", "nombre": "LEANDRO ANDRES FRANCO", "direccion": "URUGUAY Y PARANA * DERQUI", "localidad": "MORENO"}, {"codigo": "557592", "razon": "VALLEJOS FERRETERIA", "nombre": "VALLEJOS", "direccion": "Chacabuco 2193", "localidad": "PRESIDENTE DERQUI"}, {"codigo": "10574", "razon": "XXXGILES FLORENCIA SYSXXXX", "nombre": "XXXGILES FLORENCIAXXX", "direccion": "rio tercero 1463", "localidad": "PRESIDENTE DERQUI"}], "Dario Rocha": [{"codigo": "11111478", "razon": "ADAN JUSTO GIMENEZ", "nombre": "ADAN JUSTO GIMENEZ", "direccion": "IBERA 2411", "localidad": ""}, {"codigo": "83", "razon": "AGUSTINA FERRETERIA  DOMINGUEZ SANDRA GLADYS", "nombre": "AGUSTINA FERRETERIA  DOMINGUEZ SANDRA GLADYS", "direccion": "Brown 1381 y Corrientes", "localidad": "MORENO"}, {"codigo": "13560", "razon": "AGUSTIN EZEQUIEL DI ROSSI", "nombre": "AGUSTIN EZEQUIEL DI ROSSI", "direccion": "carola lorenzini 1261", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "555", "razon": "ANCAR - ANSELMO VERONICA PATRICIA", "nombre": "VERONICA PATRICIA  ANSELMO", "direccion": "MITRE 1974", "localidad": "LUJAN"}, {"codigo": "572", "razon": "ANDINO", "nombre": "ANDINO", "direccion": "BALBIN 2263", "localidad": "MORENO"}, {"codigo": "183", "razon": "AVELLANEDA ALFREDO ALBERTO", "nombre": "AVELLANEDA ALFREDO ALBERTO", "direccion": "Patricio Ham 1060", "localidad": "MORENO"}, {"codigo": "535", "razon": "BECOFER - LAZZARO CRISTIAN RUBEN", "nombre": "CRISTIAN RUBEN LAZZARO", "direccion": "Garcia Lorca 399  Torres", "localidad": "TORRES"}, {"codigo": "144", "razon": "BETO  KACJAN ALBERTO NESTOR", "nombre": "BETO  KACJAN ALBERTO NESTOR", "direccion": "De Maria 3941", "localidad": "MORENO"}, {"codigo": "617", "razon": "BRANDSEN  GONZALEZ PEREZ JUAN HONORATO", "nombre": "BRANDSEN  GONZALEZ PEREZ JUAN HONORATO", "direccion": "Brandsen 3550 e/Cerrito y A. Schweitzer", "localidad": "MORENO"}, {"codigo": "111", "razon": "BRIGUERA  DUNGEL GUSTAVO ALEJANDRO", "nombre": "BRIGUERA  DUNGEL GUSTAVO ALEJANDRO", "direccion": "R. moreno 1905       Bº Costani", "localidad": "MORENO"}, {"codigo": "532", "razon": "BULONERA SANCHEZ  SANGUINETTI TOMAS", "nombre": "BULONERA SANCHEZ  SANGUINETTI TOMAS", "direccion": "AV. JOSE MARIA PAZ 379", "localidad": "MORENO"}, {"codigo": "645", "razon": "CAPELLETTI FERRETERIA", "nombre": "CAPELLETTI FERRETERIA", "direccion": "Rivadavia 555 e/Merlo y Argentina * Gral Rodriguez", "localidad": "MORENO"}, {"codigo": "875", "razon": "CARDOZO FERRETERIA", "nombre": "CIRIO CARDOZO", "direccion": "ACASUSO 190 E/AMANGAY * F. ALVAREZ", "localidad": "MORENO"}, {"codigo": "393", "razon": "CASA OSCAR  EUGUI OSCAR ALBERTO", "nombre": "CASA OSCAR  EUGUI OSCAR ALBERTO", "direccion": "B. Irigoyen nº 508", "localidad": "MORENO"}, {"codigo": "648", "razon": "CASA OSVALDO  LUQUI MARIO OSVALDO", "nombre": "CASA OSVALDO  LUQUI MARIO OSVALDO", "direccion": "LOS MATREROS 2943 E/PRINGLES    ITUZAINGO", "localidad": "MORENO"}, {"codigo": "107", "razon": "CEFEIDA SAS", "nombre": "TOMASELLO  TOMASELLO ENRIQUE ROBERTO", "direccion": "Bartolomé Mitre", "localidad": "MORENO"}, {"codigo": "46", "razon": "CHINGOLO", "nombre": "CHINGOLO", "direccion": "Ruta 200 esq, Pedernera", "localidad": "MORENO"}, {"codigo": "657", "razon": "CLEM CARERI LUCAS SEBASTIAN", "nombre": "CLEM CARERI LUCAS SEBASTIAN", "direccion": "GRAHAM BELL Y CORVALAN (ALTURA COUNTRY M.EUGENIA)", "localidad": "MORENO"}, {"codigo": "210", "razon": "C.O CRISTIANELLI OSVALDO RAFAEL", "nombre": "C.O  CRISTIANELLI OSVALDO RAFAEL", "direccion": "Ruta 200 KM 37.500", "localidad": "MORENO"}, {"codigo": "425", "razon": "CONCORDIA  BECERRA ALICIA BEATRIZ", "nombre": "CONCORDIA  BECERRA ALICIA BEATRIZ", "direccion": "Arenale esq. valparaiso", "localidad": "MORENO"}, {"codigo": "171", "razon": "CORTINEZ - RODRIGUEZ VILMA MARINA", "nombre": "VILMA MARINA RODRIGUEZ", "direccion": "Dr.Muñiz 3451", "localidad": "CORTINES"}, {"codigo": "838", "razon": "DAMIAN", "nombre": "DAMIAN", "direccion": "Ruben Dario 70 aprox", "localidad": "MORENO"}, {"codigo": "101", "razon": "DEL BARRIO", "nombre": "MUÑOZ MARIA ANTONIA", "direccion": "SAN FRANCISCO DE ASIS 381", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "516533", "razon": "DISTRIBUIDORA AGRIPA", "nombre": "DISTRIBUIDORA AGRIPA", "direccion": "JOSE HERNANDEZ 4297", "localidad": "ITUZAINGO"}, {"codigo": "55555758", "razon": "DISTRIBUIDORA HUGO", "nombre": "DISTRIBUIDORA HUGO", "direccion": "", "localidad": "MORENO"}, {"codigo": "556956", "razon": "DON BROCHAS - FEDERICO JESÚS GOMEZ", "nombre": "DON BROCHAS - FEDERICO JESÚS GOMEZ", "direccion": "", "localidad": ""}, {"codigo": "63", "razon": "DON DOMINGO", "nombre": "MARIA CLARA BENITEZ SUAREZ", "direccion": "Pueyrredon 439 E/Rawson y Antartida Argentina", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "557798", "razon": "DON FUSION RICCI MICAELA  AILEN", "nombre": "DON FUSION RICCI MICAELA  AILEN", "direccion": "AV NEMESIO ALVAREZ 781", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "75", "razon": "EISENACH", "nombre": "FABIAN EISENACH", "direccion": "AV. ITALIA 1100", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "255", "razon": "EL CARTU GARCES PATRICIA MONICA", "nombre": "EL CARTU GARCES PATRICIA MONICA", "direccion": "Ruben dario 57", "localidad": "MORENO"}, {"codigo": "160", "razon": "EL CHAQUEÑO", "nombre": "ZUÑIGA DANTE ALEJANDRO", "direccion": "Peyret 2446", "localidad": "MORENO"}, {"codigo": "468", "razon": "EL CICLON", "nombre": "IRIS BEATRIZ MOLINA", "direccion": "LA RIOJA 1981", "localidad": "LA REJA"}, {"codigo": "668", "razon": "EL CICLON 2", "nombre": "MOLINA IRIS BEATRIZ", "direccion": "COLOBRARO 3525", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "363", "razon": "EL FARO BORTOLOTTO CRISTIAN ANDRES", "nombre": "EL FARO BORTOLOTTO CRISTIAN ANDRES", "direccion": "Freire 635", "localidad": "MORENO"}, {"codigo": "1468", "razon": "EL INDIO", "nombre": "ASTRID DAIANA PEREYRA", "direccion": "ACOYTE 1142", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "5987", "razon": "EL OMBU", "nombre": "SADLEIR EDGARDO", "direccion": "LAS ARAUCARIAS 300", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "457", "razon": "EL PORTUGUES SRL", "nombre": "MIGUEL VITOR", "direccion": "CAMINO A CARLOS KEEN KM 3", "localidad": "CARLOS KEEN"}, {"codigo": "557017", "razon": "EL ROBLE", "nombre": "EL ROBLE - JUAN DOMINGO LEIVA", "direccion": "ESTADOS UNIDOS 1452", "localidad": "MORENO"}, {"codigo": "545", "razon": "EL SERRANITO  MORENO PABLO ROSARIO", "nombre": "EL SERRANITO  MORENO PABLO ROSARIO", "direccion": "ORIBE CASI ESQ. BARCALA 1145", "localidad": "MORENO"}, {"codigo": "155", "razon": "EL TRIUNFO - OLIVA MAXIMILIANO LUIS", "nombre": "MAXIMILIANO LUIS OLIVA", "direccion": "", "localidad": "TORRES"}, {"codigo": "670", "razon": "EMILIO FERRETERIA GONZALEZ PEREZ EMILIO SILVANO", "nombre": "EMILIO  GONZALEZ PEREZ", "direccion": "J.M.PAZ 1723 E/LA PIEDAD Y S. DUMONT", "localidad": "MORENO"}, {"codigo": "544", "razon": "FABE  CAO FABIAN OMAR", "nombre": "FABE  CAO FABIAN OMAR", "direccion": "Gallo 1451 ; esquina Paso de los Libres", "localidad": "MORENO"}, {"codigo": "11111255", "razon": "FABY FERRETERIA", "nombre": "CRISTIAN FABIAN GOMEZ", "direccion": "TULISI ESQ. VIDT 4101", "localidad": ""}, {"codigo": "71", "razon": "FERREDEL * DELIA PASCUAL RENE", "nombre": "PASCUAL RENE DELIA", "direccion": "Ruta 8 Parada Robles", "localidad": "EXALTACION DE LA CRUZ"}, {"codigo": "557270", "razon": "FERRETERIA ANDRE E HIJOS", "nombre": "SONIA BARRIOS CORONEL", "direccion": "SALTA 2015", "localidad": ""}, {"codigo": "557457", "razon": "FERRETERIA CATALINA", "nombre": "MIRIAM LOPEZ", "direccion": "CAPORALE 3150", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "515216", "razon": "FERRETERIA CYC EVER CAÑETE", "nombre": "FERRETERIA CYC EVER CAÑETE", "direccion": "BUSCHIAZZO 6701", "localidad": "MORENO"}, {"codigo": "557607", "razon": "FERRETERIA DEL PLATA", "nombre": "FERRETERIA DEL PLATA", "direccion": "PUENTE DEL PLATA 359", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "556628", "razon": "FERRETERIA  EDUARDO PUENTE", "nombre": "EDUARDO PUENTE", "direccion": "TIERRA DEL FUEGO", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "111396", "razon": "FERRETERIA   EL ADRY", "nombre": "FERRETERIA   EL ADRY", "direccion": "EL ZORSAL 698", "localidad": "LUJAN"}, {"codigo": "516808", "razon": "FERRETERÍA LO DE FIGUE", "nombre": "FERRETERÍA LO DE FIGUE", "direccion": "Manuela Gomez 279", "localidad": "MORENO"}, {"codigo": "10142", "razon": "FERRETERIA PABLO", "nombre": "FERRETERIA PABLO", "direccion": "CHILAVERT 1050", "localidad": "ITUZAINGO"}, {"codigo": "111975", "razon": "FERRETERIA PICHU", "nombre": "ROBERTO MARGALEF", "direccion": "CANADA 2420", "localidad": "LUJAN"}, {"codigo": "154", "razon": "FERRIMAR KACJAN MARTIN ANDRES", "nombre": "FERRIMAR KACJAN MARTIN ANDRES", "direccion": "Peyret esq. Villafañe", "localidad": "MORENO"}, {"codigo": "1064", "razon": "FH FERRETERIA * ALARCON MARIANO MARTIN", "nombre": "FH FERRETERIA * ALARCON MARIANO MARTIN", "direccion": "RATTI ESQUINA SANTA CRUZ 3301", "localidad": "MORENO"}, {"codigo": "555832", "razon": "FREDY VASQUEZ", "nombre": "FREDY VASQUEZ", "direccion": "LAS VIOLETAS 1326", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "516534", "razon": "GABRIEL FERRETTO", "nombre": "GABRIEL FERRETTO", "direccion": "AV FERNANDEZ BESCHETEDT 566", "localidad": "LUJAN"}, {"codigo": "516810", "razon": "GASTON ALBERTO GOMEZ", "nombre": "GASTON ALBERTO GOMEZ", "direccion": "Maestro argentino el boatti", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "494", "razon": "GONZALEZ FERRETERIA", "nombre": "MARCIAL ALVARENGA", "direccion": "CAMBACERES (EDGARDO) 1352", "localidad": "MORENO"}, {"codigo": "516702", "razon": "GONZALO IRRIBARREN", "nombre": "GONZALO IRRIBARREN", "direccion": "Colectora Norte 3745 (entre Puente Roca y puerto Lobos)", "localidad": "MORENO"}, {"codigo": "1164", "razon": "GRACIELA FERRETERIA", "nombre": "GRACIELA FERRETERIA", "direccion": "BENITO JUAREZ 2759 ENTRE SAN LUIS", "localidad": "MORENO"}, {"codigo": "86", "razon": "HELGUERA MENDEZ ALBERTO", "nombre": "HELGUERA MENDEZ ALBERTO", "direccion": "Constancio Vigil 1832            La reja", "localidad": "MORENO"}, {"codigo": "626", "razon": "INTEGRAL - SICCA MAURICIO JAVIER", "nombre": "MAURICIO JAVIER SICCA", "direccion": "C. Pelegrini 1200", "localidad": "LUJAN"}, {"codigo": "516464", "razon": "JOSE MARIA PAZ FERRETERIA", "nombre": "JOSE MARIA PAZ FERRETERIA", "direccion": "JOSE MARIA PAZ 517", "localidad": "ITUZAINGO"}, {"codigo": "112098", "razon": "JYR FERRETERIA", "nombre": "CEBALLOS JAVIER ALEJANDRO", "direccion": "Int. Juan Irigoin 4202", "localidad": "SAN MIGUEL"}, {"codigo": "87", "razon": "KUKITA", "nombre": "EDUARDO DANTE KUKITA", "direccion": "SANABRIA 963", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "89", "razon": "KYR  WALTON KARINA AMALIA", "nombre": "KYR  WALTON KARINA AMALIA", "direccion": "Graham  bell 1255", "localidad": "MORENO"}, {"codigo": "399", "razon": "LA BECA", "nombre": "LA BECA", "direccion": "RUTA 5 Y MARIA HELENA", "localidad": "MORENO"}, {"codigo": "10074", "razon": "LA BECA II", "nombre": "LILIANA NOEMI COLMAN", "direccion": "AV. CENTRAL 105", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "501", "razon": "LA ESQUINA  PANZA ANDRES", "nombre": "LA ESQUINA  PANZA ANDRES", "direccion": "Ruben Dario 2901 esq. San jose", "localidad": "MORENO"}, {"codigo": "498", "razon": "LA MAZA  CONSTRUCCIONES LA MAZA SRL", "nombre": "LA MAZA  CONSTRUCCIONES LA MAZA SRL", "direccion": "Alte. Brown y Hudson  Bº las latas", "localidad": "MORENO"}, {"codigo": "511", "razon": "LA UNICA", "nombre": "LA UNICA", "direccion": "ZAPIOLA ESQ. 25 DE MAYO 502", "localidad": "MORENO"}, {"codigo": "1235", "razon": "LEGUIZAMON FERRETERIA (EXVADONE)", "nombre": "LEGUIZAMON FERRETERIA (EXVADONE)", "direccion": "GABOTO 364", "localidad": "MERLO"}, {"codigo": "105922222", "razon": "LUCERO 2", "nombre": "JUAN LUCERO", "direccion": "av. cabred 1235", "localidad": "COLONIA NAC DE ALIENADOS"}, {"codigo": "157", "razon": "LUCERO LEONARDO FABIAN", "nombre": "LEONARDO FABIAN LUCERO", "direccion": "Av. cabred 1235", "localidad": "COLONIA NAC DE ALIENADOS"}, {"codigo": "13511", "razon": "LUIS MARQUES (EL PROGRESO)", "nombre": "LUIS MARQUES (EL PROGRESO)", "direccion": "NEMENSIO ALVAREZ 412", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "120", "razon": "MAFFER", "nombre": "MAFFER", "direccion": "Graham Bell esq. del Carril", "localidad": "MORENO"}, {"codigo": "460", "razon": "MALVINAS  UGALDE PABLO", "nombre": "UGALDE PABLO", "direccion": "RUTA 5 KM 49260", "localidad": "MORENO"}, {"codigo": "556280", "razon": "MARCELO GUILLET", "nombre": "MARCELO GUILLET", "direccion": "ACCESO 9 DE JULIO CUCULLU", "localidad": "SAN ANDRES DE GILES"}, {"codigo": "23", "razon": "MARCOS MORALES ROBERTO ALEJANDRO", "nombre": "MARCOS MORALES ROBERTO ALEJANDRO", "direccion": "Dastugue y Graham Bell", "localidad": "MORENO"}, {"codigo": "11111878", "razon": "MARISA MARGOSA", "nombre": "MARISA MARGOSA", "direccion": "puente del inca 500", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "43", "razon": "MARY QUIROZ DIAZ ANGELA MARIA", "nombre": "MARY QUIROZ DIAZ ANGELA MARIA", "direccion": "Bongiovani 1751", "localidad": "MORENO"}, {"codigo": "112122", "razon": "MATERIALES DANTE", "nombre": "QUISPE RAMOS DANTE", "direccion": "el chasqui 1250", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "552", "razon": "MI SOL  PIRRELLO CLAUDIO CESAR", "nombre": "MI SOL  PIRRELLO CLAUDIO CESAR", "direccion": "ALEM 2931", "localidad": "MORENO"}, {"codigo": "1428", "razon": "MUÑOZ MAURICIO FEDERICO", "nombre": "MUÑOZ MAURICIO FEDERICO", "direccion": "TROPERO MOREIRA 2110 Y PADRE VARELA", "localidad": "LUJAN"}, {"codigo": "647", "razon": "NANO  ORTIZ ROMINA PAOLA", "nombre": "NANO  ORTIZ ROMINA PAOLA", "direccion": "Irigoyen esq. Almagro 2490  Ituzaingo", "localidad": "MORENO"}, {"codigo": "556807", "razon": "NIELSEN HOEGH ERIC", "nombre": "NIELSEN HOEGH ERIC", "direccion": "J. TRUEBA 151", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "805", "razon": "NILO FERRETERIA", "nombre": "NILO FERRETERIA", "direccion": "PEREZ QUINTANA 1278", "localidad": "ITUZAINGO"}, {"codigo": "111561", "razon": "PARQUE LAZA", "nombre": "PARQUE LAZA", "direccion": "echegaray esquina la tradicion 1487", "localidad": "LUJAN"}, {"codigo": "1078", "razon": "PINTUMIX FERRETERIA RIOS NATALIA SOLEDAD", "nombre": "PINTUMIX FERRETERIA RIOS NATALIA SOLEDAD", "direccion": "HIPOLITO IRIGOYEN 428", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "437", "razon": "PLAN Z  FIGUEIRAS RUBEN OMAR", "nombre": "PLAN Z  FIGUEIRAS RUBEN OMAR", "direccion": "", "localidad": "MORENO"}, {"codigo": "445", "razon": "POLO QUIROGA DIEGO SEBASTIAN", "nombre": "POLO QUIROGA DIEGO SEBASTIAN", "direccion": "Semana de Mayo 1991", "localidad": "MORENO"}, {"codigo": "131", "razon": "PUEBLO NUEVO - PALACIOS GASTON ARIEL", "nombre": "GASTON ARIEL PALACIOS", "direccion": "TROPERO MOREYRA Y LOS PLATANOS", "localidad": "PUEBLO NUEVO"}, {"codigo": "965", "razon": "RETAMAR", "nombre": "CEBALLOS FRANCO NICOLAS", "direccion": "maestro ferreira 3693", "localidad": "MORENO"}, {"codigo": "509", "razon": "RHOSS", "nombre": "ELVES MAIDANA", "direccion": "LAGUNA CORTES 541", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "1459", "razon": "RICARDO FERRETERIA JORGE ANDRES YOUNG", "nombre": "RICARDO FERRETERIA JORGE ANDRES YOUNG", "direccion": "CERRITO 1452", "localidad": "ITUZAINGO"}, {"codigo": "974", "razon": "RICHARD FERRETERIA", "nombre": "CELINA ELIZABETH VALIENTE FRANCO", "direccion": "FRAY MANUEL DE TORRES 860", "localidad": "LUJAN"}, {"codigo": "1371", "razon": "RIOS FERRETERIA", "nombre": "RIOS FERRETERIA", "direccion": "Luis Maria Campos 1231 E/Avellaneda y Lugones", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "13321", "razon": "RODRIGO FABRIZIO VERA", "nombre": "FERRETERIA LA FRATERNIDAD", "direccion": "del lazo 4293", "localidad": "ITUZAINGO"}, {"codigo": "9", "razon": "RODRIGUEZ PENINO MARTHA LILIANA", "nombre": "RODRIGUEZ PENINO MARTHA LILIANA", "direccion": "pereyra 325", "localidad": "MORENO"}, {"codigo": "569", "razon": "ROGER", "nombre": "SILVIA ANDREA HEREÑU", "direccion": "JOSE C PAZ 360", "localidad": ""}, {"codigo": "681", "razon": "RUBEN DARIO  GUVIAZDA RAUL HORACIO", "nombre": "RUBEN DARIO  GUVIAZDA RAUL HORACIO", "direccion": "RUBEN DARIO ESQUINA MIERO 1387", "localidad": "LA REJA"}, {"codigo": "652", "razon": "RUHOFF", "nombre": "MAXIMILIANO ADRIAN RUHOFF", "direccion": "RUTA 24", "localidad": "GENERAL RODRIGUEZ"}, {"codigo": "1348", "razon": "RUTA 192 MATERIALES - GUILLET GABRIEL", "nombre": "GABRIEL GUILLET", "direccion": "RUTA 192 KM 1.500 LUJAN", "localidad": "LUJAN"}, {"codigo": "47", "razon": "SANABRIA  DIAZ JUANA", "nombre": "SANABRIA  DIAZ JUANA", "direccion": "Peyret 1876 y antofagasta", "localidad": "MORENO"}, {"codigo": "571", "razon": "SANTA BRIGIDA", "nombre": "MENDAN MENDOZA DANIELA LORENA", "direccion": "Ruta 24 nº 307", "localidad": "FRANCISCO ALVAREZ"}, {"codigo": "650", "razon": "SANTA FE  BAMONTE IVAN AUGUSTO RENE", "nombre": "SANTA FE  BAMONTE IVAN AUGUSTO RENE", "direccion": "SANTA FE 1811", "localidad": "MORENO"}, {"codigo": "873", "razon": "SILVANA FERRETERIA", "nombre": "SILVANA FERRETERIA", "direccion": "TITO LIVIO 4659 E/ H. PRIMERO * F. ALVAREZ", "localidad": "MORENO"}, {"codigo": "235", "razon": "SILVIA Y FABI (ITUZAINGO)", "nombre": "SILVIA Y FABI (ITUZAINGO)", "direccion": "Camili 2799", "localidad": "MORENO"}, {"codigo": "557576", "razon": "TEJERA CLAUDIA ROSA", "nombre": "TEJERA CLAUDIA ROSA", "direccion": "JULIAN ALVAREZ 2316", "localidad": "MORENO"}, {"codigo": "556793", "razon": "TODO LADRILLOS", "nombre": "EMILIANO FERNANDEZ", "direccion": "COLECTORA RUTA 5 Y CALLE 555", "localidad": "LUJAN"}, {"codigo": "11111392", "razon": "ZABALA HORACIO FERRETERIA", "nombre": "ZABALA HORACIO FERRETERIA", "direccion": "CARLOS GARDEL 296", "localidad": "MARCOS PAZ"}]};
+
 const DEFAULT_PASSWORDS = {
   "Cristian Albornoz": "cristian",
   "Dario Rocha":       "dario",
@@ -433,146 +442,95 @@ const DEFAULT_PASSWORDS = {
   "Hernán Aranda":     "hernan"
 };
 
-// Las contraseñas personalizadas se guardan en localStorage
-// clave: "pwd_<nombre>"  valor: <nueva_clave>
-// Si no existe, se usa la contraseña por defecto y se exige cambio.
-
-function getPassword(user) {
-  return localStorage.getItem('pwd_' + user) || DEFAULT_PASSWORDS[user];
-}
-
-function isFirstLogin(user) {
-  return !localStorage.getItem('pwd_' + user);
-}
-
-function savePassword(user, pwd) {
-  localStorage.setItem('pwd_' + user, pwd);
-}
+function getPassword(u) { return localStorage.getItem('pwd_' + u) || DEFAULT_PASSWORDS[u]; }
+function isFirstLogin(u) { return !localStorage.getItem('pwd_' + u); }
+function savePassword(u, p) { localStorage.setItem('pwd_' + u, p); }
 
 // Estado
 let currentUser = null;
+let misClientes = [];
 let tracking = false;
 let entryTime = null;
 let trackPoints = [];
 let watchId = null;
 let durationInterval = null;
 let totalDistance = 0;
+let visitasHoy = [];
+let visitaActual = null;
+let clienteSeleccionado = null;
 
 // Reloj
-setInterval(() => {
-  document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8);
-}, 1000);
+setInterval(() => { document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8); }, 1000);
 document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8);
 
-function formatDate(d) {
-  return d.toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'long' });
-}
+function formatDate(d) { return d.toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long'}); }
 function formatTime(d) { return d.toTimeString().slice(0,5); }
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
-  // app-screen no es .screen, manejo aparte
-  document.getElementById('app-screen').style.display = id === 'app' ? 'flex' : 'none';
-}
 
 // ---- LOGIN ----
 window.doLogin = function() {
   const user = document.getElementById('login-user').value;
   const pass = document.getElementById('login-pass').value;
   const err  = document.getElementById('login-error');
-
-  if (!user || !DEFAULT_PASSWORDS[user]) {
-    err.style.display = 'block';
-    err.textContent = 'Seleccioná tu nombre';
-    return;
-  }
-
-  if (getPassword(user) !== pass) {
-    err.style.display = 'block';
-    err.textContent = 'Contraseña incorrecta';
-    return;
-  }
-
+  if (!user || !DEFAULT_PASSWORDS[user]) { err.style.display='block'; err.textContent='Seleccioná tu nombre'; return; }
+  if (getPassword(user) !== pass) { err.style.display='block'; err.textContent='Contraseña incorrecta'; return; }
   err.style.display = 'none';
   currentUser = user;
+  misClientes = CLIENTES[user] || [];
 
   if (isFirstLogin(user)) {
-    // Forzar cambio de contraseña
     document.getElementById('chpass-name').textContent = '¡Hola, ' + user.split(' ')[0] + '!';
     document.getElementById('new-pass1').value = '';
     document.getElementById('new-pass2').value = '';
     document.getElementById('chpass-error').style.display = 'none';
-    showScreen('change-pass-screen');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('change-pass-screen').classList.add('active');
     document.getElementById('app-screen').style.display = 'none';
-    document.getElementById('login-screen').classList.remove('active');
   } else {
     enterApp();
   }
 };
 
-// ---- CAMBIO DE CONTRASEÑA ----
 window.checkStrength = function() {
   const val = document.getElementById('new-pass1').value;
-  const bar  = document.getElementById('str-bar');
-  const hint = document.getElementById('str-hint');
-  let score = 0;
-  if (val.length >= 6) score++;
-  if (val.length >= 10) score++;
-  if (/[0-9]/.test(val)) score++;
-  if (/[^a-zA-Z0-9]/.test(val)) score++;
-
-  const colors = ['#ff4757','#f4c430','#00d97e','#00d97e'];
-  const labels = ['Muy corta','Débil','Buena','Fuerte'];
-  const widths  = ['25%','50%','75%','100%'];
-  const i = Math.max(0, score - 1);
-  bar.style.width = val.length === 0 ? '0%' : widths[i];
-  bar.style.background = val.length === 0 ? '' : colors[i];
-  hint.textContent = val.length === 0 ? 'Ingresá tu nueva contraseña' : labels[i];
+  const bar = document.getElementById('str-bar'), hint = document.getElementById('str-hint');
+  let s = 0;
+  if (val.length >= 6) s++;
+  if (val.length >= 10) s++;
+  if (/[0-9]/.test(val)) s++;
+  if (/[^a-zA-Z0-9]/.test(val)) s++;
+  const colors=['#ff4757','#f4c430','#00d97e','#00d97e'], labels=['Muy corta','Débil','Buena','Fuerte'], widths=['25%','50%','75%','100%'];
+  const i = Math.max(0, s-1);
+  bar.style.width = val.length===0?'0%':widths[i]; bar.style.background = val.length===0?'':colors[i];
+  hint.textContent = val.length===0?'Ingresá tu nueva contraseña':labels[i];
 };
 
 window.doChangePass = function() {
-  const p1 = document.getElementById('new-pass1').value;
-  const p2 = document.getElementById('new-pass2').value;
-  const err = document.getElementById('chpass-error');
-
-  if (p1.length < 6) {
-    err.textContent = 'La contraseña debe tener al menos 6 caracteres';
-    err.style.display = 'block'; return;
-  }
-  if (p1 !== p2) {
-    err.textContent = 'Las contraseñas no coinciden';
-    err.style.display = 'block'; return;
-  }
-
+  const p1=document.getElementById('new-pass1').value, p2=document.getElementById('new-pass2').value;
+  const err=document.getElementById('chpass-error');
+  if (p1.length<6) { err.textContent='Mínimo 6 caracteres'; err.style.display='block'; return; }
+  if (p1!==p2) { err.textContent='Las contraseñas no coinciden'; err.style.display='block'; return; }
   savePassword(currentUser, p1);
-  err.style.display = 'none';
-  showToast('✅ Contraseña guardada correctamente');
+  showToast('✅ Contraseña guardada');
   enterApp();
 };
 
-// ---- ENTRAR A LA APP ----
 function enterApp() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('app-screen').style.display = 'flex';
-
-  const initials = currentUser.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  document.getElementById('avatar-initials').textContent = initials;
+  document.getElementById('avatar-initials').textContent = currentUser.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('display-name').textContent = currentUser;
   document.getElementById('display-date').textContent = formatDate(new Date());
-
   loadTodaySessions();
+  cargarClientes();
+  visitasHoy = {};
 }
 
-// ---- LOGOUT ----
 window.doLogout = function() {
   if (tracking) { showToast('⚠️ Cerrá el turno antes de salir'); return; }
-  currentUser = null;
+  currentUser = null; misClientes = []; visitasHoy = [];
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('login-screen').classList.add('active');
+  visitasHoy = {};
   document.getElementById('login-pass').value = '';
   document.getElementById('login-user').value = '';
 };
@@ -585,27 +543,33 @@ function startGPS() {
     pos => {
       setGPS('ok', `✅ GPS activo (±${Math.round(pos.coords.accuracy)}m)`);
       if (!tracking) return;
-      const pt = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy, ts: new Date().toISOString() };
-      if (trackPoints.length > 0) {
-        const last = trackPoints[trackPoints.length-1];
-        totalDistance += haversine(last.lat, last.lng, pt.lat, pt.lng);
+      const pt = {lat:pos.coords.latitude, lng:pos.coords.longitude, acc:pos.coords.accuracy, ts:new Date().toISOString()};
+      if (trackPoints.length>0) {
+        const last=trackPoints[trackPoints.length-1];
+        totalDistance += haversine(last.lat,last.lng,pt.lat,pt.lng);
         document.getElementById('dist-count').textContent = totalDistance.toFixed(2);
       }
       trackPoints.push(pt);
       document.getElementById('pts-count').textContent = trackPoints.length;
     },
-    err => setGPS('off','⚠️ Sin GPS: ' + err.message),
-    { enableHighAccuracy: true, timeout: 30000, maximumAge: 5000 }
+    err => {
+      let msg = '⚠️ Sin GPS';
+      if (err.code === 1) msg = '⚠️ Permiso GPS denegado — habilitalo en Ajustes';
+      else if (err.code === 2) msg = '⚠️ GPS no disponible';
+      else if (err.code === 3) msg = '⚠️ GPS tardó demasiado';
+      setGPS('off', msg);
+    },
+    {enableHighAccuracy:true, timeout:30000, maximumAge:5000}
   );
 }
 
 function stopGPS() {
-  if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+  if (watchId!==null) { navigator.geolocation.clearWatch(watchId); watchId=null; }
   setGPS('off','GPS inactivo');
 }
 
 function setGPS(state, text) {
-  document.getElementById('gps-status').className = 'gps-row gps-' + (state==='ok'?'ok':state==='searching'?'searching':'off');
+  document.getElementById('gps-status').className = 'gps-row gps-'+(state==='ok'?'ok':state==='searching'?'searching':'off');
   document.getElementById('gps-text').textContent = text;
 }
 
@@ -618,25 +582,29 @@ function haversine(lat1,lon1,lat2,lon2) {
 // ---- TOGGLE TURNO ----
 window.toggleTracking = async function() {
   if (!tracking) {
-    tracking = true; entryTime = new Date(); trackPoints = []; totalDistance = 0;
+    tracking=true; entryTime=new Date(); trackPoints=[]; totalDistance=0; visitasHoy=[];
 
     document.getElementById('entry-time').textContent = formatTime(entryTime);
     document.getElementById('entry-time').className = 'time-item-val entry';
     document.getElementById('exit-time').textContent = '--:--';
     document.getElementById('exit-time').className = 'time-item-val empty';
-
     document.getElementById('track-btn').className = 'btn-track on';
     document.getElementById('btn-icon').textContent = '⏹';
     document.getElementById('btn-label').textContent = 'FINALIZAR';
     document.getElementById('btn-hint').textContent = 'Presioná para terminar tu turno';
-
     document.getElementById('status-badge').className = 'status-badge active';
     document.getElementById('status-text').textContent = 'En turno';
     document.getElementById('status-dot').className = 'dot pulse';
 
+    // Habilitar buscador
+    const inp = document.getElementById('cliente-search');
+    inp.disabled = false;
+    inp.placeholder = 'Buscá un cliente para registrar visita...';
+    document.getElementById('cliente-results').innerHTML = '<div class="search-hint">Escribí el nombre del cliente</div>';
+
     durationInterval = setInterval(() => {
-      const e = Math.floor((Date.now()-entryTime.getTime())/1000);
-      const h = Math.floor(e/3600), m = Math.floor((e%3600)/60);
+      const e=Math.floor((Date.now()-entryTime.getTime())/1000);
+      const h=Math.floor(e/3600), m=Math.floor((e%3600)/60);
       document.getElementById('dur-count').textContent = `${h}:${String(m).padStart(2,'0')}`;
     }, 10000);
 
@@ -644,22 +612,29 @@ window.toggleTracking = async function() {
     showToast('✅ Turno iniciado — ' + formatTime(entryTime));
 
   } else {
-    tracking = false;
-    const exitTime = new Date();
+    // Si hay visita activa, la cerramos automáticamente
+    if (visitaActual) { cerrarVisita(); }
+
+    tracking=false;
+    const exitTime=new Date();
     clearInterval(durationInterval);
     stopGPS();
 
     document.getElementById('exit-time').textContent = formatTime(exitTime);
     document.getElementById('exit-time').className = 'time-item-val exit';
-
     document.getElementById('track-btn').className = 'btn-track off';
     document.getElementById('btn-icon').textContent = '▶';
     document.getElementById('btn-label').textContent = 'INICIAR';
     document.getElementById('btn-hint').textContent = 'Presioná para comenzar tu turno';
-
     document.getElementById('status-badge').className = 'status-badge inactive';
     document.getElementById('status-text').textContent = 'Fuera de turno';
     document.getElementById('status-dot').className = 'dot';
+
+    // Deshabilitar buscador
+    const inp = document.getElementById('cliente-search');
+    inp.disabled=true; inp.value='';
+    inp.placeholder='Iniciá el turno para buscar clientes...';
+    document.getElementById('cliente-results').innerHTML = '<div class="search-hint">Iniciá el turno para registrar visitas</div>';
 
     const session = {
       empleado: currentUser,
@@ -670,12 +645,13 @@ window.toggleTracking = async function() {
       distancia_km: parseFloat(totalDistance.toFixed(3)),
       puntos: trackPoints.length,
       recorrido: trackPoints,
+      visitas: visitasHoy,
       creado: serverTimestamp()
     };
 
     try {
       await addDoc(collection(db,'sesiones'), session);
-      showToast('💾 Sesión guardada correctamente');
+      showToast('💾 Sesión guardada — ' + visitasHoy.length + ' visitas');
     } catch(e) {
       showToast('⚠️ Error al guardar: ' + e.message);
       console.error(e);
@@ -683,6 +659,141 @@ window.toggleTracking = async function() {
     loadTodaySessions();
   }
 };
+
+// ---- BUSCADOR DE CLIENTES ----
+window.buscarCliente = function() {
+  const q = document.getElementById('cliente-search').value.trim().toLowerCase();
+  const results = document.getElementById('cliente-results');
+
+  if (q.length < 2) {
+    results.innerHTML = '<div class="search-hint">Escribí al menos 2 letras</div>';
+    return;
+  }
+
+  const encontrados = misClientes.filter(c =>
+    c.razon.toLowerCase().includes(q) ||
+    c.nombre.toLowerCase().includes(q) ||
+    c.codigo.toLowerCase().includes(q) ||
+    c.localidad.toLowerCase().includes(q)
+  ).slice(0, 20);
+
+  if (encontrados.length === 0) {
+    results.innerHTML = '<div class="search-hint">No se encontraron clientes</div>';
+    return;
+  }
+
+  results.innerHTML = '';
+  encontrados.forEach(c => {
+    const item = document.createElement('div');
+    item.className = 'cliente-item';
+    item.innerHTML = `
+      <span class="cliente-item-icon">🏪</span>
+      <div class="cliente-item-info">
+        <div class="cliente-razon">${c.razon}</div>
+        <div class="cliente-dir">📍 ${c.direccion || '—'} · ${c.localidad || ''}</div>
+        <div class="cliente-cod">Cód: ${c.codigo}</div>
+      </div>
+    `;
+    item.onclick = () => abrirModalVisita(c);
+    results.appendChild(item);
+  });
+};
+
+// ---- MODAL VISITA ----
+function abrirModalVisita(cliente) {
+  if (!tracking) { showToast('⚠️ Primero iniciá el turno'); return; }
+  clienteSeleccionado = cliente;
+  document.getElementById('modal-cli-name').textContent = cliente.razon;
+  document.getElementById('modal-cli-dir').textContent = '📍 ' + (cliente.direccion || '—') + (cliente.localidad ? ' · ' + cliente.localidad : '');
+  document.getElementById('modal-cli-cod').textContent = 'Código: ' + cliente.codigo;
+  document.getElementById('modal-visita').classList.add('open');
+}
+
+window.cerrarModal = function() {
+  document.getElementById('modal-visita').classList.remove('open');
+  clienteSeleccionado = null;
+};
+
+window.confirmarVisita = function() {
+  if (!clienteSeleccionado) return;
+
+  // Si había visita activa, cerrarla
+  if (visitaActual) { cerrarVisita(true); }
+
+  visitaActual = {
+    cliente: clienteSeleccionado,
+    entrada: new Date().toISOString(),
+    lat: trackPoints.length ? trackPoints[trackPoints.length-1].lat : null,
+    lng: trackPoints.length ? trackPoints[trackPoints.length-1].lng : null
+  };
+
+  // Mostrar visita activa
+  document.getElementById('visita-activa').style.display = 'flex';
+  document.getElementById('visita-nombre').textContent = clienteSeleccionado.razon;
+  document.getElementById('visita-hora').textContent = 'Llegada: ' + formatTime(new Date(visitaActual.entrada));
+
+  cerrarModal();
+  document.getElementById('cliente-search').value = '';
+  document.getElementById('cliente-results').innerHTML = '<div class="search-hint">Escribí el nombre del cliente</div>';
+
+  showToast('📍 Visita registrada: ' + clienteSeleccionado.razon.slice(0,25));
+};
+
+window.cerrarVisita = function(silencioso = false) {
+  if (!visitaActual) return;
+
+  const salida = new Date().toISOString();
+  const durMin = Math.round((new Date(salida) - new Date(visitaActual.entrada)) / 60000);
+
+  const visita = {
+    codigo: visitaActual.cliente.codigo,
+    razon: visitaActual.cliente.razon,
+    direccion: visitaActual.cliente.direccion,
+    localidad: visitaActual.cliente.localidad,
+    entrada: visitaActual.entrada,
+    salida: salida,
+    duracion_min: durMin,
+    lat: visitaActual.lat,
+    lng: visitaActual.lng
+  };
+
+  visitasHoy.push(visita);
+  document.getElementById('vis-count').textContent = visitasHoy.length;
+
+  // Ocultar visita activa
+  document.getElementById('visita-activa').style.display = 'none';
+  visitaActual = null;
+
+  // Actualizar lista de visitas
+  renderVisitasHoy();
+
+  if (!silencioso) showToast('✅ Salida registrada — ' + durMin + ' min en ' + visita.razon.slice(0,20));
+};
+
+function renderVisitasHoy() {
+  const section = document.getElementById('visitas-section');
+  const list = document.getElementById('visitas-list');
+
+  if (visitasHoy.length === 0) { section.style.display='none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = '';
+
+  visitasHoy.forEach(v => {
+    const ei = new Date(v.entrada).toTimeString().slice(0,5);
+    const si = v.salida ? new Date(v.salida).toTimeString().slice(0,5) : '...';
+    const item = document.createElement('div');
+    item.className = 'visita-item';
+    item.innerHTML = `
+      <div>
+        <div class="visita-item-name">${v.razon}</div>
+        <div class="visita-item-hora">${ei} → ${si}</div>
+        <div class="visita-item-dur">${v.localidad || ''}</div>
+      </div>
+      <span class="visita-badge">${v.duracion_min ?? '...'} min</span>
+    `;
+    list.appendChild(item);
+  });
+}
 
 // ---- SESIONES DEL DÍA ----
 async function loadTodaySessions() {
@@ -697,15 +808,16 @@ async function loadTodaySessions() {
     if (snap.empty) { list.innerHTML='<div class="empty-state">No hay sesiones hoy</div>'; return; }
     list.innerHTML='';
     snap.forEach(doc => {
-      const d = doc.data();
-      const ei = new Date(d.entrada).toTimeString().slice(0,5);
-      const si = new Date(d.salida).toTimeString().slice(0,5);
-      const item = document.createElement('div');
+      const d=doc.data();
+      const ei=new Date(d.entrada).toTimeString().slice(0,5);
+      const si=new Date(d.salida).toTimeString().slice(0,5);
+      const nvis = (d.visitas||[]).length;
+      const item=document.createElement('div');
       item.className='session-item';
-      item.innerHTML=`<div>
+      item.innerHTML=`
         <div class="session-date">${ei} → ${si}</div>
-        <div class="session-meta">${d.duracion_min} min · ${d.distancia_km} km · ${d.puntos} pts GPS</div>
-      </div>`;
+        <div class="session-meta">${d.duracion_min} min · ${d.distancia_km} km · ${nvis} visita${nvis!==1?'s':''}</div>
+      `;
       list.appendChild(item);
     });
   } catch(e) {
@@ -714,21 +826,31 @@ async function loadTodaySessions() {
   }
 }
 
-// ---- TOAST ----
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-// Enter en login
-document.getElementById('login-pass').addEventListener('keypress', e => {
-  if (e.key==='Enter') window.doLogin();
-});
-document.getElementById('new-pass2').addEventListener('keypress', e => {
-  if (e.key==='Enter') window.doChangePass();
-});
+document.getElementById('login-pass').addEventListener('keypress', e=>{ if(e.key==='Enter') window.doLogin(); });
+document.getElementById('new-pass2').addEventListener('keypress', e=>{ if(e.key==='Enter') window.doChangePass(); });
+document.getElementById('modal-visita').addEventListener('click', e=>{ if(e.target===document.getElementById('modal-visita')) window.cerrarModal(); });
 
 </script>
+
+<!-- MODAL VISITA -->
+<div id="modal-visita" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--surface);border-radius:20px 20px 0 0;padding:28px 24px;width:100%;max-width:440px;margin:0 auto;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:6px;" id="modal-cliente-nombre">Cliente</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;" id="modal-cliente-dir">Dirección</div>
+    <div style="font-size:13px;margin-bottom:20px;">¿Confirmás que estás visitando este cliente ahora?</div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="cancelarVisita()" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:12px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;">Cancelar</button>
+      <button onclick="confirmarVisita()" style="flex:2;background:var(--green);color:#000;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;">✅ Sí, estoy aquí</button>
+    </div>
+  </div>
+</div>
+
+
 </body>
 </html>
