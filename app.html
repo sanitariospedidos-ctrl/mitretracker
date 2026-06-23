@@ -3,7 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
+
+  <!-- PWA META TAGS -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mitre Tracker">
+  <meta name="application-name" content="Mitre Tracker">
+  <meta name="theme-color" content="#0f1923">
+  <meta name="msapplication-TileColor" content="#0f1923">
+
+  <!-- ICONOS PWA (emoji como SVG inline) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f1923'/><text y='.9em' font-size='75' x='12'>📍</text></svg>">
+
+  <!-- MANIFEST INLINE -->
+  <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Mitre%20Tracker%22%2C%22short_name%22%3A%22Tracker%22%2C%22description%22%3A%22Control%20de%20presencia%20y%20recorridos%22%2C%22start_url%22%3A%22.%2Fapp.html%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f1923%22%2C%22theme_color%22%3A%22%230f1923%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Crect%20width%3D'100'%20height%3D'100'%20rx%3D'22'%20fill%3D'%230f1923'%2F%3E%3Ctext%20y%3D'.9em'%20font-size%3D'75'%20x%3D'12'%3E%F0%9F%93%8D%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0f1923">
 <title>Mitre Tracker</title>
@@ -225,6 +240,71 @@
     border-radius: 20px; padding: 2px 8px;
     font-size: 10px; font-weight: 700; margin-top: 3px;
   }
+
+
+  /* ---- INSTALAR APP ---- */
+  .install-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    z-index: 998;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    max-width: 320px;
+    width: 90%;
+  }
+  .install-banner.show { display: flex; }
+  .install-icon { font-size: 28px; flex-shrink: 0; }
+  .install-text { flex: 1; }
+  .install-text strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .install-text span { font-size: 11px; color: var(--text-muted); }
+  .btn-install {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-install-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 2px 4px;
+    flex-shrink: 0;
+  }
+
+  /* Instrucciones iOS */
+  .ios-instructions {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 2px solid var(--accent);
+    border-radius: 16px 16px 0 0;
+    padding: 20px 24px 32px;
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .ios-instructions.show { display: flex; }
+  .ios-title { font-size: 15px; font-weight: 700; text-align: center; }
+  .ios-steps { display: flex; flex-direction: column; gap: 10px; }
+  .ios-step { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+  .ios-num { width: 26px; height: 26px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .btn-ios-close { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
 
 </style>
 </head>
@@ -933,6 +1013,113 @@ document.getElementById('modal-visita').addEventListener('click', e=>{ if(e.targ
   </div>
 </div>
 
+
+
+<!-- BANNER INSTALAR APP -->
+<div class="install-banner" id="install-banner">
+  <div class="install-icon">📍</div>
+  <div class="install-text">
+    <strong>Instalar Mitre Tracker</strong>
+    <span>Agregá la app a tu pantalla de inicio</span>
+  </div>
+  <button class="btn-install" id="btn-install">Instalar</button>
+  <button class="btn-install-close" id="btn-install-close">✕</button>
+</div>
+
+<!-- INSTRUCCIONES iOS -->
+<div class="ios-instructions" id="ios-instructions">
+  <div class="ios-title">📱 Instalar en iPhone</div>
+  <div class="ios-steps">
+    <div class="ios-step">
+      <div class="ios-num">1</div>
+      <span>Tocá el botón <strong>Compartir</strong> ⬆️ en Safari (abajo en la pantalla)</span>
+    </div>
+    <div class="ios-step">
+      <div class="ios-num">2</div>
+      <span>Buscá y tocá <strong>"Agregar a pantalla de inicio"</strong></span>
+    </div>
+    <div class="ios-step">
+      <div class="ios-num">3</div>
+      <span>Tocá <strong>"Agregar"</strong> arriba a la derecha</span>
+    </div>
+  </div>
+  <button class="btn-ios-close" id="btn-ios-close">Entendido ✓</button>
+</div>
+
+<!-- SERVICE WORKER INLINE -->
+<script>
+// Registrar Service Worker para funcionamiento offline
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'mitre-tracker-v1';
+    const URLS = [self.location.pathname];
+
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS)));
+      self.skipWaiting();
+    });
+
+    self.addEventListener('activate', e => {
+      e.waitUntil(caches.keys().then(keys =>
+        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      ));
+      self.clients.claim();
+    });
+
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        fetch(e.request).catch(() => caches.match(e.request))
+      );
+    });
+  `;
+
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl, { scope: '/' })
+    .then(() => console.log('SW registrado'))
+    .catch(e => console.log('SW error:', e));
+}
+
+// Detectar dispositivo
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isAndroid = /android/i.test(navigator.userAgent);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                  || window.navigator.standalone === true;
+
+let deferredPrompt = null;
+
+// Android — capturar evento de instalación
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!isStandalone) {
+    setTimeout(() => document.getElementById('install-banner').classList.add('show'), 3000);
+  }
+});
+
+// Instalar en Android
+document.getElementById('btn-install').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('install-banner').classList.remove('show');
+  }
+});
+
+// Cerrar banner Android
+document.getElementById('btn-install-close').addEventListener('click', () => {
+  document.getElementById('install-banner').classList.remove('show');
+});
+
+// iOS — mostrar instrucciones manuales
+if (isIOS && !isStandalone) {
+  setTimeout(() => document.getElementById('ios-instructions').classList.add('show'), 3000);
+}
+document.getElementById('btn-ios-close').addEventListener('click', () => {
+  document.getElementById('ios-instructions').classList.remove('show');
+});
+</script>
 
 </body>
 </html>
