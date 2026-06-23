@@ -1197,18 +1197,15 @@ document.getElementById('btn-ios-close').addEventListener('click', () => {
 });
 
 // ---- AUTO-RESTAURAR SESIÓN AL CARGAR ----
+// Si hay usuario guardado, entrar directo sin pedir login de nuevo.
+// enterApp() ya llama restaurarTurno() que verifica Firebase.
 (async function() {
   const savedUser = localStorage.getItem('currentUser');
   if (!savedUser) return;
-  try {
-    const snap = await getDoc(doc(db, 'estados', savedUser));
-    if (snap.exists() && snap.data().activo) {
-      currentUser = savedUser;
-      const cached = localStorage.getItem('clientes_' + savedUser);
-      misClientes = cached ? JSON.parse(cached) : [];
-      await enterApp();
-    }
-  } catch(e) { console.log('Sin conexión, no se pudo auto-restaurar turno'); }
+  currentUser = savedUser;
+  const cached = localStorage.getItem('clientes_' + savedUser);
+  misClientes = cached ? JSON.parse(cached) : [];
+  await enterApp();
 })();
 </script>
 
