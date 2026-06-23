@@ -416,7 +416,7 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy }
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, doc, setDoc }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -611,6 +611,15 @@ window.toggleTracking = async function() {
     startGPS();
     showToast('✅ Turno iniciado — ' + formatTime(entryTime));
 
+    // Actualizar estado en Firebase (panel lo ve en tiempo real)
+    try {
+      await setDoc(doc(db, 'estados', currentUser), {
+        activo: true,
+        desde: entryTime.toISOString(),
+        empleado: currentUser
+      });
+    } catch(e) { console.error('Error estado:', e); }
+
   } else {
     // Si hay visita activa, la cerramos automáticamente
     if (visitaActual) { cerrarVisita(); }
@@ -635,6 +644,15 @@ window.toggleTracking = async function() {
     inp.disabled=true; inp.value='';
     inp.placeholder='Iniciá el turno para buscar clientes...';
     document.getElementById('cliente-results').innerHTML = '<div class="search-hint">Iniciá el turno para registrar visitas</div>';
+
+    // Actualizar estado en Firebase
+    try {
+      await setDoc(doc(db, 'estados', currentUser), {
+        activo: false,
+        hasta: exitTime.toISOString(),
+        empleado: currentUser
+      });
+    } catch(e) { console.error('Error estado:', e); }
 
     const session = {
       empleado: currentUser,
