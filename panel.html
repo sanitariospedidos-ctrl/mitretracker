@@ -967,8 +967,8 @@ document.getElementById('btn-export-ses').addEventListener('click', () => {
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${s.empleado} — ${fd}</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"><\/script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js">${'</'}script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">${'</'}script>
 <style>body{font-family:sans-serif;margin:0;background:#f5f7fa}.header{background:#1a2535;color:white;padding:20px 28px}.header h1{font-size:18px}.header p{font-size:12px;opacity:.7;margin-top:3px}.stats{display:flex;background:white;border-bottom:1px solid #dde3ef}.stat{flex:1;padding:14px 18px;border-right:1px solid #eee;text-align:center}.stat:last-child{border-right:none}.sv{font-size:20px;font-weight:800;color:${color}}.sl{font-size:10px;color:#8b949e;text-transform:uppercase;margin-top:2px}#map{height:500px}.footer{text-align:center;padding:14px;font-size:11px;color:#8b949e;background:white;border-top:1px solid #eee}</style>
 </head><body>
 <div class="header"><h1>📍 ${s.empleado}</h1><p>${fd} · Sanitarios Mitre</p></div>
@@ -991,7 +991,7 @@ L.circleMarker(pts[0],{radius:10,fillColor:'#3fb950',color:'#fff',weight:2,fillO
 L.circleMarker(pts[pts.length-1],{radius:10,fillColor:'#f85149',color:'#fff',weight:2,fillOpacity:1}).bindPopup('🔴 SALIDA ${si}').addTo(map);
 map.fitBounds(poly.getBounds(),{padding:[40,40]});
 }
-<\/script>
+${'</'}script>
 <!-- MODAL ACTUALIZAR CLIENTES -->
 <div class="modal-clientes-bg" id="modal-clientes">
   <div class="modal-clientes-card">
