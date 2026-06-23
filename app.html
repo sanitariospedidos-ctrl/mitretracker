@@ -549,7 +549,7 @@ function startGPS() {
   if (!navigator.geolocation) { setGPS('off','❌ GPS no disponible'); return; }
   setGPS('searching','🔍 Buscando señal GPS...');
   watchId = navigator.geolocation.watchPosition(
-    pos => {
+    async pos => {
       setGPS('ok', `✅ GPS activo (±${Math.round(pos.coords.accuracy)}m)`);
       if (!tracking) return;
       const pt = {lat:pos.coords.latitude, lng:pos.coords.longitude, acc:pos.coords.accuracy, ts:new Date().toISOString()};
@@ -560,6 +560,18 @@ function startGPS() {
       }
       trackPoints.push(pt);
       document.getElementById('pts-count').textContent = trackPoints.length;
+
+      // Enviar posición en vivo a Firebase (panel la ve en tiempo real)
+      try {
+        await setDoc(doc(db, 'ubicaciones', currentUser), {
+          empleado: currentUser,
+          lat:      pt.lat,
+          lng:      pt.lng,
+          acc:      pt.acc,
+          ts:       pt.ts,
+          activo:   true
+        });
+      } catch(e) { /* silencioso — no interrumpir tracking */ }
     },
     err => {
       let msg = '⚠️ Sin GPS';
@@ -660,6 +672,12 @@ window.toggleTracking = async function() {
         activo: false,
         hasta: exitTime.toISOString(),
         empleado: currentUser
+      });
+      // Limpiar ubicación en vivo
+      await setDoc(doc(db, 'ubicaciones', currentUser), {
+        empleado: currentUser,
+        activo: false,
+        ts: exitTime.toISOString()
       });
     } catch(e) { console.error('Error estado:', e); }
 

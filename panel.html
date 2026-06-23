@@ -601,6 +601,265 @@
     white-space: nowrap;
   }
 
+
+  /* ---- GESTIÓN DE USUARIOS ---- */
+  .btn-usuarios {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.2s;
+  }
+  .btn-usuarios:hover { border-color: var(--accent); color: var(--accent); }
+
+  .modal-overlay-users {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay-users.open { display: flex; }
+
+  .modal-users-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-users-title {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .btn-close-modal {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 6px;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .user-row {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #5b5ef4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .user-info-row { flex: 1; min-width: 0; }
+  .user-name-row { font-size: 13px; font-weight: 600; }
+  .user-meta-row { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .user-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .badge-admin { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .badge-user  { background: rgba(61,142,240,0.15); color: var(--accent); }
+  .badge-new   { background: rgba(217,144,50,0.15); color: var(--yellow); }
+
+  .btn-reset-pass {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-reset-pass:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  .btn-del-user {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-del-user:hover { border-color: var(--red); color: var(--red); }
+
+  .add-user-form {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .add-user-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .add-user-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .add-field {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .add-field label {
+    font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+  }
+  .add-field input, .add-field select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .add-field input:focus, .add-field select:focus { border-color: var(--accent); }
+  .add-field select option { background: var(--surface); }
+
+  .btn-add-user {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-add-user:hover { opacity: 0.85; }
+
+  .users-msg {
+    font-size: 12px;
+    text-align: center;
+    padding: 4px;
+    border-radius: 6px;
+    display: none;
+  }
+  .users-msg.ok  { background: rgba(63,185,80,0.1); color: var(--green); display: block; }
+  .users-msg.err { background: rgba(248,81,73,0.1); color: var(--red); display: block; }
+
+
+  /* ---- TRACKING EN VIVO ---- */
+  .btn-live {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-live:hover { border-color: var(--green); color: var(--green); }
+  .btn-live.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(63,185,80,0.08);
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .btn-live.active .live-dot {
+    animation: pulse-live 1s infinite;
+  }
+  @keyframes pulse-live {
+    0%,100% { opacity:1; }
+    50%      { opacity:0.3; }
+  }
+
+  /* Leyenda de colores */
+  .live-legend {
+    position: absolute;
+    bottom: 24px;
+    left: 295px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 400;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .live-legend.visible { display: flex; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    flex-shrink: 0;
+  }
+
 </style>
 </head>
 <body>
@@ -728,6 +987,11 @@
         <p id="panel-sub">Usá el panel lateral para filtrar y elegir un recorrido</p>
       </div>
       <div class="topbar-actions">
+        <button class="btn-live" id="btn-live" onclick="toggleLive()">
+          <div class="live-dot"></div>
+          <span>Ver en vivo</span>
+        </button>
+        <button class="btn-usuarios" onclick="abrirGestionUsuarios()">👥 Usuarios</button>
         <button class="btn-action" onclick="exportarReporteHTML()">📄 Exportar reporte HTML</button>
       </div>
     </div>
@@ -755,7 +1019,8 @@
       </div>
     </div>
 
-    <div id="map"></div>
+    <div id="map" style="position:relative;"></div>
+    <div class="live-legend" id="live-legend"></div>
 
     <div class="info-panel" id="info-panel">
       <div class="info-chips" id="info-chips"></div>
@@ -1119,6 +1384,49 @@ if(pts.length>0){
   map.fitBounds(poly.getBounds(),{padding:[40,40]});
 }
 <\/script>
+
+<!-- MODAL GESTIÓN DE USUARIOS -->
+<div class="modal-overlay-users" id="modal-users">
+  <div class="modal-users-card">
+    <div class="modal-users-title">
+      <span>👥 Gestión de usuarios</span>
+      <button class="btn-close-modal" onclick="cerrarGestionUsuarios()">✕</button>
+    </div>
+
+    <div class="users-list" id="users-list">
+      <div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px;">Cargando usuarios...</div>
+    </div>
+
+    <div class="add-user-form">
+      <div class="add-user-title">➕ Agregar nuevo usuario</div>
+      <div class="add-user-fields">
+        <div class="add-field">
+          <label>Nombre completo</label>
+          <input type="text" id="new-user-name" placeholder="Ej: Juan García">
+        </div>
+        <div class="add-field">
+          <label>Usuario (para login)</label>
+          <input type="text" id="new-user-login" placeholder="Ej: juangarcia">
+        </div>
+        <div class="add-field">
+          <label>Contraseña inicial</label>
+          <input type="text" id="new-user-pass" placeholder="El usuario la cambiará al primer login">
+        </div>
+        <div class="add-field">
+          <label>Rol</label>
+          <select id="new-user-role">
+            <option value="vendedor">Vendedor (app móvil)</option>
+            <option value="supervisor">Supervisor (panel)</option>
+            <option value="admin">Admin (panel completo)</option>
+          </select>
+        </div>
+      </div>
+      <div class="users-msg" id="users-msg"></div>
+      <button class="btn-add-user" onclick="agregarUsuario()">➕ Agregar usuario</button>
+    </div>
+  </div>
+</div>
+
 </body></html>`;
 
   const blob = new Blob([html], { type: 'text/html' });
@@ -1203,6 +1511,288 @@ window.exportarReporteHTML = function() {
 };
 
 
+
+
+
+// ============================================================
+// TRACKING EN VIVO
+// ============================================================
+const COLORES_VENDEDOR = {
+  'Cristian Albornoz': { color: '#3d8ef0', bg: 'rgba(61,142,240,0.15)' },
+  'Dario Rocha':       { color: '#f97316', bg: 'rgba(249,115,22,0.15)' },
+  'Diego Portillo':    { color: '#a855f7', bg: 'rgba(168,85,247,0.15)' },
+  'Hernán Aranda':     { color: '#3fb950', bg: 'rgba(63,185,80,0.15)'  }
+};
+
+let liveActivo = false;
+let liveUnsubscribe = null;
+let liveMarkers = {}; // nombre -> L.marker
+
+window.toggleLive = function() {
+  if (liveActivo) {
+    detenerLive();
+  } else {
+    iniciarLive();
+  }
+};
+
+function iniciarLive() {
+  liveActivo = true;
+  const btn = document.getElementById('btn-live');
+  btn.classList.add('active');
+  btn.querySelector('span').textContent = 'En vivo';
+
+  // Mostrar leyenda
+  renderLegend();
+  document.getElementById('live-legend').classList.add('visible');
+
+  // Asegurarse que el mapa esté iniciado
+  if (!map) initMap();
+
+  // Escuchar colección ubicaciones en tiempo real
+  liveUnsubscribe = onSnapshot(collection(db2, 'ubicaciones'), (snap) => {
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      const nombre = docSnap.id;
+      if (!d.activo || !d.lat || !d.lng) {
+        // Vendedor inactivo — remover marcador
+        if (liveMarkers[nombre]) {
+          map.removeLayer(liveMarkers[nombre]);
+          delete liveMarkers[nombre];
+        }
+        return;
+      }
+
+      const cfg = COLORES_VENDEDOR[nombre] || { color: '#fff', bg: 'rgba(255,255,255,0.1)' };
+      const initials = nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const hora = new Date(d.ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="
+          width:36px; height:36px;
+          background:${cfg.color};
+          border:3px solid white;
+          border-radius:50%;
+          display:flex; align-items:center; justify-content:center;
+          font-size:12px; font-weight:800; color:white;
+          box-shadow:0 2px 8px rgba(0,0,0,0.4);
+          position:relative;
+        ">${initials}<div style="
+          position:absolute; bottom:-8px; left:50%;
+          transform:translateX(-50%);
+          width:0; height:0;
+          border-left:6px solid transparent;
+          border-right:6px solid transparent;
+          border-top:8px solid ${cfg.color};
+        "></div></div>`,
+        iconSize: [36, 44],
+        iconAnchor: [18, 44],
+        popupAnchor: [0, -46]
+      });
+
+      if (liveMarkers[nombre]) {
+        // Actualizar posición con animación suave
+        liveMarkers[nombre].setLatLng([d.lat, d.lng]);
+        liveMarkers[nombre].setIcon(icon);
+        liveMarkers[nombre].getPopup().setContent(`
+          <div style="min-width:140px">
+            <div style="font-weight:700;font-size:13px;color:${cfg.color}">${nombre}</div>
+            <div style="font-size:11px;color:#666;margin-top:4px;">🟢 En turno</div>
+            <div style="font-size:11px;color:#666;">⏱️ Actualizado: ${hora}</div>
+            <div style="font-size:11px;color:#666;">📡 Precisión: ±${Math.round(d.acc||0)}m</div>
+          </div>
+        `);
+      } else {
+        // Crear nuevo marcador
+        const marker = L.marker([d.lat, d.lng], { icon })
+          .bindPopup(`
+            <div style="min-width:140px">
+              <div style="font-weight:700;font-size:13px;color:${cfg.color}">${nombre}</div>
+              <div style="font-size:11px;color:#666;margin-top:4px;">🟢 En turno</div>
+              <div style="font-size:11px;color:#666;">⏱️ Actualizado: ${hora}</div>
+              <div style="font-size:11px;color:#666;">📡 Precisión: ±${Math.round(d.acc||0)}m</div>
+            </div>
+          `)
+          .addTo(map);
+        liveMarkers[nombre] = marker;
+      }
+    });
+
+    // Centrar mapa si hay marcadores
+    const positions = Object.values(liveMarkers).map(m => m.getLatLng());
+    if (positions.length === 1) {
+      map.setView(positions[0], 14);
+    } else if (positions.length > 1) {
+      map.fitBounds(positions.map(p => [p.lat, p.lng]), { padding: [60,60] });
+    }
+  });
+}
+
+function detenerLive() {
+  liveActivo = false;
+  const btn = document.getElementById('btn-live');
+  btn.classList.remove('active');
+  btn.querySelector('span').textContent = 'Ver en vivo';
+
+  document.getElementById('live-legend').classList.remove('visible');
+
+  if (liveUnsubscribe) { liveUnsubscribe(); liveUnsubscribe = null; }
+
+  // Remover marcadores del mapa
+  Object.values(liveMarkers).forEach(m => map.removeLayer(m));
+  liveMarkers = {};
+}
+
+function renderLegend() {
+  const legend = document.getElementById('live-legend');
+  legend.innerHTML = '<div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Vendedores</div>';
+  Object.entries(COLORES_VENDEDOR).forEach(([nombre, cfg]) => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.style.color = 'var(--text)';
+    item.innerHTML = `
+      <div class="legend-dot" style="background:${cfg.color}"></div>
+      <span>${nombre.split(' ')[0]}</span>
+    `;
+    legend.appendChild(item);
+  });
+}
+
+// ============================================================
+// GESTIÓN DE USUARIOS
+// ============================================================
+
+window.abrirGestionUsuarios = function() {
+  document.getElementById('modal-users').classList.add('open');
+  cargarUsuarios();
+};
+
+window.cerrarGestionUsuarios = function() {
+  document.getElementById('modal-users').classList.remove('open');
+  limpiarFormUsuario();
+};
+
+// Cerrar con click fuera
+document.getElementById('modal-users').addEventListener('click', function(e) {
+  if (e.target === this) cerrarGestionUsuarios();
+});
+
+async function cargarUsuarios() {
+  const lista = document.getElementById('users-list');
+  lista.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px;">Cargando...</div>';
+
+  try {
+    const snap = await getDocs(collection(db2, 'usuarios'));
+    if (snap.empty) {
+      lista.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px;">No hay usuarios registrados</div>';
+      return;
+    }
+
+    lista.innerHTML = '';
+    snap.forEach(docSnap => {
+      const u = docSnap.data();
+      const id = docSnap.id;
+      const initials = (u.nombre || id).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const rolBadge = u.rol === 'admin' ? 'badge-admin' : 'badge-user';
+      const rolLabel = u.rol === 'admin' ? 'Admin' : u.rol === 'supervisor' ? 'Supervisor' : 'Vendedor';
+      const esPrimerLogin = u.primerLogin !== false;
+
+      const row = document.createElement('div');
+      row.className = 'user-row';
+      row.innerHTML = `
+        <div class="user-avatar">${initials}</div>
+        <div class="user-info-row">
+          <div class="user-name-row">${u.nombre || id}</div>
+          <div class="user-meta-row">@${id} ${esPrimerLogin ? '· <span style="color:var(--yellow)">Nunca ingresó</span>' : '· Activo'}</div>
+        </div>
+        <span class="user-badge ${rolBadge}">${rolLabel}</span>
+        <button class="btn-reset-pass" onclick="resetearPass('${id}','${u.nombre||id}')">🔑 Reset</button>
+        ${id !== 'admin' ? `<button class="btn-del-user" onclick="eliminarUsuario('${id}','${u.nombre||id}')">✕</button>` : ''}
+      `;
+      lista.appendChild(row);
+    });
+  } catch(e) {
+    lista.innerHTML = `<div style="text-align:center;color:var(--red);font-size:13px;padding:16px;">Error: ${e.message}</div>`;
+    console.error(e);
+  }
+}
+
+window.agregarUsuario = async function() {
+  const nombre = document.getElementById('new-user-name').value.trim();
+  const login  = document.getElementById('new-user-login').value.trim().toLowerCase().replace(/\s+/g,'');
+  const pass   = document.getElementById('new-user-pass').value.trim();
+  const rol    = document.getElementById('new-user-role').value;
+  const msg    = document.getElementById('users-msg');
+
+  if (!nombre || !login || !pass) {
+    msg.textContent = 'Completá todos los campos'; msg.className = 'users-msg err'; return;
+  }
+  if (login.length < 3) {
+    msg.textContent = 'El usuario debe tener al menos 3 caracteres'; msg.className = 'users-msg err'; return;
+  }
+
+  try {
+    // Check if user already exists
+    const existing = await getDocs(query(collection(db2,'usuarios'), where('__name__','==',login)));
+    // Use setDoc with login as document ID
+    const { doc: firestoreDoc, setDoc: firestoreSetDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+
+    await setDoc(doc(db2, 'usuarios', login), {
+      nombre:      nombre,
+      password:    pass,
+      rol:         rol,
+      primerLogin: true,
+      creado:      new Date().toISOString()
+    });
+
+    msg.textContent = `✅ Usuario "${nombre}" creado. Contraseña inicial: ${pass}`;
+    msg.className = 'users-msg ok';
+    limpiarFormUsuario();
+    cargarUsuarios();
+
+  } catch(e) {
+    msg.textContent = 'Error: ' + e.message;
+    msg.className = 'users-msg err';
+    console.error(e);
+  }
+};
+
+window.resetearPass = async function(id, nombre) {
+  const nuevaPass = prompt(`Nueva contraseña para ${nombre}:`);
+  if (!nuevaPass || nuevaPass.length < 4) { alert('Contraseña muy corta'); return; }
+
+  try {
+    await setDoc(doc(db2, 'usuarios', id), {
+      password: nuevaPass,
+      primerLogin: true
+    }, { merge: true });
+    alert(`✅ Contraseña de ${nombre} reseteada. Deberá cambiarla al próximo login.`);
+    cargarUsuarios();
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+};
+
+window.eliminarUsuario = async function(id, nombre) {
+  if (!confirm(`¿Eliminar al usuario "${nombre}"? Esta acción no se puede deshacer.`)) return;
+  try {
+    const { deleteDoc, doc: firestoreDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    await deleteDoc(doc(db2, 'usuarios', id));
+    cargarUsuarios();
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+};
+
+function limpiarFormUsuario() {
+  document.getElementById('new-user-name').value = '';
+  document.getElementById('new-user-login').value = '';
+  document.getElementById('new-user-pass').value = '';
+  document.getElementById('new-user-role').value = 'vendedor';
+  const msg = document.getElementById('users-msg');
+  msg.textContent = ''; msg.className = 'users-msg';
+}
 
 // ============================================================
 // ESTADO EN TIEMPO REAL DE VENDEDORES
