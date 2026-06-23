@@ -564,6 +564,7 @@ window.doLogin = function() {
   if (getPassword(user) !== pass) { err.style.display='block'; err.textContent='Contraseña incorrecta'; return; }
   err.style.display = 'none';
   currentUser = user;
+  localStorage.setItem('currentUser', user);
   // Cargar clientes desde cache local primero, luego actualizar de Firebase
   const cached = localStorage.getItem('clientes_' + user);
   misClientes = cached ? JSON.parse(cached) : (CLIENTES[user] || []);
@@ -672,7 +673,7 @@ async function restaurarTurno() {
   } catch(e) { console.error('Error restaurando turno:', e); }
 }
 
-function enterApp() {
+async function enterApp() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('app-screen').style.display = 'flex';
   document.getElementById('avatar-initials').textContent = currentUser.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
@@ -685,11 +686,12 @@ function enterApp() {
   // Actualizar clientes desde Firebase en segundo plano
   actualizarClientesFirebase();
   // Restaurar turno activo desde Firebase si la app se cerró sin finalizar
-  restaurarTurno();
+  await restaurarTurno();
 }
 
 window.doLogout = function() {
   if (tracking) { showToast('⚠️ Cerrá el turno antes de salir'); return; }
+  localStorage.removeItem('currentUser');
   currentUser = null; misClientes = []; visitasHoy = [];
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('login-screen').classList.add('active');
@@ -1193,6 +1195,21 @@ if (isIOS && !isStandalone) {
 document.getElementById('btn-ios-close').addEventListener('click', () => {
   document.getElementById('ios-instructions').classList.remove('show');
 });
+
+// ---- AUTO-RESTAURAR SESIÓN AL CARGAR ----
+(async function() {
+  const savedUser = localStorage.getItem('currentUser');
+  if (!savedUser) return;
+  try {
+    const snap = await getDoc(doc(db, 'estados', savedUser));
+    if (snap.exists() && snap.data().activo) {
+      currentUser = savedUser;
+      const cached = localStorage.getItem('clientes_' + savedUser);
+      misClientes = cached ? JSON.parse(cached) : [];
+      await enterApp();
+    }
+  } catch(e) { console.log('Sin conexión, no se pudo auto-restaurar turno'); }
+})();
 </script>
 
 </body>
