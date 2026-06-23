@@ -396,6 +396,81 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   </div>
 </div>
 
+<!-- MODAL ACTUALIZAR CLIENTES -->
+<div class="modal-clientes-bg" id="modal-clientes">
+  <div class="modal-clientes-card">
+    <div class="modal-clientes-title">
+      <span>📋 Actualizar clientes por vendedor</span>
+      <button class="btn-close-cl" id="btn-close-cl">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);">
+      Subí el Excel de cada vendedor. Las columnas deben ser: <strong>Código, Razón Social, Nombre, Calle, Nro, Localidad</strong>.
+      Los vendedores verán los clientes actualizados la próxima vez que abran la app con internet.
+    </p>
+
+    <!-- CRISTIAN -->
+    <div class="vendedor-upload" id="vu-Cristian Albornoz">
+      <div class="vendedor-upload-header">
+        <span class="vendedor-upload-name">Cristian Albornoz</span>
+        <span class="vendedor-upload-meta" id="vm-Cristian Albornoz">Sin datos cargados</span>
+      </div>
+      <div class="upload-drop" onclick="document.getElementById('fi-Cristian Albornoz').click()">
+        <input type="file" id="fi-Cristian Albornoz" accept=".xlsx,.xls" onchange="leerExcel(this,'Cristian Albornoz')">
+        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
+        <div class="upload-preview" id="fp-Cristian Albornoz"></div>
+      </div>
+      <div class="upload-msg" id="fmsg-Cristian Albornoz"></div>
+      <button class="btn-subir-clientes" id="fbtn-Cristian Albornoz" onclick="subirClientes('Cristian Albornoz')">⬆️ Subir clientes</button>
+    </div>
+
+    <!-- DARIO -->
+    <div class="vendedor-upload" id="vu-Dario Rocha">
+      <div class="vendedor-upload-header">
+        <span class="vendedor-upload-name">Dario Rocha</span>
+        <span class="vendedor-upload-meta" id="vm-Dario Rocha">Sin datos cargados</span>
+      </div>
+      <div class="upload-drop" onclick="document.getElementById('fi-Dario Rocha').click()">
+        <input type="file" id="fi-Dario Rocha" accept=".xlsx,.xls" onchange="leerExcel(this,'Dario Rocha')">
+        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
+        <div class="upload-preview" id="fp-Dario Rocha"></div>
+      </div>
+      <div class="upload-msg" id="fmsg-Dario Rocha"></div>
+      <button class="btn-subir-clientes" id="fbtn-Dario Rocha" onclick="subirClientes('Dario Rocha')">⬆️ Subir clientes</button>
+    </div>
+
+    <!-- DIEGO -->
+    <div class="vendedor-upload" id="vu-Diego Portillo">
+      <div class="vendedor-upload-header">
+        <span class="vendedor-upload-name">Diego Portillo</span>
+        <span class="vendedor-upload-meta" id="vm-Diego Portillo">Sin datos cargados</span>
+      </div>
+      <div class="upload-drop" onclick="document.getElementById('fi-Diego Portillo').click()">
+        <input type="file" id="fi-Diego Portillo" accept=".xlsx,.xls" onchange="leerExcel(this,'Diego Portillo')">
+        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
+        <div class="upload-preview" id="fp-Diego Portillo"></div>
+      </div>
+      <div class="upload-msg" id="fmsg-Diego Portillo"></div>
+      <button class="btn-subir-clientes" id="fbtn-Diego Portillo" onclick="subirClientes('Diego Portillo')">⬆️ Subir clientes</button>
+    </div>
+
+    <!-- HERNAN -->
+    <div class="vendedor-upload" id="vu-Hernán Aranda">
+      <div class="vendedor-upload-header">
+        <span class="vendedor-upload-name">Hernán Aranda</span>
+        <span class="vendedor-upload-meta" id="vm-Hernán Aranda">Sin datos cargados</span>
+      </div>
+      <div class="upload-drop" onclick="document.getElementById('fi-Hernán Aranda').click()">
+        <input type="file" id="fi-Hernán Aranda" accept=".xlsx,.xls" onchange="leerExcel(this,'Hernán Aranda')">
+        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
+        <div class="upload-preview" id="fp-Hernán Aranda"></div>
+      </div>
+      <div class="upload-msg" id="fmsg-Hernán Aranda"></div>
+      <button class="btn-subir-clientes" id="fbtn-Hernán Aranda" onclick="subirClientes('Hernán Aranda')">⬆️ Subir clientes</button>
+    </div>
+
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getFirestore, collection, query, where, getDocs, getDoc, orderBy, onSnapshot, doc, setDoc, deleteDoc }
@@ -992,81 +1067,6 @@ L.circleMarker(pts[pts.length-1],{radius:10,fillColor:'#f85149',color:'#fff',wei
 map.fitBounds(poly.getBounds(),{padding:[40,40]});
 }
 ${'</'}script>
-<!-- MODAL ACTUALIZAR CLIENTES -->
-<div class="modal-clientes-bg" id="modal-clientes">
-  <div class="modal-clientes-card">
-    <div class="modal-clientes-title">
-      <span>📋 Actualizar clientes por vendedor</span>
-      <button class="btn-close-cl" id="btn-close-cl">✕</button>
-    </div>
-    <p style="font-size:12px;color:var(--text-muted);">
-      Subí el Excel de cada vendedor. Las columnas deben ser: <strong>Código, Razón Social, Nombre, Calle, Nro, Localidad</strong>.
-      Los vendedores verán los clientes actualizados la próxima vez que abran la app con internet.
-    </p>
-
-    <!-- CRISTIAN -->
-    <div class="vendedor-upload" id="vu-Cristian Albornoz">
-      <div class="vendedor-upload-header">
-        <span class="vendedor-upload-name">Cristian Albornoz</span>
-        <span class="vendedor-upload-meta" id="vm-Cristian Albornoz">Sin datos cargados</span>
-      </div>
-      <div class="upload-drop" onclick="document.getElementById('fi-Cristian Albornoz').click()">
-        <input type="file" id="fi-Cristian Albornoz" accept=".xlsx,.xls" onchange="leerExcel(this,'Cristian Albornoz')">
-        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
-        <div class="upload-preview" id="fp-Cristian Albornoz"></div>
-      </div>
-      <div class="upload-msg" id="fmsg-Cristian Albornoz"></div>
-      <button class="btn-subir-clientes" id="fbtn-Cristian Albornoz" onclick="subirClientes('Cristian Albornoz')">⬆️ Subir clientes</button>
-    </div>
-
-    <!-- DARIO -->
-    <div class="vendedor-upload" id="vu-Dario Rocha">
-      <div class="vendedor-upload-header">
-        <span class="vendedor-upload-name">Dario Rocha</span>
-        <span class="vendedor-upload-meta" id="vm-Dario Rocha">Sin datos cargados</span>
-      </div>
-      <div class="upload-drop" onclick="document.getElementById('fi-Dario Rocha').click()">
-        <input type="file" id="fi-Dario Rocha" accept=".xlsx,.xls" onchange="leerExcel(this,'Dario Rocha')">
-        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
-        <div class="upload-preview" id="fp-Dario Rocha"></div>
-      </div>
-      <div class="upload-msg" id="fmsg-Dario Rocha"></div>
-      <button class="btn-subir-clientes" id="fbtn-Dario Rocha" onclick="subirClientes('Dario Rocha')">⬆️ Subir clientes</button>
-    </div>
-
-    <!-- DIEGO -->
-    <div class="vendedor-upload" id="vu-Diego Portillo">
-      <div class="vendedor-upload-header">
-        <span class="vendedor-upload-name">Diego Portillo</span>
-        <span class="vendedor-upload-meta" id="vm-Diego Portillo">Sin datos cargados</span>
-      </div>
-      <div class="upload-drop" onclick="document.getElementById('fi-Diego Portillo').click()">
-        <input type="file" id="fi-Diego Portillo" accept=".xlsx,.xls" onchange="leerExcel(this,'Diego Portillo')">
-        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
-        <div class="upload-preview" id="fp-Diego Portillo"></div>
-      </div>
-      <div class="upload-msg" id="fmsg-Diego Portillo"></div>
-      <button class="btn-subir-clientes" id="fbtn-Diego Portillo" onclick="subirClientes('Diego Portillo')">⬆️ Subir clientes</button>
-    </div>
-
-    <!-- HERNAN -->
-    <div class="vendedor-upload" id="vu-Hernán Aranda">
-      <div class="vendedor-upload-header">
-        <span class="vendedor-upload-name">Hernán Aranda</span>
-        <span class="vendedor-upload-meta" id="vm-Hernán Aranda">Sin datos cargados</span>
-      </div>
-      <div class="upload-drop" onclick="document.getElementById('fi-Hernán Aranda').click()">
-        <input type="file" id="fi-Hernán Aranda" accept=".xlsx,.xls" onchange="leerExcel(this,'Hernán Aranda')">
-        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
-        <div class="upload-preview" id="fp-Hernán Aranda"></div>
-      </div>
-      <div class="upload-msg" id="fmsg-Hernán Aranda"></div>
-      <button class="btn-subir-clientes" id="fbtn-Hernán Aranda" onclick="subirClientes('Hernán Aranda')">⬆️ Subir clientes</button>
-    </div>
-
-  </div>
-</div>
-
 </body></html>`;
 
   const blob = new Blob([html],{type:'text/html'});
