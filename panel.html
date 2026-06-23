@@ -7,859 +7,173 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #21262d;
-    --border: #30363d;
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --accent: #3d8ef0;
-    --green: #3fb950;
-    --red: #f85149;
-    --yellow: #d29922;
-    --purple: #8b5cf6;
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* LOGIN */
-  #login-screen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-
-  .login-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 40px;
-    width: 100%;
-    max-width: 380px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .login-header {
-    text-align: center;
-  }
-
-  .login-logo {
-    font-size: 40px;
-    margin-bottom: 12px;
-  }
-
-  .login-header h1 {
-    font-size: 20px;
-    font-weight: 700;
-  }
-
-  .login-header p {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .field label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .field input {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
-    color: var(--text);
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .field input:focus { border-color: var(--accent); }
-
-  .btn-enter {
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 14px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .btn-enter:hover { opacity: 0.85; }
-
-  .login-err {
-    color: var(--red);
-    font-size: 13px;
-    text-align: center;
-    display: none;
-  }
-
-  /* PANEL */
-  #panel-screen { display: none; }
-
-  .sidebar {
-    position: fixed;
-    left: 0; top: 0; bottom: 0;
-    width: 280px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    z-index: 100;
-    overflow: hidden;
-  }
-
-  .sidebar-header {
-    padding: 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .sidebar-title {
-    font-size: 15px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .btn-logout-panel {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: 6px;
-    padding: 5px 10px;
-    font-size: 11px;
-    cursor: pointer;
-  }
-
-  .filters {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .filter-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-  }
-
-  .filter-select, .filter-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 9px 12px;
-    color: var(--text);
-    font-size: 13px;
-    outline: none;
-  }
-
-  .filter-select:focus, .filter-input:focus { border-color: var(--accent); }
-
-  .btn-buscar {
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-  }
-
-  .session-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px 12px;
-  }
-
-  .session-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-
-  .session-card:hover { border-color: var(--accent); }
-  .session-card.active { border-color: var(--accent); background: rgba(61,142,240,0.08); }
-
-  .sc-name {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 3px;
-  }
-
-  .sc-date {
-    font-size: 11px;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
-
-  .sc-meta {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .sc-tag {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 10px;
-    font-weight: 600;
-  }
-
-  .tag-green { background: rgba(63,185,80,0.15); color: var(--green); }
-  .tag-blue { background: rgba(61,142,240,0.15); color: var(--accent); }
-  .tag-purple { background: rgba(139,92,246,0.15); color: var(--purple); }
-
-  .no-sessions {
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 13px;
-    padding: 32px 16px;
-  }
-
-  /* MAIN AREA */
-  .main-area {
-    margin-left: 280px;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-
-  .topbar-panel {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-  }
-
-  .topbar-info h2 {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 2px;
-  }
-
-  .topbar-info p {
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-
-  .topbar-actions {
-    display: flex;
-    gap: 10px;
-  }
-
-  .btn-action {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .btn-action:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* STATS */
-  .stats-row {
-    display: flex;
-    gap: 1px;
-    background: var(--border);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .stat-box {
-    flex: 1;
-    background: var(--surface);
-    padding: 16px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .stat-val {
-    font-size: 24px;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -1px;
-  }
-
-  .stat-lbl {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  /* MAP */
-  #map {
-    flex: 1;
-    background: #0d1117;
-  }
-
-  /* INFO PANEL */
-  .info-panel {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 16px 24px;
-    display: none;
-    flex-shrink: 0;
-    gap: 20px;
-    align-items: center;
-  }
-
-  .info-panel.visible { display: flex; }
-
-  .info-chips {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .chip {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .btn-export-html {
-    background: var(--green);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-left: auto;
-    white-space: nowrap;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .sidebar {
-      width: 100%;
-      height: auto;
-      position: relative;
-    }
-    .main-area { margin-left: 0; }
-    .stats-row { display: none; }
-  }
-
-  .visitas-panel {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 14px 20px;
-    flex-shrink: 0;
-    max-height: 220px;
-    overflow-y: auto;
-    display: none;
-  }
-  .visitas-panel.visible { display: block; }
-  .visitas-title {
-    font-size: 11px; font-weight: 600; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px;
-  }
-  .visita-row {
-    display: flex; gap: 10px; align-items: flex-start;
-    padding: 8px 0; border-bottom: 1px solid var(--border);
-  }
-  .visita-row:last-child { border-bottom: none; }
-  .visita-hora {
-    font-size: 12px; font-weight: 700; color: var(--green);
-    white-space: nowrap; flex-shrink: 0; padding-top: 1px;
-  }
-  .visita-info { flex: 1; min-width: 0; }
-  .visita-nombre { font-size: 12px; font-weight: 600; }
-  .visita-dir { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-
-
-  /* ---- CALENDARIO ---- */
-  .calendar-wrap {
-    position: relative;
-  }
-  .cal-trigger {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 9px 12px;
-    color: var(--text);
-    font-size: 13px;
-    cursor: pointer;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: border-color 0.2s;
-  }
-  .cal-trigger:hover { border-color: var(--accent); }
-  .cal-dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0; right: 0;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    z-index: 200;
-    display: none;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    min-width: 240px;
-  }
-  .cal-dropdown.open { display: block; }
-  .cal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .cal-month-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text);
-    text-transform: capitalize;
-  }
-  .cal-nav {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: 6px;
-    width: 26px; height: 26px;
-    cursor: pointer;
-    font-size: 13px;
-    display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.2s;
-  }
-  .cal-nav:hover { border-color: var(--accent); color: var(--accent); }
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-  }
-  .cal-day-name {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-align: center;
-    padding: 4px 0;
-    text-transform: uppercase;
-  }
-  .cal-day {
-    position: relative;
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: background 0.15s, color 0.15s;
-    gap: 2px;
-  }
-  .cal-day:hover { background: var(--surface); color: var(--text); }
-  .cal-day.other-month { opacity: 0.3; cursor: default; }
-  .cal-day.other-month:hover { background: transparent; }
-  .cal-day.today { color: var(--accent); font-weight: 700; }
-  .cal-day.selected {
-    background: var(--accent);
-    color: white;
-    font-weight: 700;
-  }
-  .cal-day.selected .cal-dot { background: white; }
-  .cal-day.has-data { color: var(--text); }
-  .cal-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--accent);
-    flex-shrink: 0;
-  }
-  .cal-clear {
-    width: 100%;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: 6px;
-    padding: 6px;
-    font-size: 11px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: border-color 0.2s;
-  }
-  .cal-clear:hover { border-color: var(--red); color: var(--red); }
-
-
-  /* ---- PANEL ESTADO VENDEDORES ---- */
-  .vendedores-status {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 20px;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-  }
-  .vendedor-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 14px;
-    flex: 1;
-    min-width: 150px;
-    transition: border-color 0.3s;
-  }
-  .vendedor-card.online {
-    border-color: rgba(63,185,80,0.5);
-    background: rgba(63,185,80,0.05);
-  }
-  .status-circle {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--red);
-    flex-shrink: 0;
-    transition: background 0.4s;
-    box-shadow: 0 0 0 3px rgba(248,81,73,0.2);
-  }
-  .status-circle.online {
-    background: var(--green);
-    box-shadow: 0 0 0 3px rgba(63,185,80,0.25);
-    animation: pulse-green 2s infinite;
-  }
-  @keyframes pulse-green {
-    0%,100% { box-shadow: 0 0 0 3px rgba(63,185,80,0.25); }
-    50%      { box-shadow: 0 0 0 6px rgba(63,185,80,0.1); }
-  }
-  .vendedor-info { flex: 1; min-width: 0; }
-  .vendedor-nombre {
-    font-size: 12px; font-weight: 700;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .vendedor-estado {
-    font-size: 10px; color: var(--text-muted); margin-top: 1px;
-  }
-  .vendedor-card.online .vendedor-estado { color: var(--green); }
-  .vendedor-hora {
-    font-size: 10px; color: var(--text-muted);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-
-  /* ---- GESTIÓN DE USUARIOS ---- */
-  .btn-usuarios {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: border-color 0.2s;
-  }
-  .btn-usuarios:hover { border-color: var(--accent); color: var(--accent); }
-
-  .modal-overlay-users {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 500;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .modal-overlay-users.open { display: flex; }
-
-  .modal-users-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    width: 100%;
-    max-width: 480px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .modal-users-title {
-    font-size: 16px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .btn-close-modal {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: 6px;
-    width: 28px; height: 28px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  .users-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .user-row {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .user-avatar {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #5b5ef4);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .user-info-row { flex: 1; min-width: 0; }
-  .user-name-row { font-size: 13px; font-weight: 600; }
-  .user-meta-row { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-  .user-badge {
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 10px;
-    font-weight: 600;
-  }
-  .badge-admin { background: rgba(139,92,246,0.15); color: var(--purple); }
-  .badge-user  { background: rgba(61,142,240,0.15); color: var(--accent); }
-  .badge-new   { background: rgba(217,144,50,0.15); color: var(--yellow); }
-
-  .btn-reset-pass {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 11px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-reset-pass:hover { border-color: var(--yellow); color: var(--yellow); }
-
-  .btn-del-user {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 11px;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-del-user:hover { border-color: var(--red); color: var(--red); }
-
-  .add-user-form {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .add-user-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .add-user-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .add-field {
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .add-field label {
-    font-size: 11px; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
-  }
-  .add-field input, .add-field select {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 9px 12px;
-    color: var(--text);
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-  }
-  .add-field input:focus, .add-field select:focus { border-color: var(--accent); }
-  .add-field select option { background: var(--surface); }
-
-  .btn-add-user {
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .btn-add-user:hover { opacity: 0.85; }
-
-  .users-msg {
-    font-size: 12px;
-    text-align: center;
-    padding: 4px;
-    border-radius: 6px;
-    display: none;
-  }
-  .users-msg.ok  { background: rgba(63,185,80,0.1); color: var(--green); display: block; }
-  .users-msg.err { background: rgba(248,81,73,0.1); color: var(--red); display: block; }
-
-
-  /* ---- TRACKING EN VIVO ---- */
-  .btn-live {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-live:hover { border-color: var(--green); color: var(--green); }
-  .btn-live.active {
-    border-color: var(--green);
-    color: var(--green);
-    background: rgba(63,185,80,0.08);
-  }
-  .live-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-  .btn-live.active .live-dot {
-    animation: pulse-live 1s infinite;
-  }
-  @keyframes pulse-live {
-    0%,100% { opacity:1; }
-    50%      { opacity:0.3; }
-  }
-
-  /* Leyenda de colores */
-  .live-legend {
-    position: absolute;
-    bottom: 24px;
-    left: 295px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    z-index: 400;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  }
-  .live-legend.visible { display: flex; }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .legend-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.3);
-    flex-shrink: 0;
-  }
-
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+  --border: #30363d; --text: #e6edf3; --text-muted: #8b949e;
+  --accent: #3d8ef0; --green: #3fb950; --red: #f85149;
+  --yellow: #d29922; --purple: #8b5cf6;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* LOGIN */
+#login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+.login-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:40px; width:100%; max-width:380px; display:flex; flex-direction:column; gap:20px; }
+.login-header { text-align:center; }
+.login-logo { font-size:40px; margin-bottom:12px; }
+.login-header h1 { font-size:20px; font-weight:700; }
+.login-header p { font-size:13px; color:var(--text-muted); margin-top:4px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
+.field input { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px 14px; color:var(--text); font-size:14px; outline:none; transition:border-color .2s; }
+.field input:focus { border-color:var(--accent); }
+.btn-enter { background:var(--accent); color:white; border:none; border-radius:10px; padding:14px; font-size:14px; font-weight:700; cursor:pointer; }
+.btn-enter:hover { opacity:.85; }
+.login-err { color:var(--red); font-size:13px; text-align:center; display:none; }
+
+/* PANEL */
+#panel-screen { display:none; height:100vh; flex-direction:column; }
+#panel-screen.visible { display:flex; }
+
+/* VENDEDORES STATUS */
+.vendedores-bar { background:var(--surface); border-bottom:1px solid var(--border); padding:10px 16px; display:flex; gap:10px; flex-wrap:wrap; flex-shrink:0; }
+.vc { display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:8px 12px; flex:1; min-width:140px; transition:border-color .3s; }
+.vc.online { border-color:rgba(63,185,80,.5); background:rgba(63,185,80,.05); }
+.sc { width:11px; height:11px; border-radius:50%; background:var(--red); flex-shrink:0; box-shadow:0 0 0 3px rgba(248,81,73,.2); transition:background .4s; }
+.sc.online { background:var(--green); box-shadow:0 0 0 3px rgba(63,185,80,.25); animation:pg 2s infinite; }
+@keyframes pg { 0%,100%{box-shadow:0 0 0 3px rgba(63,185,80,.25)} 50%{box-shadow:0 0 0 6px rgba(63,185,80,.1)} }
+.vc-info { flex:1; min-width:0; }
+.vc-nombre { font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vc-estado { font-size:10px; color:var(--text-muted); margin-top:1px; }
+.vc.online .vc-estado { color:var(--green); }
+.vc-hora { font-size:10px; color:var(--text-muted); white-space:nowrap; }
+
+/* LAYOUT */
+.panel-body { display:flex; flex:1; overflow:hidden; }
+.sidebar { width:280px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; }
+.sidebar-header { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.sidebar-title { font-size:14px; font-weight:700; }
+.btn-logout-p { background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:6px; padding:5px 10px; font-size:11px; cursor:pointer; }
+.filters { padding:12px 14px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:8px; }
+.filter-label { font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px; }
+.filter-select { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:8px 10px; color:var(--text); font-size:13px; outline:none; -webkit-appearance:none; }
+.filter-select:focus { border-color:var(--accent); }
+.btn-buscar { background:var(--accent); color:white; border:none; border-radius:8px; padding:9px; font-size:13px; font-weight:700; cursor:pointer; width:100%; }
+
+/* CALENDARIO */
+.cal-wrap { position:relative; }
+.cal-trigger { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:8px 10px; color:var(--text); font-size:13px; cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between; }
+.cal-trigger:hover { border-color:var(--accent); }
+.cal-dropdown { position:absolute; top:calc(100% + 4px); left:0; right:0; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:12px; z-index:300; display:none; box-shadow:0 8px 24px rgba(0,0,0,.5); min-width:230px; }
+.cal-dropdown.open { display:block; }
+.cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.cal-month { font-size:13px; font-weight:700; text-transform:capitalize; }
+.cal-nav-btn { background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:5px; width:24px; height:24px; cursor:pointer; font-size:13px; line-height:1; }
+.cal-nav-btn:hover { border-color:var(--accent); color:var(--accent); }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; }
+.cal-dn { font-size:9px; font-weight:600; color:var(--text-muted); text-align:center; padding:3px 0; text-transform:uppercase; }
+.cal-day { position:relative; aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:11px; border-radius:5px; cursor:pointer; color:var(--text-muted); gap:2px; }
+.cal-day:hover { background:var(--surface); color:var(--text); }
+.cal-day.other { opacity:.25; pointer-events:none; }
+.cal-day.today { color:var(--accent); font-weight:700; }
+.cal-day.sel { background:var(--accent); color:white; font-weight:700; }
+.cal-day.has-data { color:var(--text); font-weight:600; }
+.cal-dot { width:4px; height:4px; border-radius:50%; background:var(--accent); }
+.cal-day.sel .cal-dot { background:white; }
+.cal-clear { width:100%; background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:6px; padding:5px; font-size:11px; cursor:pointer; margin-top:8px; }
+.cal-clear:hover { border-color:var(--red); color:var(--red); }
+
+/* SESSION LIST */
+.session-scroll { flex:1; overflow-y:auto; padding:8px; }
+.sc-card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:6px; cursor:pointer; transition:border-color .2s; }
+.sc-card:hover { border-color:var(--accent); }
+.sc-card.active { border-color:var(--accent); background:rgba(61,142,240,.08); }
+.sc-name { font-size:13px; font-weight:700; margin-bottom:2px; }
+.sc-date { font-size:11px; color:var(--accent); margin-bottom:5px; }
+.sc-tags { display:flex; gap:5px; flex-wrap:wrap; }
+.sc-tag { font-size:10px; padding:2px 6px; border-radius:8px; font-weight:600; }
+.tag-g { background:rgba(63,185,80,.15); color:var(--green); }
+.tag-b { background:rgba(61,142,240,.15); color:var(--accent); }
+.tag-p { background:rgba(139,92,246,.15); color:var(--purple); }
+.no-sess { text-align:center; color:var(--text-muted); font-size:13px; padding:24px 12px; }
+
+/* VISITAS SIDEBAR */
+.visitas-panel { background:var(--surface); border-top:1px solid var(--border); padding:12px 14px; display:none; max-height:200px; overflow-y:auto; flex-shrink:0; }
+.visitas-panel.visible { display:block; }
+.visitas-title { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+.vrow { display:flex; gap:8px; padding:6px 0; border-bottom:1px solid var(--border); }
+.vrow:last-child { border-bottom:none; }
+.vhora { font-size:11px; font-weight:700; color:var(--green); white-space:nowrap; flex-shrink:0; padding-top:1px; }
+.vinfo { flex:1; min-width:0; }
+.vnombre { font-size:11px; font-weight:600; }
+.vdir { font-size:10px; color:var(--text-muted); margin-top:1px; }
+
+/* MAIN AREA */
+.main-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+.topbar-panel { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.tp-info h2 { font-size:15px; font-weight:700; }
+.tp-info p { font-size:12px; color:var(--text-muted); }
+.tp-actions { display:flex; gap:8px; }
+.btn-action { background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:7px 12px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; transition:border-color .2s; }
+.btn-action:hover { border-color:var(--accent); color:var(--accent); }
+.btn-live { background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:8px; padding:7px 12px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; transition:border-color .2s,color .2s; }
+.btn-live:hover { border-color:var(--green); color:var(--green); }
+.btn-live.active { border-color:var(--green); color:var(--green); background:rgba(63,185,80,.08); }
+.live-dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+.btn-live.active .live-dot { animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* STATS */
+.stats-row { display:flex; gap:1px; background:var(--border); border-bottom:1px solid var(--border); flex-shrink:0; display:none; }
+.stats-row.visible { display:flex; }
+.stat-box { flex:1; background:var(--surface); padding:12px 16px; }
+.stat-val { font-size:20px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-1px; }
+.stat-lbl { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+
+#map { flex:1; background:#0d1117; }
+
+/* INFO BAR */
+.info-bar { background:var(--surface); border-top:1px solid var(--border); padding:12px 20px; display:none; align-items:center; gap:10px; flex-wrap:wrap; flex-shrink:0; }
+.info-bar.visible { display:flex; }
+.info-chip { background:var(--surface2); border:1px solid var(--border); border-radius:16px; padding:5px 12px; font-size:11px; font-weight:600; }
+.btn-export-ses { background:var(--green); color:#000; border:none; border-radius:8px; padding:7px 14px; font-size:12px; font-weight:700; cursor:pointer; margin-left:auto; white-space:nowrap; }
+
+/* LEYENDA VIVO */
+.live-legend { position:absolute; bottom:80px; left:8px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 14px; display:none; flex-direction:column; gap:5px; z-index:400; }
+.live-legend.visible { display:flex; }
+.leg-item { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:600; }
+.leg-dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; }
+
+/* MODAL USUARIOS */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:500; display:none; align-items:center; justify-content:center; padding:24px; }
+.modal-bg.open { display:flex; }
+.modal-card-u { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:460px; display:flex; flex-direction:column; gap:18px; max-height:90vh; overflow-y:auto; }
+.modal-title-u { font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:space-between; }
+.btn-close-u { background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:6px; width:26px; height:26px; cursor:pointer; font-size:13px; }
+.u-list { display:flex; flex-direction:column; gap:7px; }
+.u-row { background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:10px 12px; display:flex; align-items:center; gap:10px; }
+.u-av { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#5b5ef4); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+.u-info { flex:1; min-width:0; }
+.u-name { font-size:12px; font-weight:700; }
+.u-meta { font-size:10px; color:var(--text-muted); margin-top:2px; }
+.u-badge { font-size:10px; padding:2px 7px; border-radius:8px; font-weight:600; }
+.b-admin { background:rgba(139,92,246,.15); color:var(--purple); }
+.b-user  { background:rgba(61,142,240,.15); color:var(--accent); }
+.btn-reset { background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:5px; padding:3px 7px; font-size:10px; cursor:pointer; }
+.btn-reset:hover { border-color:var(--yellow); color:var(--yellow); }
+.btn-del { background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:5px; padding:3px 7px; font-size:10px; cursor:pointer; }
+.btn-del:hover { border-color:var(--red); color:var(--red); }
+.add-form { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:10px; }
+.add-title { font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
+.add-field { display:flex; flex-direction:column; gap:4px; }
+.add-field label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; font-weight:600; }
+.add-field input, .add-field select { background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:8px 10px; color:var(--text); font-size:13px; outline:none; -webkit-appearance:none; }
+.add-field input:focus, .add-field select:focus { border-color:var(--accent); }
+.add-field select option { background:var(--surface); }
+.btn-add { background:var(--accent); color:white; border:none; border-radius:7px; padding:9px; font-size:13px; font-weight:700; cursor:pointer; }
+.u-msg { font-size:12px; text-align:center; padding:4px 8px; border-radius:6px; display:none; }
+.u-msg.ok  { background:rgba(63,185,80,.1); color:var(--green); display:block; }
+.u-msg.err { background:rgba(248,81,73,.1); color:var(--red); display:block; }
 </style>
 </head>
 <body>
@@ -870,9 +184,8 @@
     <div class="login-header">
       <div class="login-logo">🗺️</div>
       <h1>Panel de Control</h1>
-      <p>Mitre Tracker — Acceso supervisores</p>
+      <p>Mitre Tracker — Supervisores</p>
     </div>
-
     <div class="field">
       <label>Usuario</label>
       <input type="text" id="admin-user" placeholder="admin">
@@ -882,1129 +195,734 @@
       <input type="password" id="admin-pass" placeholder="••••••">
     </div>
     <p class="login-err" id="admin-err">Credenciales incorrectas</p>
-    <button class="btn-enter" onclick="adminLogin()">Ingresar al panel</button>
+    <button class="btn-enter" id="btn-entrar">Ingresar al panel</button>
   </div>
 </div>
 
 <!-- PANEL -->
 <div id="panel-screen">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-title">📍 Mitre Tracker</div>
-      <button class="btn-logout-panel" onclick="adminLogout()">Salir</button>
-    </div>
-
-    <div class="filters">
-      <div>
-        <div class="filter-label">Empleado</div>
-        <select class="filter-select" id="filter-emp">
-          <option value="">Todos</option>
-          <option>Cristian Albornoz</option>
-          <option>Dario Rocha</option>
-          <option>Diego Portillo</option>
-          <option>Hernán Aranda</option>
-        </select>
+  <!-- VENDEDORES STATUS BAR -->
+  <div class="vendedores-bar">
+    <div class="vc" id="vc-Cristian Albornoz">
+      <div class="sc" id="sc-Cristian Albornoz"></div>
+      <div class="vc-info">
+        <div class="vc-nombre">Cristian Albornoz</div>
+        <div class="vc-estado" id="se-Cristian Albornoz">Fuera de turno</div>
       </div>
-      <div>
-        <div class="filter-label">Fecha</div>
-        <div class="calendar-wrap" id="cal-wrap">
-          <button class="cal-trigger" onclick="toggleCalendar(event)" id="cal-trigger">
-            <span id="cal-trigger-text">Todas las fechas</span>
-            <span>📅</span>
-          </button>
-          <div class="cal-dropdown" id="cal-dropdown">
-            <div class="cal-header">
-              <button class="cal-nav" onclick="calNav(-1)">‹</button>
-              <span class="cal-month-label" id="cal-month-label"></span>
-              <button class="cal-nav" onclick="calNav(1)">›</button>
-            </div>
-            <div class="cal-grid" id="cal-grid">
-              <div class="cal-day-name">Do</div>
-              <div class="cal-day-name">Lu</div>
-              <div class="cal-day-name">Ma</div>
-              <div class="cal-day-name">Mi</div>
-              <div class="cal-day-name">Ju</div>
-              <div class="cal-day-name">Vi</div>
-              <div class="cal-day-name">Sá</div>
-            </div>
-            <button class="cal-clear" onclick="calClear()">✕ Limpiar fecha</button>
-          </div>
-        </div>
-        <input type="hidden" id="filter-date">
-      </div>
-      <button class="btn-buscar" onclick="buscarSesiones()">🔍 Buscar</button>
+      <div class="vc-hora" id="sh-Cristian Albornoz">--:--</div>
     </div>
-
-    <div class="session-scroll" id="session-scroll">
-      <div class="no-sessions">Buscá para ver sesiones</div>
+    <div class="vc" id="vc-Dario Rocha">
+      <div class="sc" id="sc-Dario Rocha"></div>
+      <div class="vc-info">
+        <div class="vc-nombre">Dario Rocha</div>
+        <div class="vc-estado" id="se-Dario Rocha">Fuera de turno</div>
+      </div>
+      <div class="vc-hora" id="sh-Dario Rocha">--:--</div>
+    </div>
+    <div class="vc" id="vc-Diego Portillo">
+      <div class="sc" id="sc-Diego Portillo"></div>
+      <div class="vc-info">
+        <div class="vc-nombre">Diego Portillo</div>
+        <div class="vc-estado" id="se-Diego Portillo">Fuera de turno</div>
+      </div>
+      <div class="vc-hora" id="sh-Diego Portillo">--:--</div>
+    </div>
+    <div class="vc" id="vc-Hernán Aranda">
+      <div class="sc" id="sc-Hernán Aranda"></div>
+      <div class="vc-info">
+        <div class="vc-nombre">Hernán Aranda</div>
+        <div class="vc-estado" id="se-Hernán Aranda">Fuera de turno</div>
+      </div>
+      <div class="vc-hora" id="sh-Hernán Aranda">--:--</div>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main-area">
+  <div class="panel-body">
 
-    <!-- ESTADO VENDEDORES EN TIEMPO REAL -->
-    <div class="vendedores-status" id="vendedores-status">
-      <div class="vendedor-card" id="vc-Cristian Albornoz">
-        <div class="status-circle" id="sc-Cristian Albornoz"></div>
-        <div class="vendedor-info">
-          <div class="vendedor-nombre">Cristian Albornoz</div>
-          <div class="vendedor-estado" id="se-Cristian Albornoz">Fuera de turno</div>
-        </div>
-        <div class="vendedor-hora" id="sh-Cristian Albornoz">--:--</div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">📍 Mitre Tracker</div>
+        <button class="btn-logout-p" id="btn-logout">Salir</button>
       </div>
-      <div class="vendedor-card" id="vc-Dario Rocha">
-        <div class="status-circle" id="sc-Dario Rocha"></div>
-        <div class="vendedor-info">
-          <div class="vendedor-nombre">Dario Rocha</div>
-          <div class="vendedor-estado" id="se-Dario Rocha">Fuera de turno</div>
+
+      <div class="filters">
+        <div>
+          <div class="filter-label">Empleado</div>
+          <select class="filter-select" id="filter-emp">
+            <option value="">Todos</option>
+            <option>Cristian Albornoz</option>
+            <option>Dario Rocha</option>
+            <option>Diego Portillo</option>
+            <option>Hernán Aranda</option>
+          </select>
         </div>
-        <div class="vendedor-hora" id="sh-Dario Rocha">--:--</div>
+        <div>
+          <div class="filter-label">Fecha</div>
+          <div class="cal-wrap">
+            <button class="cal-trigger" id="cal-trigger">
+              <span id="cal-trigger-text">Todas las fechas</span>
+              <span>📅</span>
+            </button>
+            <div class="cal-dropdown" id="cal-dropdown">
+              <div class="cal-header">
+                <button class="cal-nav-btn" id="cal-prev">‹</button>
+                <span class="cal-month" id="cal-month"></span>
+                <button class="cal-nav-btn" id="cal-next">›</button>
+              </div>
+              <div class="cal-grid" id="cal-grid">
+                <div class="cal-dn">Do</div><div class="cal-dn">Lu</div><div class="cal-dn">Ma</div>
+                <div class="cal-dn">Mi</div><div class="cal-dn">Ju</div><div class="cal-dn">Vi</div>
+                <div class="cal-dn">Sá</div>
+              </div>
+              <button class="cal-clear" id="cal-clear">✕ Limpiar fecha</button>
+            </div>
+          </div>
+          <input type="hidden" id="filter-date">
+        </div>
+        <button class="btn-buscar" id="btn-buscar">🔍 Buscar</button>
       </div>
-      <div class="vendedor-card" id="vc-Diego Portillo">
-        <div class="status-circle" id="sc-Diego Portillo"></div>
-        <div class="vendedor-info">
-          <div class="vendedor-nombre">Diego Portillo</div>
-          <div class="vendedor-estado" id="se-Diego Portillo">Fuera de turno</div>
-        </div>
-        <div class="vendedor-hora" id="sh-Diego Portillo">--:--</div>
+
+      <div class="session-scroll" id="session-scroll">
+        <div class="no-sess">Buscá para ver sesiones</div>
       </div>
-      <div class="vendedor-card" id="vc-Hernán Aranda">
-        <div class="status-circle" id="sc-Hernán Aranda"></div>
-        <div class="vendedor-info">
-          <div class="vendedor-nombre">Hernán Aranda</div>
-          <div class="vendedor-estado" id="se-Hernán Aranda">Fuera de turno</div>
-        </div>
-        <div class="vendedor-hora" id="sh-Hernán Aranda">--:--</div>
+
+      <div class="visitas-panel" id="visitas-panel">
+        <div class="visitas-title">🏪 Visitas de la sesión</div>
+        <div id="visitas-lista"></div>
       </div>
     </div>
 
-    <div class="topbar-panel">
-      <div class="topbar-info">
-        <h2 id="panel-title">Seleccioná una sesión</h2>
-        <p id="panel-sub">Usá el panel lateral para filtrar y elegir un recorrido</p>
+    <!-- MAIN -->
+    <div class="main-area">
+      <div class="topbar-panel">
+        <div class="tp-info">
+          <h2 id="panel-title">Seleccioná una sesión</h2>
+          <p id="panel-sub">Usá el panel lateral para buscar</p>
+        </div>
+        <div class="tp-actions">
+          <button class="btn-live" id="btn-live">
+            <div class="live-dot"></div>
+            <span id="btn-live-text">Ver en vivo</span>
+          </button>
+          <button class="btn-action" id="btn-usuarios">👥 Usuarios</button>
+          <button class="btn-action" id="btn-export-all">📄 Exportar reporte</button>
+        </div>
       </div>
-      <div class="topbar-actions">
-        <button class="btn-live" id="btn-live" onclick="toggleLive()">
-          <div class="live-dot"></div>
-          <span>Ver en vivo</span>
-        </button>
-        <button class="btn-usuarios" onclick="abrirGestionUsuarios()">👥 Usuarios</button>
-        <button class="btn-action" onclick="exportarReporteHTML()">📄 Exportar reporte HTML</button>
-      </div>
-    </div>
 
-    <div class="stats-row" id="stats-row" style="display:none">
-      <div class="stat-box">
-        <div class="stat-val" id="stat-entrada">--:--</div>
-        <div class="stat-lbl">Entrada</div>
+      <div class="stats-row" id="stats-row">
+        <div class="stat-box"><div class="stat-val" id="stat-entrada">--:--</div><div class="stat-lbl">Entrada</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-salida">--:--</div><div class="stat-lbl">Salida</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-dur">0 min</div><div class="stat-lbl">Duración</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-km">0 km</div><div class="stat-lbl">Distancia</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-pts">0</div><div class="stat-lbl">Pts GPS</div></div>
       </div>
-      <div class="stat-box">
-        <div class="stat-val" id="stat-salida">--:--</div>
-        <div class="stat-lbl">Salida</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val" id="stat-dur">0 min</div>
-        <div class="stat-lbl">Duración</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val" id="stat-km">0 km</div>
-        <div class="stat-lbl">Distancia</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val" id="stat-pts">0</div>
-        <div class="stat-lbl">Puntos GPS</div>
-      </div>
-    </div>
 
-    <div id="map" style="position:relative;"></div>
-    <div class="live-legend" id="live-legend"></div>
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;">
+        <div id="map"></div>
+        <div class="live-legend" id="live-legend"></div>
+      </div>
 
-    <div class="info-panel" id="info-panel">
-      <div class="info-chips" id="info-chips"></div>
-      <button class="btn-export-html" onclick="exportarSesionHTML()">📄 Exportar esta sesión</button>
+      <div class="info-bar" id="info-bar">
+        <div class="info-chip" id="ic-entrada"></div>
+        <div class="info-chip" id="ic-salida"></div>
+        <div class="info-chip" id="ic-dur"></div>
+        <div class="info-chip" id="ic-km"></div>
+        <div class="info-chip" id="ic-pts"></div>
+        <button class="btn-export-ses" id="btn-export-ses">📄 Exportar sesión</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- FIREBASE + LÓGICA -->
+<!-- MODAL USUARIOS -->
+<div class="modal-bg" id="modal-users">
+  <div class="modal-card-u">
+    <div class="modal-title-u">
+      <span>👥 Gestión de usuarios</span>
+      <button class="btn-close-u" id="btn-close-users">✕</button>
+    </div>
+    <div class="u-list" id="u-list"><div class="no-sess">Cargando...</div></div>
+    <div class="add-form">
+      <div class="add-title">➕ Agregar usuario</div>
+      <div class="add-field"><label>Nombre completo</label><input type="text" id="nu-nombre" placeholder="Ej: Juan García"></div>
+      <div class="add-field"><label>Usuario (login)</label><input type="text" id="nu-login" placeholder="juangarcia"></div>
+      <div class="add-field"><label>Contraseña inicial</label><input type="text" id="nu-pass" placeholder="La cambia al primer login"></div>
+      <div class="add-field"><label>Rol</label>
+        <select id="nu-rol">
+          <option value="vendedor">Vendedor</option>
+          <option value="supervisor">Supervisor</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="u-msg" id="u-msg"></div>
+      <button class="btn-add" id="btn-add-user">➕ Agregar</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, query, where, getDocs, orderBy, onSnapshot, doc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, query, where, getDocs, orderBy, onSnapshot, doc, setDoc, deleteDoc }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-// ============================================================
-// 🔧 CONFIGURACIÓN FIREBASE — misma que en app.html
-// ============================================================
 const firebaseConfig = {
   apiKey: "AIzaSyC-QEySKh_4MCoBG-QrIPTb1PLda4-psk0",
   authDomain: "gps-vendedores-192ab.firebaseapp.com",
   projectId: "gps-vendedores-192ab",
   storageBucket: "gps-vendedores-192ab.firebasestorage.app",
   messagingSenderId: "890957103857",
-  appId: "1:890957103857:web:b34226e06a7fba1f925f50",
-  measurementId: "G-ZVVK70X3Z7"
+  appId: "1:890957103857:web:b34226e06a7fba1f925f50"
 };
 
-// Admin credentials
-const ADMIN_CREDENTIALS = {
-  "admin": "admin"
+const ADMIN_CREDENTIALS = { "admin": "admin" };
+const VENDEDORES = ['Cristian Albornoz','Dario Rocha','Diego Portillo','Hernán Aranda'];
+const COLORES = {
+  'Cristian Albornoz': '#3d8ef0',
+  'Dario Rocha':       '#f97316',
+  'Diego Portillo':    '#a855f7',
+  'Hernán Aranda':     '#3fb950'
 };
-// ============================================================
 
-const app2 = initializeApp(firebaseConfig, 'panel');
-const db2 = getFirestore(app2);
+const fbApp = initializeApp(firebaseConfig, 'panel');
+const db = getFirestore(fbApp);
 
 let map = null;
 let currentLayer = null;
 let currentSession = null;
 let allSessions = [];
+let liveActivo = false;
+let liveUnsub = null;
+let liveMarkers = {};
+let estadosUnsub = null;
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let calSelected = '';
+let fechasConDatos = new Set();
 
-// Set today's date in filter
-// filter-date manejado por el calendario
+// ---- LOGIN ----
+document.getElementById('btn-entrar').addEventListener('click', hacerLogin);
+document.getElementById('admin-pass').addEventListener('keypress', e => { if(e.key==='Enter') hacerLogin(); });
 
-// LOGIN
-window.adminLogin = function() {
+function hacerLogin() {
   const user = document.getElementById('admin-user').value.trim();
   const pass = document.getElementById('admin-pass').value;
-  const err = document.getElementById('admin-err');
-
+  const err  = document.getElementById('admin-err');
   if (!ADMIN_CREDENTIALS[user] || ADMIN_CREDENTIALS[user] !== pass) {
-    err.style.display = 'block';
-    return;
+    err.style.display = 'block'; return;
   }
-
   err.style.display = 'none';
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('panel-screen').style.display = 'block';
+  document.getElementById('panel-screen').classList.add('visible');
   initMap();
-  iniciarEscuchaEstados();
+  iniciarEstados();
   renderCalendar();
   cargarFechasConDatos();
-};
+}
 
-window.adminLogout = function() {
+document.getElementById('btn-logout').addEventListener('click', () => {
+  if (estadosUnsub) estadosUnsub();
+  if (liveUnsub) liveUnsub();
   document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('panel-screen').style.display = 'none';
-};
+  document.getElementById('panel-screen').classList.remove('visible');
+});
 
-// MAP
+// ---- MAPA ----
 function initMap() {
-  map = L.map('map', { zoomControl: true }).setView([-34.65, -58.72], 12);
+  if (map) return;
+  map = L.map('map').setView([-34.65, -58.72], 12);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors',
-    maxZoom: 19
+    attribution: '© OpenStreetMap', maxZoom: 19
   }).addTo(map);
 }
 
-// BUSCAR SESIONES
-window.buscarSesiones = async function() {
-  const emp = document.getElementById('filter-emp').value;
-  const fecha = document.getElementById('filter-date').value;
-  const scroll = document.getElementById('session-scroll');
-  scroll.innerHTML = '<div class="no-sessions">Cargando...</div>';
-
-  try {
-    let constraints = [collection(db2, 'sesiones')];
-    let q;
-
-    if (emp && fecha) {
-      q = query(collection(db2,'sesiones'), where('empleado','==',emp), where('fecha','==',fecha), orderBy('entrada','desc'));
-    } else if (emp) {
-      q = query(collection(db2,'sesiones'), where('empleado','==',emp), orderBy('entrada','desc'));
-    } else if (fecha) {
-      q = query(collection(db2,'sesiones'), where('fecha','==',fecha), orderBy('entrada','desc'));
-    } else {
-      q = query(collection(db2,'sesiones'), orderBy('entrada','desc'));
-    }
-
-    const snap = await getDocs(q);
-    allSessions = [];
-    snap.forEach(doc => allSessions.push({ id: doc.id, ...doc.data() }));
-
-    if (allSessions.length === 0) {
-      scroll.innerHTML = '<div class="no-sessions">No hay sesiones para estos filtros</div>';
-      return;
-    }
-
-    scroll.innerHTML = '';
-    allSessions.forEach((s, i) => {
-      const entrada = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-      const salida = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-      const fechaFmt = new Date(s.entrada).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
-
-      const card = document.createElement('div');
-      card.className = 'session-card';
-      card.id = 'sc-' + i;
-      card.innerHTML = `
-        <div class="sc-name">${s.empleado}</div>
-        <div class="sc-date">${fechaFmt} · ${entrada} → ${salida}</div>
-        <div class="sc-meta">
-          <span class="sc-tag tag-green">${s.duracion_min} min</span>
-          <span class="sc-tag tag-blue">${s.distancia_km} km</span>
-          <span class="sc-tag tag-purple">${s.puntos} pts</span>
-        </div>
-      `;
-      card.onclick = () => verSesion(s, i);
-      scroll.appendChild(card);
-    });
-
-  } catch(e) {
-    scroll.innerHTML = `<div class="no-sessions">Error: ${e.message}</div>`;
-    console.error(e);
-  }
-};
-
-
-// CARGAR VISITAS DE LA SESIÓN + PINES EN MAPA
-async function cargarVisitas(s) {
-  const panel = document.getElementById('visitas-panel');
-  const lista = document.getElementById('visitas-lista');
-
-  try {
-    // Consulta simple solo por empleado y fecha — sin orderBy para evitar índices
-    const q = query(
-      collection(db2,'visitas'),
-      where('empleado','==',s.empleado),
-      where('fecha','==',s.fecha)
-    );
-    const snap = await getDocs(q);
-
-    // Filtrar por rango de horario de la sesión y ordenar
-    const visitas = [];
-    snap.forEach(doc => {
-      const d = doc.data();
-      const horaVisita = d.hora || d.entrada || '';
-      if (horaVisita >= s.entrada && horaVisita <= s.salida) visitas.push(d);
-    });
-    visitas.sort((a,b) => (a.hora||a.entrada||'').localeCompare(b.hora||b.entrada||''));
-
-    if (visitas.length === 0) {
-      panel.classList.remove('visible');
-      return;
-    }
-
-    // ---- PINES EN EL MAPA ----
-    visitas.forEach(v => {
-      if (!v.lat || !v.lng) return;
-      const hora = new Date(v.hora).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-      const nombre = v.razon || v.nombre || 'Cliente';
-
-      // Icono naranja personalizado
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="
-          background:#f97316;
-          border:2px solid #fff;
-          border-radius:50% 50% 50% 0;
-          width:28px;height:28px;
-          transform:rotate(-45deg);
-          box-shadow:0 2px 6px rgba(0,0,0,0.4);
-          display:flex;align-items:center;justify-content:center;
-        "><span style="transform:rotate(45deg);font-size:13px;">🏪</span></div>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 28],
-        popupAnchor: [0, -30]
-      });
-
-      L.marker([v.lat, v.lng], { icon })
-        .bindPopup(`
-          <div style="min-width:160px">
-            <div style="font-weight:700;font-size:13px;margin-bottom:4px;">🏪 ${nombre}</div>
-            <div style="font-size:12px;color:#666;">${v.direccion || ''}</div>
-            <div style="font-size:11px;color:#f97316;margin-top:6px;font-weight:600;">⏱️ Visitado: ${hora}</div>
-          </div>
-        `, { maxWidth: 220 })
-        .addTo(currentLayer);
-    });
-
-    // ---- LISTA EN SIDEBAR ----
-    lista.innerHTML = '';
-    visitas.forEach(v => {
-      const hora = new Date(v.hora).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-      const row = document.createElement('div');
-      row.className = 'visita-row';
-      row.innerHTML = `
-        <div class="visita-hora">${hora}</div>
-        <div class="visita-info">
-          <div class="visita-nombre">${v.razon || v.nombre}</div>
-          <div class="visita-dir">${v.direccion || 'Sin coordenadas GPS'}</div>
-        </div>
-      `;
-      lista.appendChild(row);
-    });
-    panel.classList.add('visible');
-
-  } catch(e) {
-    console.error('Error cargando visitas:', e);
-    panel.classList.remove('visible');
-  }
-}
-
-// VER SESIÓN EN MAPA
-window.verSesion = function(s, idx) {
-  currentSession = s;
-
-  // Highlight card
-  document.querySelectorAll('.session-card').forEach(c => c.classList.remove('active'));
-  const card = document.getElementById('sc-' + idx);
-  if (card) card.classList.add('active');
-
-  // Stats
-  document.getElementById('stats-row').style.display = 'flex';
-  const entrada = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-  const salida = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('stat-entrada').textContent = entrada;
-  document.getElementById('stat-salida').textContent = salida;
-  document.getElementById('stat-dur').textContent = s.duracion_min + ' min';
-  document.getElementById('stat-km').textContent = s.distancia_km + ' km';
-  document.getElementById('stat-pts').textContent = s.puntos;
-
-  // Panel title
-  document.getElementById('panel-title').textContent = s.empleado;
-  document.getElementById('panel-sub').textContent =
-    new Date(s.entrada).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-  // Limpiar mapa
-  if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
-
-  if (!s.recorrido || s.recorrido.length === 0) {
-    document.getElementById('info-panel').className = 'info-panel';
-    return;
-  }
-
-  const pts = s.recorrido.map(p => [p.lat, p.lng]);
-
-  // Grupo de capas
-  currentLayer = L.layerGroup().addTo(map);
-
-  // Polyline del recorrido
-  const poly = L.polyline(pts, {
-    color: '#3d8ef0',
-    weight: 4,
-    opacity: 0.85,
-    dashArray: null
-  }).addTo(currentLayer);
-
-  // Inicio (verde)
-  L.circleMarker(pts[0], {
-    radius: 10,
-    fillColor: '#3fb950',
-    color: '#fff',
-    weight: 2,
-    fillOpacity: 1
-  }).bindPopup(`<b>🟢 ENTRADA</b><br>${entrada}<br><small>${s.empleado}</small>`).addTo(currentLayer);
-
-  // Fin (rojo)
-  L.circleMarker(pts[pts.length-1], {
-    radius: 10,
-    fillColor: '#f85149',
-    color: '#fff',
-    weight: 2,
-    fillOpacity: 1
-  }).bindPopup(`<b>🔴 SALIDA</b><br>${salida}<br><small>${s.empleado}</small>`).addTo(currentLayer);
-
-  // Puntos intermedios (cada 10)
-  for (let i = 10; i < pts.length - 1; i += 10) {
-    const ts = new Date(s.recorrido[i].ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    L.circleMarker(pts[i], {
-      radius: 4,
-      fillColor: '#3d8ef0',
-      color: 'transparent',
-      fillOpacity: 0.7
-    }).bindPopup(`⏱️ ${ts}`).addTo(currentLayer);
-  }
-
-  map.fitBounds(poly.getBounds(), { padding: [40, 40] });
-  cargarVisitas(s);
-
-  // Info chips
-  document.getElementById('info-panel').className = 'info-panel visible';
-  document.getElementById('info-chips').innerHTML = `
-    <span class="chip">🟢 Entrada: ${entrada}</span>
-    <span class="chip">🔴 Salida: ${salida}</span>
-    <span class="chip">⏱️ ${s.duracion_min} min</span>
-    <span class="chip">📍 ${s.distancia_km} km</span>
-    <span class="chip">🔵 ${s.puntos} puntos GPS</span>
-  `;
-};
-
-// EXPORTAR SESIÓN INDIVIDUAL HTML
-window.exportarSesionHTML = function() {
-  if (!currentSession) return;
-  const s = currentSession;
-  const pts = s.recorrido || [];
-  const entrada = new Date(s.entrada).toLocaleTimeString('es-AR');
-  const salida = new Date(s.salida).toLocaleTimeString('es-AR');
-  const fechaStr = new Date(s.entrada).toLocaleDateString('es-AR', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const ptsJSON = JSON.stringify(pts.map(p=>[p.lat,p.lng]));
-  const primeraLat = pts.length ? pts[0].lat : -34.65;
-  const primeraLng = pts.length ? pts[0].lng : -58.72;
-
-  const html = `<!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reporte — ${s.empleado} — ${fechaStr}</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
-<style>
-  body{font-family:sans-serif;margin:0;background:#f5f7fa;color:#1a1a2e}
-  .header{background:#1a2535;color:white;padding:24px 32px}
-  .header h1{font-size:20px;margin-bottom:4px}
-  .header p{font-size:13px;opacity:0.7}
-  .stats{display:flex;gap:0;background:white;border-bottom:1px solid #dde3ef}
-  .stat{flex:1;padding:16px 20px;border-right:1px solid #dde3ef;text-align:center}
-  .stat:last-child{border-right:none}
-  .sv{font-size:22px;font-weight:800;color:#3d8ef0}
-  .sl{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-  #map{height:500px}
-  .footer{background:white;padding:16px 32px;text-align:center;font-size:12px;color:#8b949e;border-top:1px solid #dde3ef}
-  @media print{.footer{position:fixed;bottom:0;width:100%}}
-</style>
-</head><body>
-<div class="header">
-  <h1>📍 ${s.empleado}</h1>
-  <p>${fechaStr} · Sanitarios Mitre</p>
-</div>
-<div class="stats">
-  <div class="stat"><div class="sv">${entrada}</div><div class="sl">Entrada</div></div>
-  <div class="stat"><div class="sv">${salida}</div><div class="sl">Salida</div></div>
-  <div class="stat"><div class="sv">${s.duracion_min} min</div><div class="sl">Duración</div></div>
-  <div class="stat"><div class="sv">${s.distancia_km} km</div><div class="sl">Distancia</div></div>
-  <div class="stat"><div class="sv">${s.puntos}</div><div class="sl">Puntos GPS</div></div>
-</div>
-<div id="map"></div>
-<div class="footer">Generado por Mitre Tracker · Sanitarios Mitre</div>
-<script>
-const map = L.map('map').setView([${primeraLat},${primeraLng}],14);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-const pts = ${ptsJSON};
-if(pts.length>0){
-  const poly=L.polyline(pts,{color:'#3d8ef0',weight:4}).addTo(map);
-  L.circleMarker(pts[0],{radius:10,fillColor:'#3fb950',color:'#fff',weight:2,fillOpacity:1}).bindPopup('🟢 ENTRADA ${entrada}').addTo(map);
-  L.circleMarker(pts[pts.length-1],{radius:10,fillColor:'#f85149',color:'#fff',weight:2,fillOpacity:1}).bindPopup('🔴 SALIDA ${salida}').addTo(map);
-  map.fitBounds(poly.getBounds(),{padding:[40,40]});
-}
-<\/script>
-
-<!-- MODAL GESTIÓN DE USUARIOS -->
-<div class="modal-overlay-users" id="modal-users">
-  <div class="modal-users-card">
-    <div class="modal-users-title">
-      <span>👥 Gestión de usuarios</span>
-      <button class="btn-close-modal" onclick="cerrarGestionUsuarios()">✕</button>
-    </div>
-
-    <div class="users-list" id="users-list">
-      <div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px;">Cargando usuarios...</div>
-    </div>
-
-    <div class="add-user-form">
-      <div class="add-user-title">➕ Agregar nuevo usuario</div>
-      <div class="add-user-fields">
-        <div class="add-field">
-          <label>Nombre completo</label>
-          <input type="text" id="new-user-name" placeholder="Ej: Juan García">
-        </div>
-        <div class="add-field">
-          <label>Usuario (para login)</label>
-          <input type="text" id="new-user-login" placeholder="Ej: juangarcia">
-        </div>
-        <div class="add-field">
-          <label>Contraseña inicial</label>
-          <input type="text" id="new-user-pass" placeholder="El usuario la cambiará al primer login">
-        </div>
-        <div class="add-field">
-          <label>Rol</label>
-          <select id="new-user-role">
-            <option value="vendedor">Vendedor (app móvil)</option>
-            <option value="supervisor">Supervisor (panel)</option>
-            <option value="admin">Admin (panel completo)</option>
-          </select>
-        </div>
-      </div>
-      <div class="users-msg" id="users-msg"></div>
-      <button class="btn-add-user" onclick="agregarUsuario()">➕ Agregar usuario</button>
-    </div>
-  </div>
-</div>
-
-</body></html>`;
-
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `recorrido_${s.empleado.replace(' ','_')}_${s.fecha}.html`;
-  a.click();
-  URL.revokeObjectURL(url);
-};
-
-// EXPORTAR REPORTE GENERAL
-window.exportarReporteHTML = function() {
-  if (allSessions.length === 0) {
-    alert('Primero buscá sesiones para exportar');
-    return;
-  }
-
-  const rows = allSessions.map(s => {
-    const entrada = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    const salida = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    const fecha = new Date(s.entrada).toLocaleDateString('es-AR');
-    return `<tr>
-      <td>${s.empleado}</td>
-      <td>${fecha}</td>
-      <td style="color:#3fb950;font-weight:600">${entrada}</td>
-      <td style="color:#f85149;font-weight:600">${salida}</td>
-      <td>${s.duracion_min} min</td>
-      <td>${s.distancia_km} km</td>
-      <td>${s.puntos}</td>
-    </tr>`;
-  }).join('');
-
-  const totalMin = allSessions.reduce((a,s) => a + s.duracion_min, 0);
-  const totalKm = allSessions.reduce((a,s) => a + s.distancia_km, 0).toFixed(2);
-  const fechaReporte = new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
-
-  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
-<title>Reporte General — Mitre Tracker</title>
-<style>
-  body{font-family:sans-serif;background:#f5f7fa;color:#1a1a2e;margin:0}
-  .header{background:#1a2535;color:white;padding:24px 40px}
-  .header h1{font-size:22px}
-  .header p{opacity:.7;font-size:13px;margin-top:4px}
-  .totals{display:flex;background:white;border-bottom:2px solid #dde3ef}
-  .tot{flex:1;padding:16px 24px;border-right:1px solid #eee;text-align:center}
-  .tot:last-child{border-right:none}
-  .tv{font-size:26px;font-weight:900;color:#3d8ef0}
-  .tl{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-  table{width:100%;border-collapse:collapse;background:white;margin:20px 0}
-  th{background:#f0f4ff;padding:12px 16px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#8b949e;border-bottom:2px solid #dde3ef}
-  td{padding:12px 16px;border-bottom:1px solid #eee;font-size:13px}
-  tr:hover td{background:#f9fbff}
-  .footer{text-align:center;padding:20px;color:#8b949e;font-size:12px}
-  @media print{body{background:white}.header{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-</style></head><body>
-<div class="header">
-  <h1>📊 Reporte General — Sanitarios Mitre</h1>
-  <p>Generado el ${fechaReporte} · ${allSessions.length} sesiones</p>
-</div>
-<div class="totals">
-  <div class="tot"><div class="tv">${allSessions.length}</div><div class="tl">Sesiones</div></div>
-  <div class="tot"><div class="tv">${totalMin} min</div><div class="tl">Total trabajado</div></div>
-  <div class="tot"><div class="tv">${totalKm} km</div><div class="tl">Total recorrido</div></div>
-</div>
-<table>
-  <thead><tr>
-    <th>Empleado</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Duración</th><th>Distancia</th><th>Pts GPS</th>
-  </tr></thead>
-  <tbody>${rows}</tbody>
-</table>
-<div class="footer">Mitre Tracker · Sanitarios Mitre · ${fechaReporte}</div>
-</body></html>`;
-
-  const blob = new Blob([html],{type:'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `reporte_mitre_${new Date().toISOString().slice(0,10)}.html`;
-  a.click();
-  URL.revokeObjectURL(url);
-};
-
-
-
-
-
-// ============================================================
-// TRACKING EN VIVO
-// ============================================================
-const COLORES_VENDEDOR = {
-  'Cristian Albornoz': { color: '#3d8ef0', bg: 'rgba(61,142,240,0.15)' },
-  'Dario Rocha':       { color: '#f97316', bg: 'rgba(249,115,22,0.15)' },
-  'Diego Portillo':    { color: '#a855f7', bg: 'rgba(168,85,247,0.15)' },
-  'Hernán Aranda':     { color: '#3fb950', bg: 'rgba(63,185,80,0.15)'  }
-};
-
-let liveActivo = false;
-let liveUnsubscribe = null;
-let liveMarkers = {}; // nombre -> L.marker
-
-window.toggleLive = function() {
-  if (liveActivo) {
-    detenerLive();
-  } else {
-    iniciarLive();
-  }
-};
-
-function iniciarLive() {
-  liveActivo = true;
-  const btn = document.getElementById('btn-live');
-  btn.classList.add('active');
-  btn.querySelector('span').textContent = 'En vivo';
-
-  // Mostrar leyenda
-  renderLegend();
-  document.getElementById('live-legend').classList.add('visible');
-
-  // Asegurarse que el mapa esté iniciado
-  if (!map) initMap();
-
-  // Escuchar colección ubicaciones en tiempo real
-  liveUnsubscribe = onSnapshot(collection(db2, 'ubicaciones'), (snap) => {
-    snap.forEach(docSnap => {
-      const d = docSnap.data();
-      const nombre = docSnap.id;
-      if (!d.activo || !d.lat || !d.lng) {
-        // Vendedor inactivo — remover marcador
-        if (liveMarkers[nombre]) {
-          map.removeLayer(liveMarkers[nombre]);
-          delete liveMarkers[nombre];
-        }
-        return;
-      }
-
-      const cfg = COLORES_VENDEDOR[nombre] || { color: '#fff', bg: 'rgba(255,255,255,0.1)' };
-      const initials = nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const hora = new Date(d.ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="
-          width:36px; height:36px;
-          background:${cfg.color};
-          border:3px solid white;
-          border-radius:50%;
-          display:flex; align-items:center; justify-content:center;
-          font-size:12px; font-weight:800; color:white;
-          box-shadow:0 2px 8px rgba(0,0,0,0.4);
-          position:relative;
-        ">${initials}<div style="
-          position:absolute; bottom:-8px; left:50%;
-          transform:translateX(-50%);
-          width:0; height:0;
-          border-left:6px solid transparent;
-          border-right:6px solid transparent;
-          border-top:8px solid ${cfg.color};
-        "></div></div>`,
-        iconSize: [36, 44],
-        iconAnchor: [18, 44],
-        popupAnchor: [0, -46]
-      });
-
-      if (liveMarkers[nombre]) {
-        // Actualizar posición con animación suave
-        liveMarkers[nombre].setLatLng([d.lat, d.lng]);
-        liveMarkers[nombre].setIcon(icon);
-        liveMarkers[nombre].getPopup().setContent(`
-          <div style="min-width:140px">
-            <div style="font-weight:700;font-size:13px;color:${cfg.color}">${nombre}</div>
-            <div style="font-size:11px;color:#666;margin-top:4px;">🟢 En turno</div>
-            <div style="font-size:11px;color:#666;">⏱️ Actualizado: ${hora}</div>
-            <div style="font-size:11px;color:#666;">📡 Precisión: ±${Math.round(d.acc||0)}m</div>
-          </div>
-        `);
-      } else {
-        // Crear nuevo marcador
-        const marker = L.marker([d.lat, d.lng], { icon })
-          .bindPopup(`
-            <div style="min-width:140px">
-              <div style="font-weight:700;font-size:13px;color:${cfg.color}">${nombre}</div>
-              <div style="font-size:11px;color:#666;margin-top:4px;">🟢 En turno</div>
-              <div style="font-size:11px;color:#666;">⏱️ Actualizado: ${hora}</div>
-              <div style="font-size:11px;color:#666;">📡 Precisión: ±${Math.round(d.acc||0)}m</div>
-            </div>
-          `)
-          .addTo(map);
-        liveMarkers[nombre] = marker;
-      }
-    });
-
-    // Centrar mapa si hay marcadores
-    const positions = Object.values(liveMarkers).map(m => m.getLatLng());
-    if (positions.length === 1) {
-      map.setView(positions[0], 14);
-    } else if (positions.length > 1) {
-      map.fitBounds(positions.map(p => [p.lat, p.lng]), { padding: [60,60] });
-    }
-  });
-}
-
-function detenerLive() {
-  liveActivo = false;
-  const btn = document.getElementById('btn-live');
-  btn.classList.remove('active');
-  btn.querySelector('span').textContent = 'Ver en vivo';
-
-  document.getElementById('live-legend').classList.remove('visible');
-
-  if (liveUnsubscribe) { liveUnsubscribe(); liveUnsubscribe = null; }
-
-  // Remover marcadores del mapa
-  Object.values(liveMarkers).forEach(m => map.removeLayer(m));
-  liveMarkers = {};
-}
-
-function renderLegend() {
-  const legend = document.getElementById('live-legend');
-  legend.innerHTML = '<div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Vendedores</div>';
-  Object.entries(COLORES_VENDEDOR).forEach(([nombre, cfg]) => {
-    const item = document.createElement('div');
-    item.className = 'legend-item';
-    item.style.color = 'var(--text)';
-    item.innerHTML = `
-      <div class="legend-dot" style="background:${cfg.color}"></div>
-      <span>${nombre.split(' ')[0]}</span>
-    `;
-    legend.appendChild(item);
-  });
-}
-
-// ============================================================
-// GESTIÓN DE USUARIOS
-// ============================================================
-
-window.abrirGestionUsuarios = function() {
-  document.getElementById('modal-users').classList.add('open');
-  cargarUsuarios();
-};
-
-window.cerrarGestionUsuarios = function() {
-  document.getElementById('modal-users').classList.remove('open');
-  limpiarFormUsuario();
-};
-
-// Cerrar con click fuera
-document.getElementById('modal-users').addEventListener('click', function(e) {
-  if (e.target === this) cerrarGestionUsuarios();
-});
-
-async function cargarUsuarios() {
-  const lista = document.getElementById('users-list');
-  lista.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px;">Cargando...</div>';
-
-  try {
-    const snap = await getDocs(collection(db2, 'usuarios'));
-    if (snap.empty) {
-      lista.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px;">No hay usuarios registrados</div>';
-      return;
-    }
-
-    lista.innerHTML = '';
-    snap.forEach(docSnap => {
-      const u = docSnap.data();
-      const id = docSnap.id;
-      const initials = (u.nombre || id).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const rolBadge = u.rol === 'admin' ? 'badge-admin' : 'badge-user';
-      const rolLabel = u.rol === 'admin' ? 'Admin' : u.rol === 'supervisor' ? 'Supervisor' : 'Vendedor';
-      const esPrimerLogin = u.primerLogin !== false;
-
-      const row = document.createElement('div');
-      row.className = 'user-row';
-      row.innerHTML = `
-        <div class="user-avatar">${initials}</div>
-        <div class="user-info-row">
-          <div class="user-name-row">${u.nombre || id}</div>
-          <div class="user-meta-row">@${id} ${esPrimerLogin ? '· <span style="color:var(--yellow)">Nunca ingresó</span>' : '· Activo'}</div>
-        </div>
-        <span class="user-badge ${rolBadge}">${rolLabel}</span>
-        <button class="btn-reset-pass" onclick="resetearPass('${id}','${u.nombre||id}')">🔑 Reset</button>
-        ${id !== 'admin' ? `<button class="btn-del-user" onclick="eliminarUsuario('${id}','${u.nombre||id}')">✕</button>` : ''}
-      `;
-      lista.appendChild(row);
-    });
-  } catch(e) {
-    lista.innerHTML = `<div style="text-align:center;color:var(--red);font-size:13px;padding:16px;">Error: ${e.message}</div>`;
-    console.error(e);
-  }
-}
-
-window.agregarUsuario = async function() {
-  const nombre = document.getElementById('new-user-name').value.trim();
-  const login  = document.getElementById('new-user-login').value.trim().toLowerCase().replace(/\s+/g,'');
-  const pass   = document.getElementById('new-user-pass').value.trim();
-  const rol    = document.getElementById('new-user-role').value;
-  const msg    = document.getElementById('users-msg');
-
-  if (!nombre || !login || !pass) {
-    msg.textContent = 'Completá todos los campos'; msg.className = 'users-msg err'; return;
-  }
-  if (login.length < 3) {
-    msg.textContent = 'El usuario debe tener al menos 3 caracteres'; msg.className = 'users-msg err'; return;
-  }
-
-  try {
-    // Check if user already exists
-    const existing = await getDocs(query(collection(db2,'usuarios'), where('__name__','==',login)));
-    // Use setDoc with login as document ID
-    const { doc: firestoreDoc, setDoc: firestoreSetDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-
-    await setDoc(doc(db2, 'usuarios', login), {
-      nombre:      nombre,
-      password:    pass,
-      rol:         rol,
-      primerLogin: true,
-      creado:      new Date().toISOString()
-    });
-
-    msg.textContent = `✅ Usuario "${nombre}" creado. Contraseña inicial: ${pass}`;
-    msg.className = 'users-msg ok';
-    limpiarFormUsuario();
-    cargarUsuarios();
-
-  } catch(e) {
-    msg.textContent = 'Error: ' + e.message;
-    msg.className = 'users-msg err';
-    console.error(e);
-  }
-};
-
-window.resetearPass = async function(id, nombre) {
-  const nuevaPass = prompt(`Nueva contraseña para ${nombre}:`);
-  if (!nuevaPass || nuevaPass.length < 4) { alert('Contraseña muy corta'); return; }
-
-  try {
-    await setDoc(doc(db2, 'usuarios', id), {
-      password: nuevaPass,
-      primerLogin: true
-    }, { merge: true });
-    alert(`✅ Contraseña de ${nombre} reseteada. Deberá cambiarla al próximo login.`);
-    cargarUsuarios();
-  } catch(e) {
-    alert('Error: ' + e.message);
-  }
-};
-
-window.eliminarUsuario = async function(id, nombre) {
-  if (!confirm(`¿Eliminar al usuario "${nombre}"? Esta acción no se puede deshacer.`)) return;
-  try {
-    await deleteDoc(doc(db2, 'usuarios', id));
-    cargarUsuarios();
-  } catch(e) {
-    alert('Error: ' + e.message);
-  }
-};
-
-function limpiarFormUsuario() {
-  document.getElementById('new-user-name').value = '';
-  document.getElementById('new-user-login').value = '';
-  document.getElementById('new-user-pass').value = '';
-  document.getElementById('new-user-role').value = 'vendedor';
-  const msg = document.getElementById('users-msg');
-  msg.textContent = ''; msg.className = 'users-msg';
-}
-
-// ============================================================
-// ESTADO EN TIEMPO REAL DE VENDEDORES
-// ============================================================
-const VENDEDORES = ['Cristian Albornoz','Dario Rocha','Diego Portillo','Hernán Aranda'];
-
-function iniciarEscuchaEstados() {
-  // Escuchar colección 'estados' en tiempo real
-  const q = collection(db2, 'estados');
-  onSnapshot(q, (snap) => {
-    // Reset todos a offline primero
-    VENDEDORES.forEach(v => setVendedorOffline(v));
-    // Aplicar estados actuales
-    snap.forEach(docSnap => {
-      const d = docSnap.data();
-      const nombre = docSnap.id; // el ID del doc es el nombre del vendedor
-      if (d.activo) {
-        setVendedorOnline(nombre, d.desde);
-      } else {
-        setVendedorOffline(nombre);
-      }
+// ---- ESTADO VENDEDORES EN TIEMPO REAL ----
+function iniciarEstados() {
+  if (estadosUnsub) estadosUnsub();
+  estadosUnsub = onSnapshot(collection(db, 'estados'), snap => {
+    VENDEDORES.forEach(v => setOffline(v));
+    snap.forEach(d => {
+      const data = d.data();
+      if (data.activo) setOnline(d.id, data.desde);
+      else setOffline(d.id);
     });
   });
 }
 
-function setVendedorOnline(nombre, desde) {
-  const card   = document.getElementById('vc-' + nombre);
-  const circle = document.getElementById('sc-' + nombre);
-  const estado = document.getElementById('se-' + nombre);
-  const hora   = document.getElementById('sh-' + nombre);
-  if (!card) return;
-  card.classList.add('online');
-  circle.classList.add('online');
-  estado.textContent = 'En turno';
-  if (desde) {
-    const h = new Date(desde).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    hora.textContent = 'desde ' + h;
-  }
+function setOnline(nombre, desde) {
+  const vc = document.getElementById('vc-' + nombre);
+  const sc = document.getElementById('sc-' + nombre);
+  const se = document.getElementById('se-' + nombre);
+  const sh = document.getElementById('sh-' + nombre);
+  if (!vc) return;
+  vc.classList.add('online');
+  sc.classList.add('online');
+  se.textContent = 'En turno';
+  if (desde) sh.textContent = 'desde ' + new Date(desde).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
 }
 
-function setVendedorOffline(nombre) {
-  const card   = document.getElementById('vc-' + nombre);
-  const circle = document.getElementById('sc-' + nombre);
-  const estado = document.getElementById('se-' + nombre);
-  const hora   = document.getElementById('sh-' + nombre);
-  if (!card) return;
-  card.classList.remove('online');
-  circle.classList.remove('online');
-  estado.textContent = 'Fuera de turno';
-  hora.textContent = '--:--';
+function setOffline(nombre) {
+  const vc = document.getElementById('vc-' + nombre);
+  const sc = document.getElementById('sc-' + nombre);
+  const se = document.getElementById('se-' + nombre);
+  const sh = document.getElementById('sh-' + nombre);
+  if (!vc) return;
+  vc.classList.remove('online');
+  sc.classList.remove('online');
+  se.textContent = 'Fuera de turno';
+  sh.textContent = '--:--';
 }
 
-// iniciarEscuchaEstados() se llama desde adminLogin()
-
-// ============================================================
-// CALENDARIO CON PUNTOS
-// ============================================================
-let calYear  = new Date().getFullYear();
-let calMonth = new Date().getMonth();
-let calSelectedDate = '';
-let fechasConDatos = new Set(); // "YYYY-MM-DD" con sesiones
-
-// Cerrar al click fuera
-document.addEventListener('click', (e) => {
-  const wrap = document.getElementById('cal-wrap');
-  if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('cal-dropdown').classList.remove('open');
-  }
-});
-
-window.toggleCalendar = function(e) {
+// ---- CALENDARIO ----
+document.getElementById('cal-trigger').addEventListener('click', e => {
   e.stopPropagation();
-  const dd = document.getElementById('cal-dropdown');
-  const isOpen = dd.classList.contains('open');
-  if (!isOpen) {
-    cargarFechasConDatos();
-  }
-  dd.classList.toggle('open');
-};
-
-window.calNav = function(dir) {
-  calMonth += dir;
-  if (calMonth > 11) { calMonth = 0; calYear++; }
-  if (calMonth < 0)  { calMonth = 11; calYear--; }
-  renderCalendar();
-};
-
-window.calClear = function() {
-  calSelectedDate = '';
+  document.getElementById('cal-dropdown').classList.toggle('open');
+});
+document.getElementById('cal-prev').addEventListener('click', () => { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); });
+document.getElementById('cal-next').addEventListener('click', () => { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); });
+document.getElementById('cal-clear').addEventListener('click', () => {
+  calSelected = '';
   document.getElementById('filter-date').value = '';
   document.getElementById('cal-trigger-text').textContent = 'Todas las fechas';
   document.getElementById('cal-dropdown').classList.remove('open');
   renderCalendar();
-};
+});
+document.addEventListener('click', e => {
+  const wrap = document.querySelector('.cal-wrap');
+  if (wrap && !wrap.contains(e.target)) document.getElementById('cal-dropdown').classList.remove('open');
+});
+document.getElementById('filter-emp').addEventListener('change', cargarFechasConDatos);
+
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid');
+  const label = document.getElementById('cal-month');
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  label.textContent = meses[calMonth] + ' ' + calYear;
+
+  // Remove old day cells
+  grid.querySelectorAll('.cal-day').forEach(c => c.remove());
+
+  const today = new Date().toISOString().slice(0,10);
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+
+  for (let i = firstDay-1; i >= 0; i--) {
+    const d = document.createElement('div');
+    d.className = 'cal-day other';
+    d.textContent = daysInPrev - i;
+    grid.appendChild(d);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+    if (ds === today) cell.classList.add('today');
+    if (ds === calSelected) cell.classList.add('sel');
+    if (fechasConDatos.has(ds)) cell.classList.add('has-data');
+
+    const num = document.createElement('span');
+    num.textContent = d;
+    cell.appendChild(num);
+
+    if (fechasConDatos.has(ds) && ds !== calSelected) {
+      const dot = document.createElement('div');
+      dot.className = 'cal-dot';
+      cell.appendChild(dot);
+    }
+
+    cell.addEventListener('click', () => {
+      calSelected = ds;
+      document.getElementById('filter-date').value = ds;
+      const mesesCortos = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      document.getElementById('cal-trigger-text').textContent = d + ' ' + mesesCortos[calMonth] + ' ' + calYear;
+      document.getElementById('cal-dropdown').classList.remove('open');
+      renderCalendar();
+      buscarSesiones();
+    });
+    grid.appendChild(cell);
+  }
+
+  const total = firstDay + daysInMonth;
+  const rem = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let d = 1; d <= rem; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day other';
+    cell.textContent = d;
+    grid.appendChild(cell);
+  }
+}
 
 async function cargarFechasConDatos() {
   fechasConDatos.clear();
   try {
     const emp = document.getElementById('filter-emp').value;
     let q;
+    const desde = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-01';
+    const hasta = calYear + '-' + String(calMonth === 11 ? calYear+1 : calYear) + '-' + String(calMonth === 11 ? '01' : String(calMonth+2).padStart(2,'0')) + '-01';
+
     if (emp) {
-      q = query(collection(db2,'sesiones'), where('empleado','==',emp));
+      q = query(collection(db,'sesiones'), where('empleado','==',emp), where('fecha','>=',desde), where('fecha','<',hasta));
     } else {
-      // Traer todas las sesiones del mes actual
-      const desde = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-01';
-      const hasta = calYear + '-' + String(calMonth+2).padStart(2,'0') + '-01';
-      q = query(collection(db2,'sesiones'), where('fecha','>=',desde), where('fecha','<',hasta));
+      q = query(collection(db,'sesiones'), where('fecha','>=',desde), where('fecha','<',hasta));
     }
     const snap = await getDocs(q);
-    snap.forEach(doc => {
-      const f = doc.data().fecha;
-      if (f) fechasConDatos.add(f);
+    snap.forEach(d => { if(d.data().fecha) fechasConDatos.add(d.data().fecha); });
+  } catch(e) { console.error('Fechas error:', e); }
+  renderCalendar();
+}
+
+// ---- BUSCAR SESIONES ----
+document.getElementById('btn-buscar').addEventListener('click', buscarSesiones);
+
+async function buscarSesiones() {
+  const emp   = document.getElementById('filter-emp').value;
+  const fecha = document.getElementById('filter-date').value;
+  const scroll = document.getElementById('session-scroll');
+  scroll.innerHTML = '<div class="no-sess">Cargando...</div>';
+
+  try {
+    let q;
+    if (emp && fecha)   q = query(collection(db,'sesiones'), where('empleado','==',emp), where('fecha','==',fecha), orderBy('entrada','desc'));
+    else if (emp)       q = query(collection(db,'sesiones'), where('empleado','==',emp), orderBy('entrada','desc'));
+    else if (fecha)     q = query(collection(db,'sesiones'), where('fecha','==',fecha), orderBy('entrada','desc'));
+    else                q = query(collection(db,'sesiones'), orderBy('entrada','desc'));
+
+    const snap = await getDocs(q);
+    allSessions = [];
+    snap.forEach(d => allSessions.push({id:d.id, ...d.data()}));
+
+    if (allSessions.length === 0) { scroll.innerHTML = '<div class="no-sess">No hay sesiones</div>'; return; }
+
+    scroll.innerHTML = '';
+    allSessions.forEach((s, i) => {
+      const ei = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+      const si = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+      const fd = new Date(s.entrada).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
+      const card = document.createElement('div');
+      card.className = 'sc-card';
+      card.id = 'scard-' + i;
+      card.innerHTML = `<div class="sc-name">${s.empleado}</div>
+        <div class="sc-date">${fd} · ${ei} → ${si}</div>
+        <div class="sc-tags">
+          <span class="sc-tag tag-g">${s.duracion_min} min</span>
+          <span class="sc-tag tag-b">${s.distancia_km} km</span>
+          <span class="sc-tag tag-p">${s.puntos} pts</span>
+        </div>`;
+      card.addEventListener('click', () => verSesion(s, i));
+      scroll.appendChild(card);
     });
   } catch(e) {
-    console.error('Error cargando fechas:', e);
-  }
-  renderCalendar();
-}
-
-function renderCalendar() {
-  const grid = document.getElementById('cal-grid');
-  const label = document.getElementById('cal-month-label');
-
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  label.textContent = meses[calMonth] + ' ' + calYear;
-
-  // Remove existing day cells (keep day-name headers = first 7)
-  const cells = grid.querySelectorAll('.cal-day');
-  cells.forEach(c => c.remove());
-
-  const hoy = new Date();
-  const todayStr = hoy.toISOString().slice(0,10);
-
-  // First day of month
-  const firstDay = new Date(calYear, calMonth, 1).getDay();
-  // Days in month
-  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-  // Days in prev month
-  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
-
-  // Prev month padding
-  for (let i = firstDay - 1; i >= 0; i--) {
-    const d = daysInPrev - i;
-    const cell = document.createElement('div');
-    cell.className = 'cal-day other-month';
-    cell.textContent = d;
-    grid.appendChild(cell);
-  }
-
-  // Current month days
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-    const cell = document.createElement('div');
-    cell.className = 'cal-day';
-    if (dateStr === todayStr) cell.classList.add('today');
-    if (dateStr === calSelectedDate) cell.classList.add('selected');
-    if (fechasConDatos.has(dateStr)) cell.classList.add('has-data');
-
-    const numSpan = document.createElement('span');
-    numSpan.textContent = d;
-    cell.appendChild(numSpan);
-
-    if (fechasConDatos.has(dateStr) && dateStr !== calSelectedDate) {
-      const dot = document.createElement('div');
-      dot.className = 'cal-dot';
-      cell.appendChild(dot);
-    }
-
-    cell.onclick = () => seleccionarFecha(dateStr);
-    grid.appendChild(cell);
-  }
-
-  // Next month padding
-  const totalCells = firstDay + daysInMonth;
-  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-  for (let d = 1; d <= remaining; d++) {
-    const cell = document.createElement('div');
-    cell.className = 'cal-day other-month';
-    cell.textContent = d;
-    grid.appendChild(cell);
+    scroll.innerHTML = `<div class="no-sess">Error: ${e.message}</div>`;
+    console.error(e);
   }
 }
 
-function seleccionarFecha(dateStr) {
-  calSelectedDate = dateStr;
-  document.getElementById('filter-date').value = dateStr;
+// ---- VER SESIÓN ----
+function verSesion(s, idx) {
+  currentSession = s;
+  document.querySelectorAll('.sc-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('scard-' + idx);
+  if (card) card.classList.add('active');
 
-  // Format for display
-  const [y,m,d] = dateStr.split('-');
-  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  document.getElementById('cal-trigger-text').textContent = d + ' ' + meses[parseInt(m)-1] + ' ' + y;
+  const ei = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  const si = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
 
-  document.getElementById('cal-dropdown').classList.remove('open');
-  renderCalendar();
+  document.getElementById('panel-title').textContent = s.empleado;
+  document.getElementById('panel-sub').textContent = new Date(s.entrada).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('stats-row').classList.add('visible');
+  document.getElementById('stat-entrada').textContent = ei;
+  document.getElementById('stat-salida').textContent = si;
+  document.getElementById('stat-dur').textContent = s.duracion_min + ' min';
+  document.getElementById('stat-km').textContent = s.distancia_km + ' km';
+  document.getElementById('stat-pts').textContent = s.puntos;
 
-  // Auto-buscar
-  buscarSesiones();
+  if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
+  if (!s.recorrido || s.recorrido.length === 0) { document.getElementById('info-bar').classList.remove('visible'); return; }
+
+  const pts = s.recorrido.map(p => [p.lat, p.lng]);
+  currentLayer = L.layerGroup().addTo(map);
+
+  const color = COLORES[s.empleado] || '#3d8ef0';
+  const poly = L.polyline(pts, { color, weight: 4, opacity: 0.85 }).addTo(currentLayer);
+
+  L.circleMarker(pts[0], { radius:10, fillColor:'#3fb950', color:'#fff', weight:2, fillOpacity:1 })
+    .bindPopup(`<b>🟢 ENTRADA</b><br>${ei}`).addTo(currentLayer);
+  L.circleMarker(pts[pts.length-1], { radius:10, fillColor:'#f85149', color:'#fff', weight:2, fillOpacity:1 })
+    .bindPopup(`<b>🔴 SALIDA</b><br>${si}`).addTo(currentLayer);
+
+  for (let i = 10; i < pts.length - 1; i += 10) {
+    const ts = new Date(s.recorrido[i].ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    L.circleMarker(pts[i], { radius:4, fillColor:color, color:'transparent', fillOpacity:.6 })
+      .bindPopup(`⏱️ ${ts}`).addTo(currentLayer);
+  }
+
+  map.fitBounds(poly.getBounds(), { padding:[40,40] });
+
+  document.getElementById('info-bar').classList.add('visible');
+  document.getElementById('ic-entrada').textContent = '🟢 Entrada: ' + ei;
+  document.getElementById('ic-salida').textContent = '🔴 Salida: ' + si;
+  document.getElementById('ic-dur').textContent = '⏱️ ' + s.duracion_min + ' min';
+  document.getElementById('ic-km').textContent = '📍 ' + s.distancia_km + ' km';
+  document.getElementById('ic-pts').textContent = '🔵 ' + s.puntos + ' pts GPS';
+
+  cargarVisitas(s);
 }
 
-// Init calendar — se llama desde adminLogin()
+// ---- VISITAS ----
+async function cargarVisitas(s) {
+  const panel = document.getElementById('visitas-panel');
+  const lista = document.getElementById('visitas-lista');
+  try {
+    const q = query(collection(db,'visitas'), where('empleado','==',s.empleado), where('fecha','==',s.fecha));
+    const snap = await getDocs(q);
+    const visitas = [];
+    snap.forEach(d => {
+      const v = d.data();
+      const hora = v.hora || v.entrada || '';
+      if (hora >= s.entrada && hora <= s.salida) visitas.push(v);
+    });
+    visitas.sort((a,b) => (a.hora||'').localeCompare(b.hora||''));
 
-// Reload dots when employee changes
-document.getElementById('filter-emp').addEventListener('change', () => {
-  cargarFechasConDatos();
+    if (visitas.length === 0) { panel.classList.remove('visible'); return; }
+
+    lista.innerHTML = '';
+    visitas.forEach(v => {
+      const hora = new Date(v.hora||v.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+      const row = document.createElement('div');
+      row.className = 'vrow';
+      row.innerHTML = `<div class="vhora">${hora}</div>
+        <div class="vinfo">
+          <div class="vnombre">${v.razon||v.nombre}</div>
+          <div class="vdir">${v.direccion||''}</div>
+        </div>`;
+      lista.appendChild(row);
+
+      if (v.lat && v.lng && currentLayer) {
+        const icon = L.divIcon({
+          className: '',
+          html: `<div style="background:#f97316;border:2px solid #fff;border-radius:50% 50% 50% 0;width:26px;height:26px;transform:rotate(-45deg);box-shadow:0 2px 6px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;"><span style="transform:rotate(45deg);font-size:12px;">🏪</span></div>`,
+          iconSize:[26,26], iconAnchor:[13,26], popupAnchor:[0,-28]
+        });
+        L.marker([v.lat,v.lng],{icon})
+          .bindPopup(`<div style="min-width:140px"><b>🏪 ${v.razon||v.nombre}</b><br><small>${v.direccion||''}</small><br><span style="color:#f97316;font-weight:700">⏱️ ${hora}</span></div>`)
+          .addTo(currentLayer);
+      }
+    });
+    panel.classList.add('visible');
+  } catch(e) { console.error('Visitas error:', e); panel.classList.remove('visible'); }
+}
+
+// ---- VER EN VIVO ----
+document.getElementById('btn-live').addEventListener('click', () => {
+  if (liveActivo) detenerLive(); else iniciarLive();
 });
 
-// Enter en login
-document.getElementById('admin-pass').addEventListener('keypress', e => {
-  if (e.key === 'Enter') window.adminLogin();
+function iniciarLive() {
+  liveActivo = true;
+  const btn = document.getElementById('btn-live');
+  btn.classList.add('active');
+  document.getElementById('btn-live-text').textContent = 'En vivo';
+  renderLegend();
+  document.getElementById('live-legend').classList.add('visible');
+  if (!map) initMap();
+
+  liveUnsub = onSnapshot(collection(db,'ubicaciones'), snap => {
+    snap.forEach(d => {
+      const v = d.data();
+      const nombre = d.id;
+      if (!v.activo || !v.lat || !v.lng) {
+        if (liveMarkers[nombre]) { map.removeLayer(liveMarkers[nombre]); delete liveMarkers[nombre]; }
+        return;
+      }
+      const color = COLORES[nombre] || '#fff';
+      const initials = nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const hora = new Date(v.ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="width:36px;height:36px;background:${color};border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:white;box-shadow:0 2px 8px rgba(0,0,0,.4);">${initials}</div>`,
+        iconSize:[36,36], iconAnchor:[18,36], popupAnchor:[0,-38]
+      });
+      const popup = `<div style="min-width:140px"><b style="color:${color}">${nombre}</b><br><small>🟢 En turno · ${hora}</small></div>`;
+      if (liveMarkers[nombre]) {
+        liveMarkers[nombre].setLatLng([v.lat,v.lng]);
+        liveMarkers[nombre].setIcon(icon);
+      } else {
+        liveMarkers[nombre] = L.marker([v.lat,v.lng],{icon}).bindPopup(popup).addTo(map);
+      }
+    });
+    const pos = Object.values(liveMarkers).map(m => m.getLatLng());
+    if (pos.length === 1) map.setView(pos[0], 14);
+    else if (pos.length > 1) map.fitBounds(pos.map(p=>[p.lat,p.lng]),{padding:[60,60]});
+  });
+}
+
+function detenerLive() {
+  liveActivo = false;
+  document.getElementById('btn-live').classList.remove('active');
+  document.getElementById('btn-live-text').textContent = 'Ver en vivo';
+  document.getElementById('live-legend').classList.remove('visible');
+  if (liveUnsub) { liveUnsub(); liveUnsub = null; }
+  Object.values(liveMarkers).forEach(m => map.removeLayer(m));
+  liveMarkers = {};
+}
+
+function renderLegend() {
+  const leg = document.getElementById('live-legend');
+  leg.innerHTML = '<div style="font-size:10px;font-weight:600;color:var(--text-muted);margin-bottom:4px;">VENDEDORES</div>';
+  Object.entries(COLORES).forEach(([nombre, color]) => {
+    leg.innerHTML += `<div class="leg-item"><div class="leg-dot" style="background:${color}"></div><span>${nombre.split(' ')[0]}</span></div>`;
+  });
+}
+
+// ---- EXPORTAR SESIÓN ----
+document.getElementById('btn-export-ses').addEventListener('click', () => {
+  if (!currentSession) return;
+  const s = currentSession;
+  const pts = s.recorrido || [];
+  const ei = new Date(s.entrada).toLocaleTimeString('es-AR');
+  const si = new Date(s.salida).toLocaleTimeString('es-AR');
+  const fd = new Date(s.entrada).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const ptsJSON = JSON.stringify(pts.map(p=>[p.lat,p.lng]));
+  const lat0 = pts.length ? pts[0].lat : -34.65;
+  const lng0 = pts.length ? pts[0].lng : -58.72;
+  const color = COLORES[s.empleado] || '#3d8ef0';
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${s.empleado} — ${fd}</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
+<style>body{font-family:sans-serif;margin:0;background:#f5f7fa}.header{background:#1a2535;color:white;padding:20px 28px}.header h1{font-size:18px}.header p{font-size:12px;opacity:.7;margin-top:3px}.stats{display:flex;background:white;border-bottom:1px solid #dde3ef}.stat{flex:1;padding:14px 18px;border-right:1px solid #eee;text-align:center}.stat:last-child{border-right:none}.sv{font-size:20px;font-weight:800;color:${color}}.sl{font-size:10px;color:#8b949e;text-transform:uppercase;margin-top:2px}#map{height:500px}.footer{text-align:center;padding:14px;font-size:11px;color:#8b949e;background:white;border-top:1px solid #eee}</style>
+</head><body>
+<div class="header"><h1>📍 ${s.empleado}</h1><p>${fd} · Sanitarios Mitre</p></div>
+<div class="stats">
+<div class="stat"><div class="sv">${ei}</div><div class="sl">Entrada</div></div>
+<div class="stat"><div class="sv">${si}</div><div class="sl">Salida</div></div>
+<div class="stat"><div class="sv">${s.duracion_min} min</div><div class="sl">Duración</div></div>
+<div class="stat"><div class="sv">${s.distancia_km} km</div><div class="sl">Distancia</div></div>
+<div class="stat"><div class="sv">${s.puntos}</div><div class="sl">Pts GPS</div></div>
+</div>
+<div id="map"></div>
+<div class="footer">Mitre Tracker · Sanitarios Mitre</div>
+<script>
+const map=L.map('map').setView([${lat0},${lng0}],14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+const pts=${ptsJSON};
+if(pts.length>0){
+const poly=L.polyline(pts,{color:'${color}',weight:4}).addTo(map);
+L.circleMarker(pts[0],{radius:10,fillColor:'#3fb950',color:'#fff',weight:2,fillOpacity:1}).bindPopup('🟢 ENTRADA ${ei}').addTo(map);
+L.circleMarker(pts[pts.length-1],{radius:10,fillColor:'#f85149',color:'#fff',weight:2,fillOpacity:1}).bindPopup('🔴 SALIDA ${si}').addTo(map);
+map.fitBounds(poly.getBounds(),{padding:[40,40]});
+}
+<\/script></body></html>`;
+
+  const blob = new Blob([html],{type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`recorrido_${s.empleado.replace(' ','_')}_${s.fecha}.html`; a.click();
+  URL.revokeObjectURL(url);
+});
+
+// ---- EXPORTAR REPORTE GENERAL ----
+document.getElementById('btn-export-all').addEventListener('click', () => {
+  if (allSessions.length === 0) { alert('Buscá sesiones primero'); return; }
+  const rows = allSessions.map(s => {
+    const ei = new Date(s.entrada).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    const si = new Date(s.salida).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    const fd = new Date(s.entrada).toLocaleDateString('es-AR');
+    return `<tr><td>${s.empleado}</td><td>${fd}</td><td style="color:#3fb950;font-weight:600">${ei}</td><td style="color:#f85149;font-weight:600">${si}</td><td>${s.duracion_min} min</td><td>${s.distancia_km} km</td><td>${s.puntos}</td></tr>`;
+  }).join('');
+  const totalMin = allSessions.reduce((a,s)=>a+s.duracion_min,0);
+  const totalKm  = allSessions.reduce((a,s)=>a+s.distancia_km,0).toFixed(2);
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Reporte Mitre Tracker</title>
+<style>body{font-family:sans-serif;background:#f5f7fa;margin:0}.header{background:#1a2535;color:white;padding:20px 32px}.header h1{font-size:18px}.tots{display:flex;background:white;border-bottom:2px solid #dde3ef}.tot{flex:1;padding:14px 20px;border-right:1px solid #eee;text-align:center}.tv{font-size:22px;font-weight:900;color:#3d8ef0}.tl{font-size:10px;color:#8b949e;text-transform:uppercase;margin-top:2px}table{width:100%;border-collapse:collapse;background:white;margin:16px 0}th{background:#f0f4ff;padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;color:#8b949e;border-bottom:2px solid #dde3ef}td{padding:10px 14px;border-bottom:1px solid #eee;font-size:13px}tr:hover td{background:#f9fbff}.footer{text-align:center;padding:16px;font-size:11px;color:#8b949e}</style>
+</head><body>
+<div class="header"><h1>📊 Reporte Sanitarios Mitre</h1></div>
+<div class="tots"><div class="tot"><div class="tv">${allSessions.length}</div><div class="tl">Sesiones</div></div><div class="tot"><div class="tv">${totalMin} min</div><div class="tl">Total trabajado</div></div><div class="tot"><div class="tv">${totalKm} km</div><div class="tl">Total recorrido</div></div></div>
+<table><thead><tr><th>Empleado</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Duración</th><th>Distancia</th><th>Pts GPS</th></tr></thead><tbody>${rows}</tbody></table>
+<div class="footer">Mitre Tracker · Sanitarios Mitre</div></body></html>`;
+  const blob = new Blob([html],{type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`reporte_mitre_${new Date().toISOString().slice(0,10)}.html`; a.click();
+  URL.revokeObjectURL(url);
+});
+
+// ---- GESTIÓN USUARIOS ----
+document.getElementById('btn-usuarios').addEventListener('click', () => {
+  document.getElementById('modal-users').classList.add('open');
+  cargarUsuarios();
+});
+document.getElementById('btn-close-users').addEventListener('click', () => {
+  document.getElementById('modal-users').classList.remove('open');
+});
+document.getElementById('modal-users').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-users')) document.getElementById('modal-users').classList.remove('open');
+});
+
+async function cargarUsuarios() {
+  const lista = document.getElementById('u-list');
+  lista.innerHTML = '<div class="no-sess">Cargando...</div>';
+  try {
+    const snap = await getDocs(collection(db,'usuarios'));
+    if (snap.empty) { lista.innerHTML = '<div class="no-sess">No hay usuarios</div>'; return; }
+    lista.innerHTML = '';
+    snap.forEach(d => {
+      const u = d.data(); const id = d.id;
+      const initials = (u.nombre||id).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const rolLabel = u.rol==='admin'?'Admin':u.rol==='supervisor'?'Supervisor':'Vendedor';
+      const row = document.createElement('div');
+      row.className = 'u-row';
+      row.innerHTML = `<div class="u-av">${initials}</div>
+        <div class="u-info"><div class="u-name">${u.nombre||id}</div>
+        <div class="u-meta">@${id} · ${u.primerLogin!==false?'<span style="color:var(--yellow)">Nunca ingresó</span>':'Activo'}</div></div>
+        <span class="u-badge ${u.rol==='admin'?'b-admin':'b-user'}">${rolLabel}</span>
+        <button class="btn-reset" data-id="${id}" data-nombre="${u.nombre||id}">🔑</button>
+        ${id!=='admin'?`<button class="btn-del" data-id="${id}" data-nombre="${u.nombre||id}">✕</button>`:''}`;
+      lista.appendChild(row);
+    });
+
+    lista.querySelectorAll('.btn-reset').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const p = prompt(`Nueva contraseña para ${btn.dataset.nombre}:`);
+        if (!p || p.length < 4) { alert('Muy corta'); return; }
+        await setDoc(doc(db,'usuarios',btn.dataset.id), {password:p, primerLogin:true}, {merge:true});
+        alert('✅ Contraseña reseteada');
+        cargarUsuarios();
+      });
+    });
+
+    lista.querySelectorAll('.btn-del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm(`¿Eliminar a ${btn.dataset.nombre}?`)) return;
+        await deleteDoc(doc(db,'usuarios',btn.dataset.id));
+        cargarUsuarios();
+      });
+    });
+
+  } catch(e) { lista.innerHTML = `<div class="no-sess">Error: ${e.message}</div>`; }
+}
+
+document.getElementById('btn-add-user').addEventListener('click', async () => {
+  const nombre = document.getElementById('nu-nombre').value.trim();
+  const login  = document.getElementById('nu-login').value.trim().toLowerCase().replace(/\s+/g,'');
+  const pass   = document.getElementById('nu-pass').value.trim();
+  const rol    = document.getElementById('nu-rol').value;
+  const msg    = document.getElementById('u-msg');
+
+  if (!nombre || !login || !pass) { msg.textContent='Completá todos los campos'; msg.className='u-msg err'; return; }
+  if (login.length < 3) { msg.textContent='Usuario muy corto'; msg.className='u-msg err'; return; }
+
+  try {
+    await setDoc(doc(db,'usuarios',login), { nombre, password:pass, rol, primerLogin:true, creado:new Date().toISOString() });
+    msg.textContent = `✅ Usuario "${nombre}" creado`;
+    msg.className = 'u-msg ok';
+    document.getElementById('nu-nombre').value='';
+    document.getElementById('nu-login').value='';
+    document.getElementById('nu-pass').value='';
+    cargarUsuarios();
+  } catch(e) { msg.textContent='Error: '+e.message; msg.className='u-msg err'; }
 });
 
 </script>
