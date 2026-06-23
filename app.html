@@ -763,23 +763,36 @@ window.confirmarVisita = function() {
   }
 };
 
-window.cerrarVisita = function(silencioso = false) {
+window.cerrarVisita = async function(silencioso = false) {
   if (!visitaActual) return;
 
   const salida = new Date().toISOString();
   const durMin = Math.round((new Date(salida) - new Date(visitaActual.entrada)) / 60000);
 
   const visita = {
-    codigo: visitaActual.cliente.codigo,
-    razon: visitaActual.cliente.razon,
-    direccion: visitaActual.cliente.direccion,
-    localidad: visitaActual.cliente.localidad,
-    entrada: visitaActual.entrada,
-    salida: salida,
+    empleado:     currentUser,
+    fecha:        visitaActual.entrada.slice(0,10),
+    codigo:       visitaActual.cliente.codigo,
+    razon:        visitaActual.cliente.razon,
+    nombre:       visitaActual.cliente.nombre || visitaActual.cliente.razon,
+    direccion:    visitaActual.cliente.direccion || '',
+    localidad:    visitaActual.cliente.localidad || '',
+    entrada:      visitaActual.entrada,
+    salida:       salida,
+    hora:         visitaActual.entrada,
     duracion_min: durMin,
-    lat: visitaActual.lat,
-    lng: visitaActual.lng
+    lat:          visitaActual.lat,
+    lng:          visitaActual.lng
   };
+
+  // Guardar en Firebase
+  try {
+    await addDoc(collection(db, 'visitas'), visita);
+    console.log('Visita guardada en Firebase:', visita.razon);
+  } catch(e) {
+    console.error('Error guardando visita:', e);
+    showToast('⚠️ Error guardando visita: ' + e.message);
+  }
 
   visitasHoy.push(visita);
   document.getElementById('vis-count').textContent = visitasHoy.length;
@@ -791,7 +804,7 @@ window.cerrarVisita = function(silencioso = false) {
   // Actualizar lista de visitas
   renderVisitasHoy();
 
-  if (!silencioso) showToast('✅ Salida registrada — ' + durMin + ' min en ' + visita.razon.slice(0,20));
+  if (!silencioso) showToast('✅ Salida de: ' + visita.razon.slice(0,20) + ' — ' + durMin + ' min');
 };
 
 function renderVisitasHoy() {
