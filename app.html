@@ -603,6 +603,45 @@ window.doChangePass = function() {
   enterApp();
 };
 
+
+async function restaurarTurno() {
+  try {
+    const d = await getDocs(query(collection(db,'estados'), where('empleado','==',currentUser)));
+    d.forEach(snap => {
+      const data = snap.data();
+      if (!data.activo || !data.desde) return;
+      tracking = true;
+      entryTime = new Date(data.desde);
+      trackPoints = []; totalDistance = 0;
+
+      document.getElementById('entry-time').textContent = formatTime(entryTime);
+      document.getElementById('entry-time').className = 'time-item-val entry';
+      document.getElementById('exit-time').textContent = '--:--';
+      document.getElementById('exit-time').className = 'time-item-val empty';
+      document.getElementById('track-btn').className = 'btn-track on';
+      document.getElementById('btn-icon').textContent = '⏹';
+      document.getElementById('btn-label').textContent = 'FINALIZAR';
+      document.getElementById('btn-hint').textContent = 'Presioná para terminar tu turno';
+      document.getElementById('status-badge').className = 'status-badge active';
+      document.getElementById('status-text').textContent = 'En turno';
+      document.getElementById('status-dot').className = 'dot pulse';
+
+      const inp = document.getElementById('cliente-search');
+      inp.disabled = false;
+      inp.placeholder = 'Buscá un cliente para registrar visita...';
+
+      durationInterval = setInterval(() => {
+        const e = Math.floor((Date.now()-entryTime.getTime())/1000);
+        const h = Math.floor(e/3600), m = Math.floor((e%3600)/60);
+        document.getElementById('dur-count').textContent = `${h}:${String(m).padStart(2,'0')}`;
+      }, 10000);
+
+      startGPS();
+      showToast('⚠️ Turno en curso — recordá finalizarlo');
+    });
+  } catch(e) { console.error('Error restaurando turno:', e); }
+}
+
 function enterApp() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('app-screen').style.display = 'flex';
@@ -614,46 +653,7 @@ function enterApp() {
   visitasHoy = {};
 
   // Restaurar turno activo desde Firebase si la app se cerró sin finalizar
-  try {
-    const estadoDoc = await getDocs(query(collection(db, 'estados'), where('empleado','==',currentUser)));
-    estadoDoc.forEach(d => {
-      const data = d.data();
-      if (data.activo && data.desde) {
-        // Hay turno activo en Firebase — restaurar
-        tracking = true;
-        entryTime = new Date(data.desde);
-        trackPoints = [];
-        totalDistance = 0;
-
-        document.getElementById('entry-time').textContent = formatTime(entryTime);
-        document.getElementById('entry-time').className = 'time-item-val entry';
-        document.getElementById('exit-time').textContent = '--:--';
-        document.getElementById('exit-time').className = 'time-item-val empty';
-        document.getElementById('track-btn').className = 'btn-track on';
-        document.getElementById('btn-icon').textContent = '⏹';
-        document.getElementById('btn-label').textContent = 'FINALIZAR';
-        document.getElementById('btn-hint').textContent = 'Presioná para terminar tu turno';
-        document.getElementById('status-badge').className = 'status-badge active';
-        document.getElementById('status-text').textContent = 'En turno';
-        document.getElementById('status-dot').className = 'dot pulse';
-
-        // Habilitar buscador
-        const inp = document.getElementById('cliente-search');
-        inp.disabled = false;
-        inp.placeholder = 'Buscá un cliente para registrar visita...';
-
-        // Reiniciar temporizador duración
-        durationInterval = setInterval(() => {
-          const e = Math.floor((Date.now() - entryTime.getTime()) / 1000);
-          const h = Math.floor(e/3600), m = Math.floor((e%3600)/60);
-          document.getElementById('dur-count').textContent = `${h}:${String(m).padStart(2,'0')}`;
-        }, 10000);
-
-        startGPS();
-        showToast('⚠️ Turno restaurado — recordá finalizarlo');
-      }
-    });
-  } catch(e) { console.error('Error restaurando turno:', e); }
+  restaurarTurno();
 }
 
 window.doLogout = function() {
