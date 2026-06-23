@@ -1127,7 +1127,7 @@ document.getElementById('modal-visita').addEventListener('click', e=>{ if(e.targ
 // Registrar Service Worker para funcionamiento offline
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'mitre-tracker-v1';
+    const CACHE = 'mitre-tracker-v3';
     const URLS = [self.location.pathname];
 
     self.addEventListener('install', e => {
