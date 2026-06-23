@@ -559,17 +559,18 @@ async function cargarFechasConDatos() {
   fechasConDatos.clear();
   try {
     const emp = document.getElementById('filter-emp').value;
+    // Consulta simple sin rangos de fecha para evitar indices compuestos
     let q;
-    const desde = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-01';
-    const hasta = calYear + '-' + String(calMonth === 11 ? calYear+1 : calYear) + '-' + String(calMonth === 11 ? '01' : String(calMonth+2).padStart(2,'0')) + '-01';
-
     if (emp) {
-      q = query(collection(db,'sesiones'), where('empleado','==',emp), where('fecha','>=',desde), where('fecha','<',hasta));
+      q = query(collection(db,'sesiones'), where('empleado','==',emp));
     } else {
-      q = query(collection(db,'sesiones'), where('fecha','>=',desde), where('fecha','<',hasta));
+      q = query(collection(db,'sesiones'));
     }
     const snap = await getDocs(q);
-    snap.forEach(d => { if(d.data().fecha) fechasConDatos.add(d.data().fecha); });
+    snap.forEach(d => {
+      const fecha = d.data().fecha;
+      if (fecha) fechasConDatos.add(fecha);
+    });
   } catch(e) { console.error('Fechas error:', e); }
   renderCalendar();
 }
