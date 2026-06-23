@@ -496,7 +496,7 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, doc, setDoc, enableIndexedDbPersistence }
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, getDoc, orderBy, doc, setDoc, enableIndexedDbPersistence }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -606,14 +606,12 @@ window.doChangePass = function() {
 
 async function restaurarTurno() {
   try {
-    // El documento en 'estados' tiene como ID el nombre del vendedor
-    const { getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
     const snap = await getDoc(doc(db, 'estados', currentUser));
     if (!snap.exists()) return;
     const data = snap.data();
     if (!data.activo || !data.desde) return;
 
-    // Turno activo encontrado — restaurar
+    // Turno activo en Firebase — restaurar UI
     tracking = true;
     entryTime = new Date(data.desde);
     trackPoints = []; totalDistance = 0;
