@@ -564,7 +564,9 @@ window.doLogin = function() {
   if (getPassword(user) !== pass) { err.style.display='block'; err.textContent='Contraseña incorrecta'; return; }
   err.style.display = 'none';
   currentUser = user;
-  misClientes = CLIENTES[user] || [];
+  // Cargar clientes desde cache local primero, luego actualizar de Firebase
+  const cached = localStorage.getItem('clientes_' + user);
+  misClientes = cached ? JSON.parse(cached) : (CLIENTES[user] || []);
 
   if (isFirstLogin(user)) {
     document.getElementById('chpass-name').textContent = '¡Hola, ' + user.split(' ')[0] + '!';
@@ -603,6 +605,33 @@ window.doChangePass = function() {
   enterApp();
 };
 
+
+
+async function actualizarClientesFirebase() {
+  try {
+    const metaSnap = await getDoc(doc(db, 'clientes_meta', currentUser));
+    if (!metaSnap.exists()) return;
+    const meta = metaSnap.data();
+    const cachedVersion = localStorage.getItem('clientes_version_' + currentUser);
+    if (cachedVersion === meta.actualizado) return; // ya tiene la última versión
+
+    // Descargar todos los chunks
+    const todos = [];
+    for (let i = 0; i < meta.chunks; i++) {
+      const snap = await getDoc(doc(db, 'clientes', currentUser + '_' + i));
+      if (snap.exists()) todos.push(...snap.data().clientes);
+    }
+    if (todos.length === 0) return;
+
+    // Guardar localmente
+    localStorage.setItem('clientes_' + currentUser, JSON.stringify(todos));
+    localStorage.setItem('clientes_version_' + currentUser, meta.actualizado);
+    misClientes = todos;
+    showToast('📋 Clientes actualizados: ' + todos.length);
+  } catch(e) {
+    console.log('Sin conexión, usando clientes locales');
+  }
+}
 
 async function restaurarTurno() {
   try {
@@ -653,6 +682,8 @@ function enterApp() {
   cargarClientes();
   visitasHoy = {};
 
+  // Actualizar clientes desde Firebase en segundo plano
+  actualizarClientesFirebase();
   // Restaurar turno activo desde Firebase si la app se cerró sin finalizar
   restaurarTurno();
 }

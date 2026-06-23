@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de Control — Mitre Tracker</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -174,6 +175,38 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .u-msg { font-size:12px; text-align:center; padding:4px 8px; border-radius:6px; display:none; }
 .u-msg.ok  { background:rgba(63,185,80,.1); color:var(--green); display:block; }
 .u-msg.err { background:rgba(248,81,73,.1); color:var(--red); display:block; }
+
+  /* ---- MODAL CLIENTES ---- */
+  .btn-clientes {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-muted); border-radius: 8px; padding: 7px 12px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; transition: border-color .2s, color .2s;
+  }
+  .btn-clientes:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  .modal-clientes-bg { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:500; display:none; align-items:center; justify-content:center; padding:24px; }
+  .modal-clientes-bg.open { display:flex; }
+  .modal-clientes-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; width:100%; max-width:520px; display:flex; flex-direction:column; gap:18px; max-height:90vh; overflow-y:auto; }
+  .modal-clientes-title { font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:space-between; }
+  .btn-close-cl { background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:6px; width:26px; height:26px; cursor:pointer; font-size:13px; }
+
+  .vendedor-upload { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+  .vendedor-upload-header { display:flex; align-items:center; justify-content:space-between; }
+  .vendedor-upload-name { font-size:13px; font-weight:700; }
+  .vendedor-upload-meta { font-size:11px; color:var(--text-muted); }
+  .upload-drop { border:2px dashed var(--border); border-radius:8px; padding:14px; text-align:center; cursor:pointer; transition:border-color .2s; }
+  .upload-drop:hover { border-color:var(--accent); }
+  .upload-drop input { display:none; }
+  .upload-drop-text { font-size:12px; color:var(--text-muted); }
+  .upload-drop-text span { color:var(--accent); font-weight:600; }
+  .upload-preview { font-size:11px; color:var(--green); margin-top:4px; display:none; }
+  .btn-subir-clientes { background:var(--accent); color:white; border:none; border-radius:8px; padding:9px 14px; font-size:12px; font-weight:700; cursor:pointer; display:none; }
+  .btn-subir-clientes:hover { opacity:.85; }
+  .upload-msg { font-size:11px; text-align:center; padding:4px 8px; border-radius:6px; display:none; }
+  .upload-msg.ok  { background:rgba(63,185,80,.1); color:var(--green); display:block; }
+  .upload-msg.err { background:rgba(248,81,73,.1); color:var(--red); display:block; }
+
 </style>
 </head>
 <body>
@@ -302,6 +335,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
           <p id="panel-sub">Usá el panel lateral para buscar</p>
         </div>
         <div class="tp-actions">
+          <button class="btn-clientes" id="btn-clientes">📋 Clientes</button>
           <button class="btn-live" id="btn-live">
             <div class="live-dot"></div>
             <span id="btn-live-text">Ver en vivo</span>
@@ -400,6 +434,145 @@ let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 let calSelected = '';
 let fechasConDatos = new Set();
+
+
+// ============================================================
+// ACTUALIZACIÓN DE CLIENTES
+// ============================================================
+const clientesData = {}; // vendedor -> array de clientes parseados
+
+document.getElementById('btn-clientes').addEventListener('click', () => {
+  document.getElementById('modal-clientes').classList.add('open');
+  cargarMetadataClientes();
+});
+document.getElementById('btn-close-cl').addEventListener('click', () => {
+  document.getElementById('modal-clientes').classList.remove('open');
+});
+document.getElementById('modal-clientes').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-clientes'))
+    document.getElementById('modal-clientes').classList.remove('open');
+});
+
+// Cargar metadata de cuándo se actualizó cada vendedor
+async function cargarMetadataClientes() {
+  const vendedores = ['Cristian Albornoz','Dario Rocha','Diego Portillo','Hernán Aranda'];
+  for (const v of vendedores) {
+    try {
+      const snap = await getDoc(doc(db, 'clientes_meta', v));
+      const meta = document.getElementById('vm-' + v);
+      if (snap.exists()) {
+        const d = snap.data();
+        const fecha = new Date(d.actualizado).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+        meta.textContent = `${d.total} clientes · actualizado ${fecha}`;
+        meta.style.color = 'var(--green)';
+      } else {
+        meta.textContent = 'Sin datos en Firebase';
+        meta.style.color = 'var(--text-muted)';
+      }
+    } catch(e) { console.error(e); }
+  }
+}
+
+// Leer Excel con SheetJS
+window.leerExcel = function(input, vendedor) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+      const clientes = rows.map(r => ({
+        codigo:    String(r['Código'] || r['Codigo'] || r['CÓDIGO'] || '').trim(),
+        razon:     String(r['Razón Social'] || r['Razon Social'] || r['RAZÓN SOCIAL'] || '').trim(),
+        nombre:    String(r['Nombre'] || r['NOMBRE'] || '').trim(),
+        calle:     String(r['Calle'] || r['CALLE'] || '').trim(),
+        nro:       String(r['Nro'] || r['NRO'] || r['Número'] || '').trim(),
+        localidad: String(r['Localidad'] || r['LOCALIDAD'] || '').trim(),
+      })).filter(c => c.razon || c.nombre);
+
+      clientesData[vendedor] = clientes;
+
+      // Mostrar preview
+      const preview = document.getElementById('fp-' + vendedor);
+      preview.textContent = `✅ ${clientes.length} clientes listos para subir`;
+      preview.style.display = 'block';
+
+      // Mostrar botón subir
+      document.getElementById('fbtn-' + vendedor).style.display = 'block';
+
+      // Limpiar mensaje anterior
+      const msg = document.getElementById('fmsg-' + vendedor);
+      msg.className = 'upload-msg';
+
+    } catch(err) {
+      const preview = document.getElementById('fp-' + vendedor);
+      preview.textContent = '❌ Error leyendo el archivo';
+      preview.style.display = 'block';
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+};
+
+// Subir clientes a Firebase
+window.subirClientes = async function(vendedor) {
+  const clientes = clientesData[vendedor];
+  if (!clientes || clientes.length === 0) return;
+
+  const btn = document.getElementById('fbtn-' + vendedor);
+  const msg = document.getElementById('fmsg-' + vendedor);
+  btn.textContent = '⏳ Subiendo...';
+  btn.disabled = true;
+
+  try {
+    // Guardar en Firestore — un documento por vendedor con array de clientes
+    // Firestore tiene límite de 1MB por doc — dividimos si hay muchos clientes
+    const chunkSize = 200;
+    const chunks = [];
+    for (let i = 0; i < clientes.length; i += chunkSize) {
+      chunks.push(clientes.slice(i, i + chunkSize));
+    }
+
+    // Borrar chunks anteriores
+    for (let i = 0; i < 10; i++) {
+      try { await deleteDoc(doc(db, 'clientes', vendedor + '_' + i)); } catch(e) {}
+    }
+
+    // Subir nuevos chunks
+    for (let i = 0; i < chunks.length; i++) {
+      await setDoc(doc(db, 'clientes', vendedor + '_' + i), {
+        vendedor,
+        chunk: i,
+        total_chunks: chunks.length,
+        clientes: chunks[i]
+      });
+    }
+
+    // Guardar metadata
+    await setDoc(doc(db, 'clientes_meta', vendedor), {
+      vendedor,
+      total: clientes.length,
+      chunks: chunks.length,
+      actualizado: new Date().toISOString()
+    });
+
+    msg.textContent = `✅ ${clientes.length} clientes subidos correctamente`;
+    msg.className = 'upload-msg ok';
+    btn.textContent = '✅ Subido';
+    cargarMetadataClientes();
+
+  } catch(e) {
+    msg.textContent = 'Error: ' + e.message;
+    msg.className = 'upload-msg err';
+    btn.textContent = '⬆️ Reintentar';
+    btn.disabled = false;
+    console.error(e);
+  }
+};
 
 // ---- LOGIN ----
 document.getElementById('btn-entrar').addEventListener('click', hacerLogin);
@@ -794,6 +967,7 @@ document.getElementById('btn-export-ses').addEventListener('click', () => {
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${s.empleado} — ${fd}</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
 <style>body{font-family:sans-serif;margin:0;background:#f5f7fa}.header{background:#1a2535;color:white;padding:20px 28px}.header h1{font-size:18px}.header p{font-size:12px;opacity:.7;margin-top:3px}.stats{display:flex;background:white;border-bottom:1px solid #dde3ef}.stat{flex:1;padding:14px 18px;border-right:1px solid #eee;text-align:center}.stat:last-child{border-right:none}.sv{font-size:20px;font-weight:800;color:${color}}.sl{font-size:10px;color:#8b949e;text-transform:uppercase;margin-top:2px}#map{height:500px}.footer{text-align:center;padding:14px;font-size:11px;color:#8b949e;background:white;border-top:1px solid #eee}</style>
 </head><body>
@@ -817,7 +991,83 @@ L.circleMarker(pts[0],{radius:10,fillColor:'#3fb950',color:'#fff',weight:2,fillO
 L.circleMarker(pts[pts.length-1],{radius:10,fillColor:'#f85149',color:'#fff',weight:2,fillOpacity:1}).bindPopup('🔴 SALIDA ${si}').addTo(map);
 map.fitBounds(poly.getBounds(),{padding:[40,40]});
 }
-<\/script></body></html>`;
+<\/script>
+<!-- MODAL ACTUALIZAR CLIENTES -->
+<div class="modal-clientes-bg" id="modal-clientes">
+  <div class="modal-clientes-card">
+    <div class="modal-clientes-title">
+      <span>📋 Actualizar clientes por vendedor</span>
+      <button class="btn-close-cl" id="btn-close-cl">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);">
+      Subí el Excel de cada vendedor. Las columnas deben ser: <strong>Código, Razón Social, Nombre, Calle, Nro, Localidad</strong>.
+      Los vendedores verán los clientes actualizados la próxima vez que abran la app con internet.
+    </p>
+
+    <!-- CRISTIAN -->
+    <div class="vendedor-upload" id="vu-Cristian Albornoz">
+      <div class="vendedor-upload-header">
+        <span class="vendedor-upload-name">Cristian Albornoz</span>
+        <span class="vendedor-upload-meta" id="vm-Cristian Albornoz">Sin datos cargados</span>
+      </div>
+      <div class="upload-drop" onclick="document.getElementById('fi-Cristian Albornoz').click()">
+        <input type="file" id="fi-Cristian Albornoz" accept=".xlsx,.xls" onchange="leerExcel(this,'Cristian Albornoz')">
+        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
+        <div class="upload-preview" id="fp-Cristian Albornoz"></div>
+      </div>
+      <div class="upload-msg" id="fmsg-Cristian Albornoz"></div>
+      <button class="btn-subir-clientes" id="fbtn-Cristian Albornoz" onclick="subirClientes('Cristian Albornoz')">⬆️ Subir clientes</button>
+    </div>
+
+    <!-- DARIO -->
+    <div class="vendedor-upload" id="vu-Dario Rocha">
+      <div class="vendedor-upload-header">
+        <span class="vendedor-upload-name">Dario Rocha</span>
+        <span class="vendedor-upload-meta" id="vm-Dario Rocha">Sin datos cargados</span>
+      </div>
+      <div class="upload-drop" onclick="document.getElementById('fi-Dario Rocha').click()">
+        <input type="file" id="fi-Dario Rocha" accept=".xlsx,.xls" onchange="leerExcel(this,'Dario Rocha')">
+        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
+        <div class="upload-preview" id="fp-Dario Rocha"></div>
+      </div>
+      <div class="upload-msg" id="fmsg-Dario Rocha"></div>
+      <button class="btn-subir-clientes" id="fbtn-Dario Rocha" onclick="subirClientes('Dario Rocha')">⬆️ Subir clientes</button>
+    </div>
+
+    <!-- DIEGO -->
+    <div class="vendedor-upload" id="vu-Diego Portillo">
+      <div class="vendedor-upload-header">
+        <span class="vendedor-upload-name">Diego Portillo</span>
+        <span class="vendedor-upload-meta" id="vm-Diego Portillo">Sin datos cargados</span>
+      </div>
+      <div class="upload-drop" onclick="document.getElementById('fi-Diego Portillo').click()">
+        <input type="file" id="fi-Diego Portillo" accept=".xlsx,.xls" onchange="leerExcel(this,'Diego Portillo')">
+        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
+        <div class="upload-preview" id="fp-Diego Portillo"></div>
+      </div>
+      <div class="upload-msg" id="fmsg-Diego Portillo"></div>
+      <button class="btn-subir-clientes" id="fbtn-Diego Portillo" onclick="subirClientes('Diego Portillo')">⬆️ Subir clientes</button>
+    </div>
+
+    <!-- HERNAN -->
+    <div class="vendedor-upload" id="vu-Hernán Aranda">
+      <div class="vendedor-upload-header">
+        <span class="vendedor-upload-name">Hernán Aranda</span>
+        <span class="vendedor-upload-meta" id="vm-Hernán Aranda">Sin datos cargados</span>
+      </div>
+      <div class="upload-drop" onclick="document.getElementById('fi-Hernán Aranda').click()">
+        <input type="file" id="fi-Hernán Aranda" accept=".xlsx,.xls" onchange="leerExcel(this,'Hernán Aranda')">
+        <div class="upload-drop-text">📂 <span>Seleccioná el Excel</span> o arrastrá acá</div>
+        <div class="upload-preview" id="fp-Hernán Aranda"></div>
+      </div>
+      <div class="upload-msg" id="fmsg-Hernán Aranda"></div>
+      <button class="btn-subir-clientes" id="fbtn-Hernán Aranda" onclick="subirClientes('Hernán Aranda')">⬆️ Subir clientes</button>
+    </div>
+
+  </div>
+</div>
+
+</body></html>`;
 
   const blob = new Blob([html],{type:'text/html'});
   const url = URL.createObjectURL(blob);
