@@ -659,19 +659,22 @@ async function cargarVisitas(s) {
   const lista = document.getElementById('visitas-lista');
 
   try {
+    // Consulta simple solo por empleado y fecha — sin orderBy para evitar índices
     const q = query(
       collection(db2,'visitas'),
       where('empleado','==',s.empleado),
-      where('fecha','==',s.fecha),
-      orderBy('hora','asc')
+      where('fecha','==',s.fecha)
     );
     const snap = await getDocs(q);
 
+    // Filtrar por rango de horario de la sesión y ordenar
     const visitas = [];
     snap.forEach(doc => {
       const d = doc.data();
-      if (d.hora >= s.entrada && d.hora <= s.salida) visitas.push(d);
+      const horaVisita = d.hora || d.entrada || '';
+      if (horaVisita >= s.entrada && horaVisita <= s.salida) visitas.push(d);
     });
+    visitas.sort((a,b) => (a.hora||a.entrada||'').localeCompare(b.hora||b.entrada||''));
 
     if (visitas.length === 0) {
       panel.classList.remove('visible');
