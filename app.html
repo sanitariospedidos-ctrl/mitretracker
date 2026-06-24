@@ -709,9 +709,14 @@ function startGPS() {
       setGPS('ok', `✅ GPS activo (±${Math.round(pos.coords.accuracy)}m)`);
       if (!tracking) return;
       const pt = {lat:pos.coords.latitude, lng:pos.coords.longitude, acc:pos.coords.accuracy, ts:new Date().toISOString()};
+      // Filtro de precisión: descartar puntos con señal mala
+      if (pt.acc > 50) return;
       if (trackPoints.length>0) {
         const last=trackPoints[trackPoints.length-1];
-        totalDistance += haversine(last.lat,last.lng,pt.lat,pt.lng);
+        // Filtro de distancia mínima: solo guardar si se movió al menos 25m
+        const dist = haversine(last.lat,last.lng,pt.lat,pt.lng);
+        if (dist < 0.025) return;
+        totalDistance += dist;
         document.getElementById('dist-count').textContent = totalDistance.toFixed(2);
       }
       trackPoints.push(pt);
