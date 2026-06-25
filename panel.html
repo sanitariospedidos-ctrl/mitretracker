@@ -895,20 +895,51 @@ function verSesion(s, idx) {
   currentLayer = L.layerGroup().addTo(map);
 
   const color = COLORES[s.empleado] || '#3d8ef0';
-  const poly = L.polyline(pts, { color, weight: 4, opacity: 0.85 }).addTo(currentLayer);
 
+  // Marcador entrada
   L.circleMarker(pts[0], { radius:10, fillColor:'#3fb950', color:'#fff', weight:2, fillOpacity:1 })
     .bindPopup(`<b>🟢 ENTRADA</b><br>${ei}`).addTo(currentLayer);
+  // Marcador salida
   L.circleMarker(pts[pts.length-1], { radius:10, fillColor:'#f85149', color:'#fff', weight:2, fillOpacity:1 })
     .bindPopup(`<b>🔴 SALIDA</b><br>${si}`).addTo(currentLayer);
-
+  // Puntos intermedios cada 10
   for (let i = 10; i < pts.length - 1; i += 10) {
     const ts = new Date(s.recorrido[i].ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
     L.circleMarker(pts[i], { radius:4, fillColor:color, color:'transparent', fillOpacity:.6 })
       .bindPopup(`⏱️ ${ts}`).addTo(currentLayer);
   }
 
-  map.fitBounds(poly.getBounds(), { padding:[40,40] });
+  // Dibujar bounding box provisorio mientras carga OSRM
+  const fallbackPoly = L.polyline(pts, { color, weight: 3, opacity: 0.4, dashArray:'6,6' }).addTo(currentLayer);
+  map.fitBounds(fallbackPoly.getBounds(), { padding:[40,40] });
+
+  // ---- OSRM: ruta por calles ----
+  async function dibujarRutaOSRM(puntos) {
+    // OSRM permite hasta ~100 waypoints; si hay más, tomamos una muestra uniforme
+    let wps = puntos;
+    if (puntos.length > 80) {
+      const step = Math.ceil(puntos.length / 80);
+      wps = puntos.filter((_, i) => i === 0 || i === puntos.length-1 || i % step === 0);
+    }
+    const coords = wps.map(p => p[1] + ',' + p[0]).join(';');
+    const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('OSRM error ' + res.status);
+      const data = await res.json();
+      if (!data.routes || data.routes.length === 0) throw new Error('Sin ruta');
+      // Quitar línea punteada provisional
+      currentLayer.removeLayer(fallbackPoly);
+      // Dibujar ruta por calles
+      const geojson = data.routes[0].geometry;
+      L.geoJSON(geojson, { style:{ color, weight:4, opacity:0.9 } }).addTo(currentLayer);
+    } catch(err) {
+      console.warn('OSRM falló, usando línea directa:', err);
+      // Ya está el fallback provisional, solo lo hacemos más visible
+      fallbackPoly.setStyle({ opacity:0.85, dashArray:null });
+    }
+  }
+  dibujarRutaOSRM(pts);
 
   document.getElementById('info-bar').classList.add('visible');
   document.getElementById('ic-entrada').textContent = '🟢 Entrada: ' + ei;
